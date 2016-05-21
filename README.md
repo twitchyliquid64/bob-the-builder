@@ -1,9 +1,5 @@
 #TODOS#
- - put todos here.
-
-
-
-
+ - Everything - All I have currently is boilerplate.
 
 
 # README #
@@ -12,26 +8,12 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Stores code for the simple build automator 'bob the builder'
+* Version 0.0.1
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* Install Go
+* Get a copy of this repository
+* 'go build'
+* './bobthebuilder' or 'bobthebuilder.exe'
