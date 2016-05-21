@@ -1,0 +1,15 @@
+makefont/makefont
+pdf/*.pdf
+look
+open
+pdf.txt
+private
+*.sublime*
+font/Ubuntu-*
+*.0
+*.swp
+**/*.out
+**/*.test
+font/CalligrapherRegular.json
+font/CalligrapherRegular.z
+coverage
