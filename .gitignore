@@ -1,3 +1,9 @@
 bobthebuilder.exe
 
 pkg/*
+definitions/*
+base/*
+build/
+definitions
+base
+build

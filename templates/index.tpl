@@ -3,7 +3,7 @@
 <html lang="en">
 
   <head>
-      <title>Bob the Builder</title>
+      <title>{!{.Config.Name}!}</title>
       {!{template "headcontent"}!}
 
       <style type="text/css">

@@ -17,12 +17,16 @@ func Load(fpath string)error{
 		return err
 	}
 
-	tls, err := loadTLS(gConfig.TLS.PrivateKey, gConfig.TLS.Cert)
-	if err == nil{
-		gTls = tls
-	} else {
-		logging.Error("config", "config.Load() error:", err)
-		return err
+	if gConfig.TLS.PrivateKey == ""{
+		logging.Warning("config", "TLS keyfile paths omitted, skipping TLS setup")
+	} else{
+		tls, err := loadTLS(gConfig.TLS.PrivateKey, gConfig.TLS.Cert)
+		if err == nil{
+			gTls = tls
+		} else {
+			logging.Error("config", "config.Load() tls error:", err)
+			return err
+		}
 	}
 
 	return nil
