@@ -36,7 +36,3 @@ func GetFilenameListInFolder(folder, suffix string)([]string,error){
     }
     return output, nil
 }
-
-func CopyFolder(src, dst string)error{
-  
-}
