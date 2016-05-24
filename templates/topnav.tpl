@@ -1,21 +1,30 @@
-    <div class="ui menu">
-      <a class="active item" style="padding-left: 60px; padding-right: 60px;">
+
+    <div class="ui fluid large vertical menu" style="height:98vh; border-bottom: none;">
+      <div class="ui header item">
+        <i class="server big icon"></i>
+        {!{.Config.Name}!}
+      </div>
+
+      <a class="active item">
         Dashboard
       </a>
 
-      {!{range .Builder.Definitions}!}
-      <a class="item">
-        {!{.Name}!}
-      </a>
-      {!{end}!}
-
-
-      <div class="right menu">
-        <a class="item">
-          System Log
-        </a>
-        <div class="item">
-          Connected
+      <div class="item">
+        <div class="header">Build Definitions</div>
+        <div class="menu">
+          {!{range .Builder.Definitions}!}
+            <a class="item">
+              {!{.Name}!}
+            </a>
+          {!{end}!}
         </div>
       </div>
+
+      <a class="item">
+        System Log
+      </a>
+      <div class="item">
+        Connected
+      </div>
+
     </div>

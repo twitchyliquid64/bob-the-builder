@@ -6,5 +6,7 @@
 
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/angular.min.js"></script>
+
     <link rel="stylesheet" type="text/css" href="/static/css/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/semantic.menu.min.css">
