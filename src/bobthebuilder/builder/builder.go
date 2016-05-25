@@ -117,6 +117,11 @@ func (b* Builder)findDefinitionIndex(definitionName string)(int, error){
   return -1, DefNotFoundErr
 }
 
+//returns an interface{} that can be serialized to JSON for the dashboard.
+func (b* Builder)GetDefinitionsSerialisable()interface{}{
+  return b.Definitions
+}
+
 
 //Do not call. This is run once on init.
 func (b* Builder)builderRunLoop(){

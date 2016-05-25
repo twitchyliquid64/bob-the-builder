@@ -12,11 +12,9 @@
       <div class="item">
         <div class="header">Build Definitions</div>
         <div class="menu">
-          {!{range .Builder.Definitions}!}
-            <a class="item">
-              {!{.Name}!}
+            <a class="item" ng-repeat="definition in dataService.getDefinitions()">
+              {{definition.name}}
             </a>
-          {!{end}!}
         </div>
       </div>
 
@@ -24,7 +22,11 @@
         System Log
       </a>
       <div class="item">
-        Connected
+        {{!dataService.connectionEstablished && !dataService.connectionLost? "Connecting ..." : ""}}
+        {{dataService.connectionLost && !dataService.error ? "Connection Lost" : ""}}
+        {{dataService.connectionEstablished && !dataService.connectionLost ? "Connected" : ""}}
+        {{dataService.error ? "Service Error" : ""}}
+        <i class="icon" ng-class="{yellow: dataService.error, red: (dataService.connectionLost && !dataService.error), checkmark: (dataService.connectionEstablished && !dataService.connectionLost), sign: dataService.connectionLost, spinner: !dataService.connectionEstablished && !dataService.connectionLost, loading: !dataService.connectionEstablished && !dataService.connectionLost, warning: dataService.connectionLost}"></i>
       </div>
 
     </div>

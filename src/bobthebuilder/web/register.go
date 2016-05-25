@@ -12,7 +12,7 @@ import (
 func Initialise() {
   logging.Info("web", "Registering page handlers")
   registerCoreHandlers()
-  registerViewHandlers()
+  registerApiHandlers()
 
   logging.Info("web", "Registering templates")
   registerCoreTemplates()
@@ -22,8 +22,8 @@ func registerCoreHandlers() {
   web.Get("/", indexMainPage, config.All().Web.Domain)
 }
 
-func registerViewHandlers(){
-
+func registerApiHandlers(){
+  web.Get("/api/definitions", getDefinitionHandler, config.All().Web.Domain)
 }
 
 func registerCoreTemplates(){

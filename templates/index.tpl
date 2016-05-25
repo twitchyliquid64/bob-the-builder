@@ -27,8 +27,8 @@
 
   </head>
 
-  <body ng-app="baseApp" class="">
-    <div class="ui dimmer" id="overlay">
+  <body ng-app="baseApp" ng-controller="mainController">
+    <div class="ui dimmer" id="overlay" ng-class="{active: dataService.isLoading()}">
         <div class="ui indeterminate text loader">Loading build data</div>
     </div>
 
