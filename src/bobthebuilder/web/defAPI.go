@@ -15,6 +15,18 @@ func getDefinitionHandler(ctx *web.Context) {
     logging.Error("web-definitions-api", err)
     ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
   } else {
+    //logging.Info("web-definitions-api", string(b))
+    ctx.ResponseWriter.Write(b)
+  }
+}
+
+func getHistoryHandler(ctx *web.Context){
+  out := builder.GetInstance().GetHistory()
+  b, err := json.Marshal(out)
+  if err != nil{
+    logging.Error("web-definitions-api", err)
+    ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
+  } else {
     logging.Info("web-definitions-api", string(b))
     ctx.ResponseWriter.Write(b)
   }

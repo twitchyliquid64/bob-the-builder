@@ -26,13 +26,13 @@ type phase interface {
 
 
 type BasicPhase struct {
-  GUID string
-  Type string
-  StatusString string
-  ErrorCode int
-  Start time.Time
-  End time.Time
-  Duration time.Duration
+  GUID string `json:"guid"`
+  Type string `json:"type"`
+  StatusString string `json:"status"`
+  ErrorCode int `json:"errorCode"`
+  Start time.Time `json:"start"`
+  End time.Time `json:"end"`
+  Duration time.Duration `json:"duration"`
 }
 
 func (p * BasicPhase)GetGUID()string{

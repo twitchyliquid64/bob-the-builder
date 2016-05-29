@@ -24,6 +24,7 @@ func registerCoreHandlers() {
 
 func registerApiHandlers(){
   web.Get("/api/definitions", getDefinitionHandler, config.All().Web.Domain)
+  web.Get("/api/history", getHistoryHandler, config.All().Web.Domain)
 }
 
 func registerCoreTemplates(){

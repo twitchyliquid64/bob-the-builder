@@ -12,7 +12,7 @@
       <div class="item">
         <div class="header">Build Definitions</div>
         <div class="menu">
-            <a class="item" ng-repeat="definition in dataService.getDefinitions()">
+            <a class="item" ng-repeat="definition in dataService.getDefinitions()" ng-click="navBuild($index)">
               {{definition.name}}
             </a>
         </div>

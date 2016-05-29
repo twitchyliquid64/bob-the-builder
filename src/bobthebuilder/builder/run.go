@@ -8,16 +8,18 @@ import (
 //A run represents a build - either planned, in progress, or finished.
 type Run struct {
   sync.Mutex
-  GUID string
-  ExecType string                    //EG: build, run-action
+  GUID string `json:"guid"`
+  ExecType string `json:"type"`     //EG: build, run-action
+  Version string `json:"version"`
 
-  HasStarted bool
-  StartTime time.Time
-  HasFinished bool
-  EndTime time.Time
-  Definition *BuildDefinition
+  HasStarted bool `json:"haveStarted"`
+  StartTime time.Time `json:"startTime"`
+  HasFinished bool `json:"haveFinished"`
+  EndTime time.Time `json:"endTime"`
+  Definition *BuildDefinition `json:"definition"`
 
-  Phases []phase                    //Phases which are part of the run.
+  Phases []phase `json:"phases"`    //Phases which are part of the run.
+  Tags []string `json:"tags"`
 }
 
 func (r *Run)IsRunning()bool{

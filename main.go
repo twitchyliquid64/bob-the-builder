@@ -9,7 +9,7 @@ import (
 
 
 func main() {
-	config.Load("testconfig.json")
+	config.Load("config.json")
 
 	b := builder.GetInstance()
 	e := b.Init()

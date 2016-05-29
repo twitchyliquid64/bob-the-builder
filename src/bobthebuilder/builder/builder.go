@@ -143,6 +143,12 @@ func (b* Builder)builderRunLoop(){
 }
 
 
+func (b* Builder)GetHistory()[]interface{}{
+  b.Lock.Lock()
+  defer b.Lock.Unlock()
+  return b.CompletedBacklog.Values()
+}
+
 //Creates a new builder object. Run in package init(), so keep this method simple.
 func New()*Builder{
   out :=  &Builder{

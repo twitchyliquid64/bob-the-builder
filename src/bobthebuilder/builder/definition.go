@@ -39,6 +39,10 @@ func (d *BuildDefinition)genRun()*Run{
     Definition: d,
     GUID: util.RandAlphaKey(32),
     ExecType: "BUILD",
+    Version: "?",
+    Tags: []string{
+      "auto",
+    },
   }
   pwd, _ := os.Getwd() //cant have error - would have failed in file/util.go
 

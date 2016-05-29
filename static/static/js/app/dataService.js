@@ -3,6 +3,8 @@
     var app = angular.module('baseApp').factory('dataService', ['$rootScope', '$http', '$timeout', dataService]);
 
     GET_DEF_URL = "/api/definitions"
+    GET_STATUS_URL = "/api/status"
+    GET_HISTORY_URL = "/api/history"
 
 
     function dataService($rootScope, $http, $timeout){
@@ -15,6 +17,10 @@
       self.error = false;//set if there is an error
 
       self.buildDefinitions = [];
+      self.history = [];
+
+
+
 
 
       //EXPOSED METHODS
@@ -22,9 +28,16 @@
         return self.loading;
       }
       self.getDefinitions = function(){
-          return self.buildDefinitions;
+        return self.buildDefinitions;
+      }
+      self.getHistory = function(){
+        return self.history;
       }
       //END EXPOSED METHODS
+
+
+
+
 
       self._loadDefinitions = function(){//called at end of factory (init)
         self._incrementLoadPendingCounter();
@@ -37,6 +50,32 @@
           self._error();
         });
       }
+
+      self._loadHistory = function(){//called at end of factory (init)
+        self._incrementLoadPendingCounter();
+        $http.get(GET_HISTORY_URL, {}).then(function (response) {
+          self.history = response.data;
+          self._preprocessHistory();
+
+          self._decrementLoadPendingCounter();
+          console.log(self.history);
+        }, function errorCallback(response) {
+          console.log(response);
+          self._decrementLoadPendingCounter();
+          self._error();
+        });
+      }
+
+      self._preprocessHistory = function(){
+        for (var i = 0; i < self.history.length; i++) {
+          self.history[i].startMom = moment(self.history[i].startTime);
+        };
+      };
+
+
+
+
+
 
       self._incrementLoadPendingCounter = function(){
         self.loading = true;
@@ -53,7 +92,11 @@
         self.connectionLost = true;
       }
 
+
+
+
       self._loadDefinitions();
+      self._loadHistory();
       return self;
     };
 
