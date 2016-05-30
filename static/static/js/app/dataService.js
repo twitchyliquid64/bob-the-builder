@@ -56,9 +56,7 @@
         $http.get(GET_HISTORY_URL, {}).then(function (response) {
           self.history = response.data;
           self._preprocessHistory();
-
           self._decrementLoadPendingCounter();
-          console.log(self.history);
         }, function errorCallback(response) {
           console.log(response);
           self._decrementLoadPendingCounter();

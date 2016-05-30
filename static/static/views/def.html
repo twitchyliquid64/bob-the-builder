@@ -1,0 +1,103 @@
+<div class="ui container " style="padding-top: 18px;">
+
+  <h1 class="ui header" ng-bind="defObject.name"></h1>
+
+  <div class="ui grid" style="margin-top: 11px;">
+    <div class="nine wide column">
+
+      <h4 class="ui header">Summary</h4>
+      <div class="ui divided list">
+        <div class="item">
+          <i class="large cloud icon" style="min-width: 40px;"></i>
+          <div class="content">
+            <p class="header">Package dependencies</p>
+            <div class="description">
+              <div class="ui label" ng-repeat="package in defObject['apt-packages-required']">
+                {{package}}
+              </div>
+              <div ng-if="defObject['apt-packages-required'].length == 0">
+                <i>None.</i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <i class="large folder icon" style="min-width: 40px;"></i>
+          <div class="content">
+            <p class="header">Base Folder</p>
+            <div class="description" ng-bind="defObject['base-folder']" ng-if="defObject['base-folder'].length > 0"></div>
+            <div class="description" ng-if="defObject['base-folder'].length == 0"><i>None</i></div>
+          </div>
+        </div>
+        <div class="item">
+          <i class="large code icon" style="min-width: 40px;"></i>
+          <div class="content">
+            <p class="header">Git Source</p>
+            <div class="description" ng-bind="defObject['git-src']" ng-if="defObject['git-src'].length > 0"></div>
+            <div class="description" ng-if="defObject['git-src'].length == 0"><i>None</i></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="ui right labeled icon button medium">
+        <i class="right wizard icon"></i>
+        Build
+      </button>
+    </div>
+
+
+
+
+    <div class="seven wide column">
+      <h4 class="ui header">Steps</h4>
+      <div class="ui fluid vertical steps" style="margin-top: 0px;">
+
+        <div class="step">
+          <i class="trash icon"></i>
+          <div class="content">
+            <div class="title">Clean workspace</div>
+            <div class="description">Empties build area.</div>
+          </div>
+        </div>
+
+
+        <div class="step" ng-if="defObject['apt-packages-required'].length > 0">
+          <i class="cloud icon"></i>
+          <div class="content">
+            <div class="title">Install package dependencies</div>
+            <div class="description">Fetch and install any missing packages.</div>
+          </div>
+        </div>
+
+        <div class="step" ng-if="defObject['git-src'].length > 0">
+          <i class="fork icon"></i>
+          <div class="content">
+            <div class="title">Fetch Git</div>
+            <div class="description">Pull git-src respository into the workspace.</div>
+          </div>
+        </div>
+
+
+        <div class="step" ng-if="defObject['base-folder'].length > 0">
+          <i class="copy icon"></i>
+          <div class="content">
+            <div class="title">Install Base</div>
+            <div class="description">Copy base files into the workspace.</div>
+          </div>
+        </div>
+
+        <div class="step" ng-repeat="step in defObject.steps">
+          <i class="terminal icon"></i>
+          <div class="content">
+            <div class="title">Execute Shell</div>
+            <div class="description">{{step.command}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="ui divider" style="padding: 12px;margin: 19px;"></div>
+
+</div>

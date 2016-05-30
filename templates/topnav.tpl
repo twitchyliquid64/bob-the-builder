@@ -5,14 +5,14 @@
         {!{.Config.Name}!}
       </div>
 
-      <a class="active item">
+      <a class="item" ng-class="{active: currentlyDash}" ng-click="navDashboard()">
         Dashboard
       </a>
 
       <div class="item">
         <div class="header">Build Definitions</div>
         <div class="menu">
-            <a class="item" ng-repeat="definition in dataService.getDefinitions()" ng-click="navBuild($index)">
+            <a class="item" ng-repeat="definition in dataService.getDefinitions()" ng-click="navBuild($index)" ng-class="{active: !currentlyDash && (currentIndex == $index)}">
               {{definition.name}}
             </a>
         </div>
@@ -26,7 +26,7 @@
         {{dataService.connectionLost && !dataService.error ? "Connection Lost" : ""}}
         {{dataService.connectionEstablished && !dataService.connectionLost ? "Connected" : ""}}
         {{dataService.error ? "Service Error" : ""}}
-        <i class="icon" ng-class="{yellow: dataService.error, red: (dataService.connectionLost && !dataService.error), checkmark: (dataService.connectionEstablished && !dataService.connectionLost), sign: dataService.connectionLost, spinner: !dataService.connectionEstablished && !dataService.connectionLost, loading: !dataService.connectionEstablished && !dataService.connectionLost, warning: dataService.connectionLost}"></i>
+        <i class="icon" ng-class="{yellow: dataService.error, red: (dataService.connectionLost && !dataService.error), checkmark: (dataService.connectionEstablished && !dataService.connectionLost), sign: dataService.connectionLost, loading: !dataService.connectionEstablished && !dataService.connectionLost, notched: !dataService.connectionEstablished && !dataService.connectionLost, circle: !dataService.connectionEstablished && !dataService.connectionLost, warning: dataService.connectionLost}"></i>
       </div>
 
     </div>
