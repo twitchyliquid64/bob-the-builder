@@ -12,6 +12,11 @@
         $scope.defObject = dataService.getDefinitions()[$routeParams.defID];
         console.log($scope.defObject);
       });
+
+      $scope.getStepTitle = function(type){
+        if (type == 'CMD')return "Run command";
+        if (type == 'EXEC')return "Run script";
+      }
     }
 
 

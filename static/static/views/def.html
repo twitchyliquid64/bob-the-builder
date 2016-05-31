@@ -44,14 +44,7 @@
       <div style="flex-grow: 1;"></div>
 
       <div class="ui buttons" style="flex-grow: 0;">
-        <button class="ui icon button toggle medium">
-          <i class="right code icon"></i>
-          Opt1
-        </button>
-        <button class="ui icon button toggle medium">
-          <i class="right wizard icon"></i>
-          Opt2
-        </button>
+
         <button class="ui icon button medium blue">
           <i class="right setting icon"></i>
           Run
@@ -97,35 +90,38 @@
         <div class="step" ng-if="defObject['base-folder'].length > 0">
           <i class="copy icon"></i>
           <div class="content">
-            <div class="title">Install Base</div>
+            <div class="title">Install base</div>
             <div class="description">Copy base files into the workspace.</div>
           </div>
         </div>
 
-        <div ng-repeat="step in defObject.steps">
-          <div class="step" ng-if="step.type == 'EXEC'">
-            <i class="terminal icon"></i>
-            <div class="content">
-              <div class="title">Execute Shell</div>
-              <div class="description">{{step.command}}</div>
-            </div>
-          </div>
-
-          <div class="step" ng-if="step.type == 'CMD'">
-            <i class="settings icon"></i>
-            <div class="content">
-              <div class="title">Run command</div>
-              <div class="description">{{step.command}}</div>
-            </div>
+        <div class="step" ng-repeat="step in defObject.steps">
+          <i class="icon" ng-class="{terminal: step.type == 'CMD', rocket: step.type == 'EXEC'}"></i>
+          <div class="content">
+            <div class="title">{{getStepTitle(step.type)}}</div>
+            <div class="description">{{step.command}}</div>
           </div>
         </div>
-
 
       </div>
     </div>
   </div>
 
 
-  <div class="ui divider" style="padding: 2px;margin: 19px;"></div>
+  <h3 class="ui horizontal divider header">
+    <i class="settings icon"></i>
+    Run output
+  </h3>
+
+  <div id="output-container" style="margin-top: 6px;">
+
+    <div class="ui basic segment">
+      <h5 class="ui header" style="flex-grow: 0;">Run command: ls -lah</h5>
+      <pre>bro</pre>
+
+
+    </div>
+
+  </div>
 
 </div>
