@@ -1,14 +1,14 @@
-#TODOS#
- - Everything - All I have currently is boilerplate.
+### TODOS ###
+ - Run from user interface
+ - Implement the different phase types
+ - Collect results
+ - WS for UI - producers/consumers architecture
+ - Display results to user
 
-
-# README #
-
-This README would normally document whatever steps are necessary to get your application up and running.
 
 ### What is this repository for? ###
 
-* Stores code for the simple build automator 'bob the builder'
+* Stores code for the simple run automator 'bob the builder'
 * Version 0.0.1
 
 ### How do I get set up? ###
@@ -16,7 +16,7 @@ This README would normally document whatever steps are necessary to get your app
 * Install Go
 * Get a copy of this repository
 * 'go build'
-* './bobthebuilder' or 'bobthebuilder.exe' (make sure testconfig.json is in your working directory)
+* './bobthebuilder' or 'bobthebuilder.exe' (make sure config.json is in your working directory)
 * Follow the steps below to setup your first build definition
 
 
@@ -26,7 +26,7 @@ There are two components to every build definition. First, there is a configurat
 
 All folders are relative to the working directory of bobthebuilder when invoked.
 
-The JSON config file is simple a json file you whack in /definitions. It should be structured like this:
+The JSON config file is simply a json file you whack in /definitions. It should be structured like this:
 
 
 ```json
@@ -38,6 +38,7 @@ The JSON config file is simple a json file you whack in /definitions. It should 
   ],
   "steps": [
     {
+      "type": "EXEC",
       "command": "./build.sh",
       "can-fail": false
     }

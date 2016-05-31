@@ -15,6 +15,7 @@ type BuildDefinition struct {
   BaseFolder string `json:"base-folder"`
   GitSrc string `json:"git-src"`
   Steps []struct {
+    Type string `json:"type"`
     Command string `json:"command"`
     CanFail bool `json:"can-fail"`
   } `json:"steps"`
