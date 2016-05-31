@@ -27,7 +27,25 @@ func getHistoryHandler(ctx *web.Context){
     logging.Error("web-definitions-api", err)
     ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
   } else {
-    logging.Info("web-definitions-api", string(b))
+    //logging.Info("web-definitions-api", string(b))
     ctx.ResponseWriter.Write(b)
   }
+}
+
+func getStatusHandler(ctx *web.Context){
+  index, run := builder.GetInstance().GetStatus()
+  out := map[string]interface{}{"index": index, "run": run}
+
+  b, err := json.Marshal(out)
+  if err != nil{
+    logging.Error("web-definitions-api", err)
+    ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
+  } else {
+    //logging.Info("web-definitions-api", string(b))
+    ctx.ResponseWriter.Write(b)
+  }
+}
+
+func enqueueBuildHandler(ctx *web.Context){
+  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"])
 }

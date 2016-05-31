@@ -3,7 +3,7 @@ package web
 import (
   "bobthebuilder/logging"
   "bobthebuilder/config"
-  //"golang.org/x/net/websocket"
+  "golang.org/x/net/websocket"
   "github.com/hoisie/web"
 )
 
@@ -20,11 +20,14 @@ func Initialise() {
 
 func registerCoreHandlers() {
   web.Get("/", indexMainPage, config.All().Web.Domain)
+  web.Get("/ws/events", websocket.Handler(ws_EventServer), config.All().Web.Domain)
 }
 
 func registerApiHandlers(){
   web.Get("/api/definitions", getDefinitionHandler, config.All().Web.Domain)
   web.Get("/api/history", getHistoryHandler, config.All().Web.Domain)
+  web.Get("/api/status", getStatusHandler, config.All().Web.Domain)
+  web.Get("/api/queue/new", enqueueBuildHandler, config.All().Web.Domain)
 }
 
 func registerCoreTemplates(){

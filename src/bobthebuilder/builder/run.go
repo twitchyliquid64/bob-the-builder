@@ -43,6 +43,7 @@ func (r *Run)SetupForRun(){
 }
 
 func (r *Run)Run(){
+  time.Sleep(time.Millisecond * 3000)
   // ...
   r.EndTime = time.Now()
   r.HasFinished = true

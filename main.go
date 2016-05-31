@@ -16,7 +16,6 @@ func main() {
 	if e != nil{
 		return
 	}
-	b.EnqueueBuildEvent("ARM build")
 
 	web.Initialise()
 	web.Run()

@@ -8,6 +8,7 @@ import (
   "io/ioutil"
   "errors"
   "path"
+  "time"
   "sync"
 )
 
@@ -20,6 +21,7 @@ const MAX_HISTORY_BACKLOG_SIZE = 15
 var DefNotFoundErr = errors.New("Definition not found")
 var BuildRunningErr = errors.New("Build already running")
 
+
 type Builder struct {
   Lock sync.Mutex //should be used to lock EventsToProcess,Definitions (iteration & modify)
   Definitions []*BuildDefinition
@@ -28,6 +30,9 @@ type Builder struct {
   EventsToProcess *ring.Ring
   TriggerWorkerChan chan bool
   CompletedBacklog *ring.Ring
+
+  //subscribers to events
+  subscribers map[chan BuilderEvent]bool
 }
 
 
@@ -39,6 +44,8 @@ func (b *Builder)Init()error{
 
   b.Definitions = []*BuildDefinition{} //clear our definitions
   b.CurrentRun = nil
+
+  b.publishEvent(EVT_DEF_REFRESH, time.Now().Unix(), -1)
 
   defFiles, err := util.GetFilenameListInFolder(DEFINITIONS_FOLDER_NAME, DEFINITIONS_FILE_SUFFIX)
   if err != nil {
@@ -100,6 +107,7 @@ func (b *Builder)EnqueueBuildEvent(buildDefinitionName string)(*Run, error){
   }
   run := b.Definitions[index].genRun()
   b.EventsToProcess.Enqueue(run)
+  b.publishEvent(EVT_RUN_QUEUED, run, index)
   b.TriggerWorkerChan <- true
 
   return run, nil
@@ -129,13 +137,22 @@ func (b* Builder)builderRunLoop(){
     b.Lock.Lock()
     event := b.EventsToProcess.Dequeue()
     if event != nil {
+
       logging.Info("builder-worker", "Got Run to execute from queue: ", event)//TODO: Log name / type - not the whole structure
       run := event.(*Run)
+      index, _ := b.findDefinitionIndex(run.Definition.Name)
+      b.publishEvent(EVT_RUN_STARTED, run, index)
       run.SetupForRun()
       b.CurrentRun = run
       b.Lock.Unlock()
+
       run.Run()
+
+      b.Lock.Lock()
       b.CompletedBacklog.Enqueue(run)
+      b.publishEvent(EVT_RUN_FINISHED, run, index)
+      b.Lock.Unlock()
+
     } else {
       b.Lock.Unlock()
     }
@@ -143,11 +160,31 @@ func (b* Builder)builderRunLoop(){
 }
 
 
+
+
+//Returns a list of recent runs.
 func (b* Builder)GetHistory()[]interface{}{
   b.Lock.Lock()
   defer b.Lock.Unlock()
   return b.CompletedBacklog.Values()
 }
+
+//returns the index of the currently running definition, and the currently running run. Returns -1, nil if nothing is running.
+func (b *Builder)GetStatus()(currIndex int, currentRun *Run){
+  b.Lock.Lock()
+  defer b.Lock.Unlock()
+
+  if !b.IsRunning(){
+    return -1, nil
+  }
+
+  currentRun = b.CurrentRun
+  currIndex, _ = b.findDefinitionIndex(currentRun.Definition.Name)
+  return
+}
+
+
+//code for events subscription/publishing system is in builder_events.go
 
 //Creates a new builder object. Run in package init(), so keep this method simple.
 func New()*Builder{
@@ -156,6 +193,7 @@ func New()*Builder{
     EventsToProcess: &ring.Ring{},
     TriggerWorkerChan: make(chan bool, MAX_EVENT_QUEUE_SIZE),
     CompletedBacklog: &ring.Ring{},
+    subscribers: map[chan BuilderEvent]bool{},
   }
   out.EventsToProcess.SetCapacity(MAX_EVENT_QUEUE_SIZE)
   out.CompletedBacklog.SetCapacity(MAX_HISTORY_BACKLOG_SIZE)

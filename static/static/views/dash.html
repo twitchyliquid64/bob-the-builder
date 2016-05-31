@@ -4,10 +4,11 @@
 
   <div class="ui vertical one column segment grid centered">
     <div class="ui column">
-      <div class="ui three statistics">
-        <div class="statistic green">
+      <div class="ui two statistics">
+        <div class="statistic" ng-class="{green: dataService.getStatus().index < 0}">
           <div class="value">
-            IDLE
+            <span ng-if="dataService.getStatus().index < 0">IDLE</span>
+            <span ng-if="dataService.getStatus().index >= 0"> <i class="setting loading icon"></i></span>
           </div>
           <div class="label">
             Status
@@ -19,14 +20,6 @@
           </div>
           <div class="label">
             Mem Free
-          </div>
-        </div>
-        <div class="statistic">
-          <div class="value">
-            19 hours
-          </div>
-          <div class="label">
-            Uptime
           </div>
         </div>
       </div>

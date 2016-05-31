@@ -10,7 +10,7 @@
       </a>
 
       <div class="item">
-        <div class="header">Build Definitions</div>
+        <div class="header">Definitions</div>
         <div class="menu">
             <a class="item" ng-repeat="definition in dataService.getDefinitions()" ng-click="navBuild($index)" ng-class="{active: !currentlyDash && (currentIndex == $index)}">
               {{definition.name}}
