@@ -135,11 +135,13 @@
 
   <div id="output-container" style="margin-top: 6px;">
 
-    <div class="ui basic segment">
-      <h5 class="ui header" style="flex-grow: 0;">Run command: ls -lah</h5>
-      <pre>bro</pre>
-
-
+    <div class="ui basic segment" ng-repeat="phase in phases track by $index" ng-if="phase.start != '0001-01-01T00:00:00Z'">
+      <h5 class="ui header" style="flex-grow: 0;">{{getPhaseTitle(phase) | uppercase}} <i class="setting loading icon" ng-if="phase.end == '0001-01-01T00:00:00Z'"></i></h5>
+      <pre ng-bind="content[$index]">{{line}}</pre>
+      <div ng-if="phase.end != '0001-01-01T00:00:00Z'">
+        <div class="ui label" ng-class="{teal: (phase.errorCode==0), red: (phase.errorCode!=0)}"><i class="code icon"></i> Error Code: {{phase.errorCode}}</div>
+        <div class="ui label"><i class="signal icon"></i> {{phase.status}}</div>
+      </div>
     </div>
 
   </div>

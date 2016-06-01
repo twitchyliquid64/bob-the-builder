@@ -28,6 +28,15 @@
           } else if (msg.Type == "RUN-FINISHED"){
             $rootScope.$broadcast('ws-events-run-finished', {run: msg.Data, index: msg.Index});
             $rootScope.$broadcast('ws-event-run-finish-' + msg.Index);
+          } else if (msg.Type == "PHASE-STARTED"){
+            $rootScope.$broadcast('ws-events-phase-started', {run: msg.Data, index: msg.Index});
+            $rootScope.$broadcast('ws-event-phase-started-' + msg.Index, {phase: msg.Data});
+          } else if (msg.Type == "PHASE-FINISHED"){
+            $rootScope.$broadcast('ws-events-phase-finished', {run: msg.Data, index: msg.Index});
+            $rootScope.$broadcast('ws-event-phase-finished-' + msg.Index, {phase: msg.Data});
+          } else if (msg.Type == "PHASE-DATA"){
+            $rootScope.$broadcast('ws-events-phase-data', {content: msg.Data.content, phase: msg.Data.phase, index: msg.Index});
+            $rootScope.$broadcast('ws-event-phase-data-' + msg.Index, {content: msg.Data.content, phase: msg.Data.phase, index: msg.Index});
           }
 
         });

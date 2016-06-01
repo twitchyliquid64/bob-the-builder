@@ -107,7 +107,6 @@
       });
       $rootScope.$on('ws-events-run-started', function(event, statusObj){
         self.status = statusObj;
-        console.log(self.status);
       });
       $rootScope.$on('ws-events-run-finished', function(event, statusObj){
         self.status = statusObj;

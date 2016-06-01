@@ -138,15 +138,15 @@ func (b* Builder)builderRunLoop(){
     event := b.EventsToProcess.Dequeue()
     if event != nil {
 
-      logging.Info("builder-worker", "Got Run to execute from queue: ", event)//TODO: Log name / type - not the whole structure
       run := event.(*Run)
+      logging.Info("builder-worker", "Got Run to execute from queue: ", run.Definition.Name)
       index, _ := b.findDefinitionIndex(run.Definition.Name)
-      b.publishEvent(EVT_RUN_STARTED, run, index)
       run.SetupForRun()
+      b.publishEvent(EVT_RUN_STARTED, run, index)
       b.CurrentRun = run
       b.Lock.Unlock()
 
-      run.Run()
+      run.Run(b, index)
 
       b.Lock.Lock()
       b.CompletedBacklog.Enqueue(run)
