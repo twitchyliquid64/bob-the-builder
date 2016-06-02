@@ -17,9 +17,9 @@ Bob-the-builder adds a frontend and framework around your scripts. Whilst intend
 * Follow the steps below to setup your first build definition
 
 
-### How do I setup something to be built automatically? ###
+### How do I setup something to be run automatically? ###
 
-There are two components to every build definition. First, there is a configuration JSON file in the definitions/ folder. Second, there is as folder in base/, which should contain any initial files to be copied into the build folder before the build process commences.
+There are two components to every run definition. First, there is a configuration JSON file in the definitions/ folder. Second, there is as folder in base/, which should contain any initial files to be copied into the build folder before the build process commences.
 
 All folders are relative to the working directory of bobthebuilder when invoked.
 

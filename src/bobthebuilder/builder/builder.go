@@ -2,7 +2,9 @@ package builder
 
 import (
   ring "github.com/zfjagann/golang-ring"
+  "github.com/stianeikeland/go-rpio"
   "bobthebuilder/logging"
+  "bobthebuilder/config"
   "bobthebuilder/util"
   "encoding/json"
   "io/ioutil"
@@ -140,6 +142,7 @@ func (b* Builder)builderRunLoop(){
 
       run := event.(*Run)
       logging.Info("builder-worker", "Got Run to execute from queue: ", run.Definition.Name)
+      go b.ledFlashLoop(run)
       index, _ := b.findDefinitionIndex(run.Definition.Name)
       run.SetupForRun()
       b.publishEvent(EVT_RUN_STARTED, run, index)
@@ -160,7 +163,18 @@ func (b* Builder)builderRunLoop(){
 }
 
 
-
+func (b* Builder)ledFlashLoop(run *Run){
+  if config.All().RaspberryPi.Enable && config.All().RaspberryPi.BuildLedPin > 0 {
+    for run.IsRunning() {
+      time.Sleep(time.Millisecond * 400)
+      led := rpio.Pin(config.All().RaspberryPi.BuildLedPin)
+      led.High()
+      time.Sleep(time.Millisecond * 7)
+      led.Low()
+      time.Sleep(time.Millisecond * 600)
+    }
+  }
+}
 
 //Returns a list of recent runs.
 func (b* Builder)GetHistory()[]interface{}{

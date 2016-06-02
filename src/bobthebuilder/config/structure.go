@@ -13,4 +13,10 @@ type Config struct {
 		Domain string					//Domain should be in the form example.com
 		Listener string				//Address:port (address can be omitted) where the HTTPS listener will bind.
 	}
+
+	RaspberryPi struct {
+		Enable bool
+		BuildLedPin int
+		DataLedPin int
+	}
 }

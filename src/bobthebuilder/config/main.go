@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/stianeikeland/go-rpio"
 	"bobthebuilder/logging"
 	"crypto/tls"
 )
@@ -26,6 +27,24 @@ func Load(fpath string)error{
 		} else {
 			logging.Error("config", "config.Load() tls error:", err)
 			return err
+		}
+	}
+
+	if gConfig.RaspberryPi.Enable {
+		err = rpio.Open()
+		if err != nil {
+			logging.Error("config", "Failed setup of RPi GPIO: ", err)
+			return err
+		}
+
+		if gConfig.RaspberryPi.BuildLedPin > 0 {
+			buildLed := rpio.Pin(gConfig.RaspberryPi.BuildLedPin)
+			buildLed.Output()
+			buildLed.Low()
+
+			dataLed := rpio.Pin(gConfig.RaspberryPi.DataLedPin)
+			dataLed.Output()
+			dataLed.Low()
 		}
 	}
 
