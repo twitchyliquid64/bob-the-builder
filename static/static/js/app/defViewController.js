@@ -37,6 +37,8 @@
           return "Clean workspace";
         } else if (phase.type == "COMMAND"){
           return "Run command: " + phase.Command;
+        } else if (phase.type == "GIT-CLONE"){
+          return "Git Clone"
         }
       }
 

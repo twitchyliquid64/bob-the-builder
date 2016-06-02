@@ -51,7 +51,7 @@
           </td>
           <td>{{run.startMom.fromNow()}}</td>
           <td>{{run.version}}</td>
-          <td class="positive"><i class="icon checkmark"></i></td>
+          <td ng-class="{positive: run.status == 0, negative: run.status < 0}"><i class="icon" ng-class="{checkmark: run.status == 0, remove: run.status < 0}"></i></td>
         </tr>
       </tbody>
     </table>

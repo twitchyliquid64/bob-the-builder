@@ -79,15 +79,3 @@ func (p * BasicPhase)WriteOutput(info string, r* Run, builder *Builder, defIndex
   }
   builder.publishEvent(EVT_PHASE_DATA_UPDATE, pOut, defIndex)
 }
-
-
-
-type GitClonePhase struct{
-  BasicPhase
-  GitSrcPath string
-}
-func (p * GitClonePhase)init(index int){
-  p.Type = "GIT-CLONE"
-  p.StatusString = PHASE_STATUS_READY
-  p.Index = index
-}
