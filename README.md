@@ -32,11 +32,29 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 ```json
 {
   "name": "Build libc",
-  "base-folder": "libc-base",
+  "base-folder": "arm base",
+  "git-src": "https://github.com/twitchyliquid64/bob-the-builder",
   "apt-packages-required": [
     "build-essentials"
   ],
   "steps": [
+    {
+      "type": "CMD",
+      "command": "ping",
+      "args": [
+        "-c",
+        "2",
+        "google.com"
+      ],
+      "can-fail": true
+    },
+    {
+      "type": "CMD",
+      "command": "git",
+      "args": [
+        "log"
+      ]
+    },
     {
       "type": "EXEC",
       "command": "build.sh",

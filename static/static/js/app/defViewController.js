@@ -41,6 +41,8 @@
           return "Git Clone"
         } else if (phase.type == "SCRIPT-EXEC"){
           return "Run script: " + phase.ScriptPath;
+        } else if (phase.type == "APT-CHECK"){
+          return "Check & install dependencies";
         }
       }
 

@@ -64,6 +64,14 @@ func (d *BuildDefinition)genRun()*Run{
   delPhase.init(len(out.Phases))
   out.Phases = append(out.Phases, delPhase)
 
+  if len(d.AptPackagesRequired) > 0 {
+    p := &AptGetCheckInstallPhase{ //generate phase to copy in files
+      Packages: d.AptPackagesRequired,
+    }
+    p.init(len(out.Phases))
+    out.Phases = append(out.Phases, p)
+  }
+
   if d.GitSrc != "" {//if we are sourcing files from git, that needs to happen first for reasons.
     p := &GitClonePhase{ //generate phase to clone in a git repo
       GitSrcPath: d.GitSrc,
