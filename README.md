@@ -70,16 +70,16 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 
 | Field Name    | Description                                   |
 | ------------- |:----------------------------------------------|
-| name          | Name of the run definition. Shows in the UI.  |
-| base-folder   | Folder from which files are copied into the build folder during initialisation. This stage occurs after the clean phase and after (if any) the git clone phase.  |
-| git-src       | This option should be set if you want to clone a git repository into your build area before running the steps. The passed value is passed to 'git clone <passed value> .' which downloads the contents of the repo into the build folder.  |
-| apt-packages-required  | This option should be set if you want to ensure a set of apt-get packages are installed on your system. If you system does not support apt-get, do not set this field in the JSON file.  |
+| *name*          | Name of the run definition. Shows in the UI.  |
+| *base-folder*   | Folder from which files are copied into the build folder during initialisation. This stage occurs after the clean phase and after (if any) the git clone phase.  |
+| *git-src*       | This option should be set if you want to clone a git repository into your build area before running the steps. The passed value is passed to 'git clone <passed value> .' which downloads the contents of the repo into the build folder.  |
+| *apt-packages-required*  | This option should be set if you want to ensure a set of apt-get packages are installed on your system. If you system does not support apt-get, do not set this field in the JSON file.  |
 
 
 
 #### Available step types
 
 | Type          | Description           | Parameters  |
-| ------------- |:----------------------|       -----:|
-| CMD           | Runs the command with the specified arguments | <ul><li>'command' - name of the command to run. Do not put a path.</li><li>'args' - List of arguments to pass to the command. No escaping permitted.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li> </ul>|
-| EXEC           | Runs the script specified in 'command' using bash | <ul><li>'command' - Path to the script relative to the build directory.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li></ul>|
+| ------------- |:----------------------|       -----|
+| *CMD*           | Runs the command with the specified arguments | <ul><li>'command' - name of the command to run. Do not put a path.</li><li>'args' - List of arguments to pass to the command. No escaping permitted.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li> </ul>|
+| *EXEC*           | Runs the script specified in 'command' using bash | <ul><li>'command' - Path to the script relative to the build directory.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li></ul>|
