@@ -38,6 +38,12 @@ func (p * CommandPhase)Run(r* Run, builder *Builder, defIndex int)int{
 
   pwd, _ := os.Getwd()
 
+
+  //make sure build dir exists
+  if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
+    os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 700)
+  }
+
   cmd := exec.Command(p.Command, p.Args...)
   cmd.Dir = path.Join(pwd, BUILD_TEMP_FOLDER_NAME)
 
@@ -73,4 +79,15 @@ func (p * CommandPhase)Write(in []byte)(n int, err error){
   //logging.Info("command-phase", string(in))
   p.WriteOutput(string(in), p.run, p.builder, p.defIndex)
   return len(in), nil
+}
+
+
+
+
+// exists returns whether the given file or directory exists or not
+func exists(path string) (bool, error) {
+    _, err := os.Stat(path)
+    if err == nil { return true, nil }
+    if os.IsNotExist(err) { return false, nil }
+    return true, err
 }

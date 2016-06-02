@@ -38,6 +38,11 @@ func (p * GitClonePhase)Run(r* Run, builder *Builder, defIndex int)int{
 
   pwd, _ := os.Getwd()
 
+  //make sure build dir exists
+  if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
+    os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 700)
+  }
+
   cmd := exec.Command("git", "clone", p.GitSrcPath, ".")
   cmd.Dir = path.Join(pwd, BUILD_TEMP_FOLDER_NAME)
 
