@@ -1,15 +1,12 @@
-### TODOS ###
- - Run from user interface
- - Implement the different phase types
- - Collect results
- - WS for UI - producers/consumers architecture
- - Display results to user
+### What is bob the builder? ###
+
+Bob-the-builder adds a frontend and framework around your scripts. Whilst intended for automating builds, it can be used to assist the running of any UNIX script or program.
 
 
 ### What is this repository for? ###
 
 * Stores code for the simple run automator 'bob the builder'
-* Version 0.0.1
+* Version 0.0.2
 
 ### How do I get set up? ###
 
@@ -83,3 +80,12 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 | ------------- |:----------------------|       -----|
 | *CMD*           | Runs the command with the specified arguments | <ul><li>'command' - name of the command to run. Do not put a path.</li><li>'args' - List of arguments to pass to the command. No escaping permitted.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li> </ul>|
 | *EXEC*           | Runs the script specified in 'command' using bash | <ul><li>'command' - Path to the script relative to the build directory.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li></ul>|
+
+
+
+
+### Development Todos ###
+ - Implement Artifactory
+ - Implement version number system
+ - Implement other step/phase types - upload to S3, set environment variable, etc
+ - Definition reload button / refresh UI
