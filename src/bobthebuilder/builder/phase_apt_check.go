@@ -47,7 +47,7 @@ func (p * AptGetCheckInstallPhase)Run(r* Run, builder *Builder, defIndex int)int
     //check if it exists
     _, err := exec.Command("dpkg", "-s", pkg).Output()
   	if err == nil {//non-zero exit value raises an error - means it needs to be installed
-  		p.Write([]byte("Package " + pkg + " exists.\n"))
+  		p.Write([]byte("Package " + pkg + " is already installed.\n"))
       continue
   	}
     p.Write([]byte("\n" + pkg + ":\n"))
