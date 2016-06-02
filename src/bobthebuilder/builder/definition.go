@@ -92,6 +92,13 @@ func (d *BuildDefinition)genRun()*Run{
       }
       cmd.init(len(out.Phases))
       out.Phases = append(out.Phases, cmd)
+    case "EXEC":
+      cmd := &ScriptExecPhase{
+        ScriptPath: step.Command,
+        CanFail: step.CanFail,
+      }
+      cmd.init(len(out.Phases))
+      out.Phases = append(out.Phases, cmd)
     }
   }
 

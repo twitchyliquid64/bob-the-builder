@@ -39,6 +39,8 @@
           return "Run command: " + phase.Command;
         } else if (phase.type == "GIT-CLONE"){
           return "Git Clone"
+        } else if (phase.type == "SCRIPT-EXEC"){
+          return "Run script: " + phase.ScriptPath;
         }
       }
 

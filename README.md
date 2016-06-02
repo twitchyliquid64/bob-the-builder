@@ -39,7 +39,7 @@ The JSON config file is simply a json file you whack in /definitions. It should 
   "steps": [
     {
       "type": "EXEC",
-      "command": "./build.sh",
+      "command": "build.sh",
       "can-fail": false
     }
   ]
