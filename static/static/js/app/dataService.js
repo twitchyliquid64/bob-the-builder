@@ -56,6 +56,7 @@
         self._incrementLoadPendingCounter();
         $http.get(GET_DEF_URL, {}).then(function (response) {
           self.buildDefinitions = response.data;
+          $rootScope.$broadcast('definitions-loaded');
           self._decrementLoadPendingCounter();
         }, function errorCallback(response) {
           console.log(response);

@@ -116,6 +116,10 @@
 
 
       // event handlers
+      $rootScope.$on('definitions-loaded', function(event, args) {
+        $scope.defObject = dataService.getDefinitions()[$routeParams.defID];
+      });
+
       $scope.$on('$routeChangeSuccess', function() { //apparently routeParams isnt always immediately populated
         $scope.defObject = dataService.getDefinitions()[$routeParams.defID];
 
