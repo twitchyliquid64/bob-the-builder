@@ -1,5 +1,11 @@
 package builder
 
+import (
+  "github.com/stianeikeland/go-rpio"
+  "bobthebuilder/config"
+  "time"
+)
+
 type BuilderEvent struct {
   Type string
   Data interface{}
@@ -31,6 +37,14 @@ func (b *Builder)UnsubscribeFromEvents(in chan BuilderEvent){
 
 //assumes caller holds the lock.
 func (b *Builder)publishEvent(t string, d interface{}, index int){
+  if config.All().RaspberryPi.Enable && config.All().RaspberryPi.DataLedPin > 0 {
+    led := rpio.Pin(config.All().RaspberryPi.DataLedPin)
+    led.High()
+    time.Sleep(time.Millisecond * 4)
+    led.Low()
+  }
+
+
   pkt := BuilderEvent{
     Type: t,
     Data: d,

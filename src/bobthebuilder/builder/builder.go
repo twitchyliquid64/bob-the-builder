@@ -186,7 +186,7 @@ func (b* Builder)ledFlasherLoop(run *Run){
       for _, pin := range config.All().RaspberryPi.CycleFlashers {
         p := rpio.Pin(pin)
         p.High()
-        time.Sleep(time.Millisecond * 500)
+        time.Sleep(time.Millisecond * 300)
         p.Low()
       }
     }
