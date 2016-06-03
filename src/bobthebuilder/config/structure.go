@@ -18,5 +18,6 @@ type Config struct {
 		Enable bool
 		BuildLedPin int
 		DataLedPin int
+		CycleFlashers []int
 	}
 }

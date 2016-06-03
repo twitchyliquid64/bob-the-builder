@@ -37,18 +37,30 @@ func Load(fpath string)error{
 			return err
 		}
 
-		if gConfig.RaspberryPi.BuildLedPin > 0 {
-			buildLed := rpio.Pin(gConfig.RaspberryPi.BuildLedPin)
-			buildLed.Output()
-			buildLed.Low()
-
-			dataLed := rpio.Pin(gConfig.RaspberryPi.DataLedPin)
-			dataLed.Output()
-			dataLed.Low()
-		}
+		initRpiGPIO()
 	}
 
 	return nil
+}
+
+
+func initRpiGPIO(){
+	if gConfig.RaspberryPi.BuildLedPin > 0 {
+		buildLed := rpio.Pin(gConfig.RaspberryPi.BuildLedPin)
+		buildLed.Output()
+		buildLed.Low()
+	}
+
+	if gConfig.RaspberryPi.DataLedPin > 0 {
+		dataLed := rpio.Pin(gConfig.RaspberryPi.DataLedPin)
+		dataLed.Output()
+		dataLed.Low()
+	}
+	for _, pin := range gConfig.RaspberryPi.CycleFlashers {
+		p := rpio.Pin(pin)
+		p.Output()
+		p.Low()
+	}
 }
 
 func GetServerName()string{

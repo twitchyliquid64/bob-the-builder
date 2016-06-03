@@ -142,7 +142,8 @@ func (b* Builder)builderRunLoop(){
 
       run := event.(*Run)
       logging.Info("builder-worker", "Got Run to execute from queue: ", run.Definition.Name)
-      go b.ledFlashLoop(run)
+      go b.ledBeaconFlashLoop(run)
+      go b.ledFlasherLoop(run)
       index, _ := b.findDefinitionIndex(run.Definition.Name)
       run.SetupForRun()
       b.publishEvent(EVT_RUN_STARTED, run, index)
@@ -163,15 +164,31 @@ func (b* Builder)builderRunLoop(){
 }
 
 
-func (b* Builder)ledFlashLoop(run *Run){
+func (b* Builder)ledBeaconFlashLoop(run *Run){
   if config.All().RaspberryPi.Enable && config.All().RaspberryPi.BuildLedPin > 0 {
     for run.IsRunning() {
       time.Sleep(time.Millisecond * 400)
       led := rpio.Pin(config.All().RaspberryPi.BuildLedPin)
-      led.High()
-      time.Sleep(time.Millisecond * 7)
-      led.Low()
-      time.Sleep(time.Millisecond * 600)
+      for i := 0; i < 3; i++ {
+        led.High()
+        time.Sleep(time.Millisecond * 7)
+        led.Low()
+        time.Sleep(time.Millisecond * 50)
+      }
+      time.Sleep(time.Millisecond * 350)
+    }
+  }
+}
+
+func (b* Builder)ledFlasherLoop(run *Run){
+  if config.All().RaspberryPi.Enable && len(config.All().RaspberryPi.CycleFlashers) > 0 {
+    for run.IsRunning() {
+      for _, pin := range config.All().RaspberryPi.CycleFlashers {
+        p := rpio.Pin(pin)
+        p.High()
+        time.Sleep(time.Millisecond * 500)
+        p.Low()
+      }
     }
   }
 }
