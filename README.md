@@ -2,6 +2,10 @@
 
 Bob-the-builder adds a frontend and framework around your scripts. Whilst intended for automating builds, it can be used to assist the running of any UNIX script or program.
 
+![Demo GIF](https://s3-ap-southeast-2.amazonaws.com/ciphersink.net.current.workingfolder/Bob%20the%20builder.gif)
+
+
+
 
 ### What is this repository for? ###
 
