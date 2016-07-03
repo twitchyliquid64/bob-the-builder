@@ -11,6 +11,7 @@
       $scope.running = false;
       $scope.phases = [];
       $scope.content = [];
+      $scope.contentCursor = -1;//-1 = end of string as a special case
 
       $scope.isRunning = function(){
         return $scope.running;
@@ -25,12 +26,15 @@
         $scope.buildQueued = true;
       }
 
+      //used for the 'steps' section - type corresponds to the set type in the JSON definition file.
       $scope.getStepTitle = function(type){
         if (type == 'CMD')return "Run command";
         if (type == 'EXEC')return "Run script";
         if (type == 'S3_UPLOAD')return "S3 file upload";
+        if (type == 'ENV_SET')return "Set environment variable";
       }
 
+      //used for 'run output' section - phase.type corresponds to the value in .Type for the phase struct
       $scope.getPhaseTitle = function(phase){
         if (phase.type == "BASE-INSTALL"){
           return "Install base";
@@ -46,11 +50,15 @@
           return "Check & install dependencies";
         } else if (phase.type == "S3UP_BASIC"){
           return "S3 file upload";
+        } else if (phase.type == "SET_ENV"){
+          return "Set environment variable";
         }
       }
       $scope.getStepDetail = function(step){
         if (step.type == 'S3_UPLOAD'){
           return step.filename;
+        }else if (step.type == 'ENV_SET'){
+          return step.key;
         }else {
           return step.command;
         }
@@ -83,11 +91,14 @@
       self.phaseDataEvent = function(args){
         //console.log("defViewController.phaseDataEvent(): ", args);
         //$scope.phases[args.phase.index] = args.phase;
+        if ($scope.contentCursor != -1){
+          $scope.content[args.phase.index] = $scope.content[args.phase.index].slice(0, $scope.contentCursor);
+          $scope.contentCursor = -1;
+        }
+
         if (args.content.indexOf("CONTROL<CHAR-RETURN>") > -1){ //has a /r - transform the current content
-          var spl = $scope.content[args.phase.index].split("\n");
-          var lastLine = spl[spl.length-1];
-          $scope.content[args.phase.index] = $scope.content[args.phase.index].slice(0, -lastLine.length);
-          console.log("Rewriting:", spl, lastLine);
+          $scope.contentCursor = $scope.content[args.phase.index].lastIndexOf("\n");
+          if ($scope.contentCursor == -1)$scope.contentCursor = 0;
         }
         $scope.content[args.phase.index] += args.content.replace("CONTROL<CHAR-RETURN>", "");
         //console.log($scope.phases, $scope.content);

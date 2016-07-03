@@ -15,6 +15,8 @@ type TemplateInformation struct {
 
 
   Phase interface{}
+  Builder *Builder
+  Run *Run
 }
 
 func getBaseTemplateInfoStruct()TemplateInformation{
@@ -27,7 +29,7 @@ func getBaseTemplateInfoStruct()TemplateInformation{
   }
 }
 
-func ExecTemplate(templ string, phase interface{})(string,error){
+func ExecTemplate(templ string, phase interface{}, r* Run, builder *Builder)(string,error){
   resultBuf := new(bytes.Buffer)
   t, err := template.New("t").Parse(templ)
   if err != nil{
@@ -36,6 +38,8 @@ func ExecTemplate(templ string, phase interface{})(string,error){
 
   tinfo := getBaseTemplateInfoStruct()
   tinfo.Phase = phase
+  tinfo.Builder = builder
+  tinfo.Run = r
   err = t.Execute(resultBuf, tinfo)
   return resultBuf.String(), err
 }

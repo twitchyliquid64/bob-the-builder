@@ -19,8 +19,13 @@ type BuildDefinition struct {
     Command string `json:"command"`
     CanFail bool `json:"can-fail"`
     Args []string `json:"args"`
+
+
     FileName string `json:"filename"`
     DestinationFileName string  `json:"filename-destination"`
+
+    Key string `json:"key"`
+    Value string `json:"value"`
 
     //used for S3 commands
     Bucket string `json:"bucket"`
@@ -107,6 +112,7 @@ func (d *BuildDefinition)genRun()*Run{
       }
       cmd.init(len(out.Phases))
       out.Phases = append(out.Phases, cmd)
+
     case "EXEC":
       cmd := &ScriptExecPhase{
         ScriptPath: step.Command,
@@ -114,6 +120,7 @@ func (d *BuildDefinition)genRun()*Run{
       }
       cmd.init(len(out.Phases))
       out.Phases = append(out.Phases, cmd)
+
     case "S3_UPLOAD":
       cmd := &S3UploadPhase{
         Bucket: step.Bucket,
@@ -122,6 +129,14 @@ func (d *BuildDefinition)genRun()*Run{
         DestinationFileName: step.DestinationFileName,
       }
       cmd.init(len(out.Phases), step.ACL)
+      out.Phases = append(out.Phases, cmd)
+
+    case "ENV_SET":
+      cmd := &SetEnvPhase{
+        Key: step.Key,
+        Value: step.Value,
+      }
+      cmd.init(len(out.Phases))
       out.Phases = append(out.Phases, cmd)
     }
   }

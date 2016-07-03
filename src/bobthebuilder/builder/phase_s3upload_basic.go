@@ -77,12 +77,12 @@ func (p * S3UploadPhase)Run(r* Run, builder *Builder, defIndex int)int{
   p.Start = time.Now()
 
   //run templates to sub in any variable information like dates etc
-  p.DestinationFileName, err = ExecTemplate(p.DestinationFileName, p)
+  p.DestinationFileName, err = ExecTemplate(p.DestinationFileName, p, r, builder)
   if err != nil{
     p.WriteOutput( "Template Error (filename-destination): " + err.Error() + "\n", r, builder, defIndex)
     return p.phaseError(-11, "Template error")
   }
-  p.FilenameToUpload, err = ExecTemplate(p.FilenameToUpload, p)
+  p.FilenameToUpload, err = ExecTemplate(p.FilenameToUpload, p, r, builder)
   if err != nil{
     p.WriteOutput( "Template Error (filename): " + err.Error() + "\n", r, builder, defIndex)
     return p.phaseError(-11, "Template error")

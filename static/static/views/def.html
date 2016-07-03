@@ -116,7 +116,7 @@
         </div>
 
         <div class="step" ng-repeat="step in defObject.steps">
-          <i class="icon" ng-class="{terminal: step.type == 'CMD', rocket: step.type == 'EXEC', 'cloud upload': step.type == 'S3_UPLOAD'}"></i>
+          <i class="icon" ng-class="{terminal: step.type == 'CMD', rocket: step.type == 'EXEC', 'cloud upload': step.type == 'S3_UPLOAD', 'level down': step.type == 'ENV_SET'}"></i>
           <div class="content">
             <div class="title">{{getStepTitle(step.type)}}</div>
             <div class="description">{{getStepDetail(step)}}</div>
