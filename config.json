@@ -8,7 +8,7 @@
 
 	"AWS": {
 		"Enable": true,
-		"AccessKey": "AKIAJXHH7AXGYN7LGRBA",
-		"SecretKey": "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"
+		"AccessKey": "PUT_UR_STUFF_IN_HERE",
+		"SecretKey": "PUT_UR_STUFF_IN_HERE"
 	}
 }
