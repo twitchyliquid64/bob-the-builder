@@ -62,6 +62,14 @@ The JSON config file is simply a json file you whack in /definitions. It should 
       "type": "EXEC",
       "command": "build.sh",
       "can-fail": false
+    },
+    {
+      "type": "S3_UPLOAD",
+      "bucket": "example.com.my.bucket",
+      "region": "ap-northwest-2",
+      "filename": "src/main.c",
+      "filename-destination": "main.c",
+      "ACL": "public"
     }
   ]
 }
@@ -84,7 +92,7 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 | ------------- |:----------------------|       -----|
 | *CMD*           | Runs the command with the specified arguments | <ul><li>'command' - name of the command to run. Do not put a path.</li><li>'args' - List of arguments to pass to the command. No escaping permitted.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li> </ul>|
 | *EXEC*           | Runs the script specified in 'command' using bash | <ul><li>'command' - Path to the script relative to the build directory.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li></ul>|
-
+| *S3_UPLOAD*           | Uploads and overwrites the specified file to AWS. AWS information must be populated in the configuration file. | <ul><li>'filename' - Path to the file relative to the build directory.</li><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' - Path where the file is to be stored on the S3 bucket. If this parameter is empty or not provided, the file path of the source file will be used.</li><li>'ACL' - either 'public' or 'private'. This refers to the ACL applied on the object in S3.</li></ul>|
 
 
 

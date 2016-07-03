@@ -20,4 +20,11 @@ type Config struct {
 		DataLedPin int
 		CycleFlashers []int
 	}
+
+	AWS struct {
+		Enable bool
+		AccessKey string
+		SecretKey string
+		Token string
+	}
 }

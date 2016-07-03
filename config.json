@@ -4,5 +4,11 @@
 	"Web": {
 		"Domain": "localhost",
 		"Listener": "0.0.0.0:8010"
+	},
+
+	"AWS": {
+		"Enable": true,
+		"AccessKey": "AKIAJXHH7AXGYN7LGRBA",
+		"SecretKey": "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"
 	}
 }

@@ -28,6 +28,7 @@
       $scope.getStepTitle = function(type){
         if (type == 'CMD')return "Run command";
         if (type == 'EXEC')return "Run script";
+        if (type == 'S3_UPLOAD')return "S3 file upload";
       }
 
       $scope.getPhaseTitle = function(phase){
@@ -43,6 +44,15 @@
           return "Run script: " + phase.ScriptPath;
         } else if (phase.type == "APT-CHECK"){
           return "Check & install dependencies";
+        } else if (phase.type == "S3UP_BASIC"){
+          return "S3 file upload";
+        }
+      }
+      $scope.getStepDetail = function(step){
+        if (step.type == 'S3_UPLOAD'){
+          return step.filename;
+        }else {
+          return step.command;
         }
       }
 
@@ -71,7 +81,7 @@
         //console.log($scope.phases, $scope.content);
       }
       self.phaseDataEvent = function(args){
-        console.log("defViewController.phaseDataEvent(): ", args);
+        //console.log("defViewController.phaseDataEvent(): ", args);
         //$scope.phases[args.phase.index] = args.phase;
         $scope.content[args.phase.index] += args.content;
         //console.log($scope.phases, $scope.content);

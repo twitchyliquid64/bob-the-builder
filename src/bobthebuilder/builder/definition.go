@@ -19,6 +19,13 @@ type BuildDefinition struct {
     Command string `json:"command"`
     CanFail bool `json:"can-fail"`
     Args []string `json:"args"`
+    FileName string `json:"filename"`
+    DestinationFileName string  `json:"filename-destination"`
+
+    //used for S3 commands
+    Bucket string `json:"bucket"`
+    Region string `json:"region"`
+    ACL string
   } `json:"steps"`
 
   CurrentRun *Run
@@ -106,6 +113,15 @@ func (d *BuildDefinition)genRun()*Run{
         CanFail: step.CanFail,
       }
       cmd.init(len(out.Phases))
+      out.Phases = append(out.Phases, cmd)
+    case "S3_UPLOAD":
+      cmd := &S3UploadPhase{
+        Bucket: step.Bucket,
+        Region: step.Region,
+        FilenameToUpload: step.FileName,
+        DestinationFileName: step.DestinationFileName,
+      }
+      cmd.init(len(out.Phases), step.ACL)
       out.Phases = append(out.Phases, cmd)
     }
   }

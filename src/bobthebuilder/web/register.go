@@ -16,6 +16,7 @@ func Initialise() {
 
   logging.Info("web", "Registering templates")
   registerCoreTemplates()
+  web.SetDefaultDomain(config.All().Web.Domain)
 }
 
 func registerCoreHandlers() {
