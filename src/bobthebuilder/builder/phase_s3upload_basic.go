@@ -101,8 +101,8 @@ func (p * S3UploadPhase)Run(r* Run, builder *Builder, defIndex int)int{
   p.WriteOutput("Opening bucket: " + p.Bucket + " (" + p.Region + ")\n", r, builder, defIndex)
   bList, err := s3cli.ListBuckets()
   if err != nil {
-    p.WriteOutput( "Error: Invalid AWS configuration - Are your credentials and region correct?\n", r, builder, defIndex)
-    return p.phaseError(-2, "S3 lookup failed")
+    p.WriteOutput( "Error: " + err.Error() + "\n", r, builder, defIndex)
+    return p.phaseError(-2, "Invalid AWS configuration")
   }
 
   //check the bucket exists
