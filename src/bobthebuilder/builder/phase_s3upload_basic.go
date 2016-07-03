@@ -76,6 +76,18 @@ func (p * S3UploadPhase)Run(r* Run, builder *Builder, defIndex int)int{
   var err error
   p.Start = time.Now()
 
+  //run templates to sub in any variable information like dates etc
+  p.DestinationFileName, err = ExecTemplate(p.DestinationFileName, p)
+  if err != nil{
+    p.WriteOutput( "Template Error (filename-destination): " + err.Error() + "\n", r, builder, defIndex)
+    return p.phaseError(-11, "Template error")
+  }
+  p.FilenameToUpload, err = ExecTemplate(p.FilenameToUpload, p)
+  if err != nil{
+    p.WriteOutput( "Template Error (filename): " + err.Error() + "\n", r, builder, defIndex)
+    return p.phaseError(-11, "Template error")
+  }
+
   //throw error if AWS not configured
   if !config.All().AWS.Enable || config.All().AWS.SecretKey == "" || config.All().AWS.AccessKey == "" {
     p.WriteOutput( "Error: Invalid AWS configuration - have you enabled AWS in the config and provided the secret key / access key?\n", r, builder, defIndex)
