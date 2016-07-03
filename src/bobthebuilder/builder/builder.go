@@ -80,6 +80,8 @@ func (b *Builder)Init()error{
       }
   }
 
+  time.Sleep(time.Millisecond * 150)
+  b.publishEvent(EVT_DEF_REFRESH_FINISHED, time.Now().Unix(), -1)
   return nil
 }
 
@@ -93,6 +95,8 @@ func (b *Builder)IsRunning()bool{
   b.CurrentRun = nil
   return false
 }
+
+
 
 //Enqueues a build based on the build definition with the given name.
 //returns DefNotFoundErr if the build definition does not exist.
@@ -114,6 +118,18 @@ func (b *Builder)EnqueueBuildEvent(buildDefinitionName string)(*Run, error){
 
   return run, nil
 }
+
+
+//Forces a reload of all definitions. Any further builds in the queue are discarded.
+func (b *Builder)EnqueueReloadEvent(){
+  b.Lock.Lock()
+  defer b.Lock.Unlock()
+
+  b.EventsToProcess.Enqueue("RELOAD")
+  b.publishEvent(EVT_RELOAD_QUEUED, time.Now().Unix(), -1)
+  b.TriggerWorkerChan <- true
+}
+
 
 //returns the array index of the build definition with the given name.
 //returns DefNotFoundErr if it does not exist.
@@ -139,6 +155,19 @@ func (b* Builder)builderRunLoop(){
     b.Lock.Lock()
     event := b.EventsToProcess.Dequeue()
     if event != nil {
+
+      _, isOutOfBandEvent := event.(string)
+      if isOutOfBandEvent {
+        switch event.(string) {
+        case "RELOAD":
+          logging.Info("builder-worker", "Now refreshing definitions")
+          time.Sleep(time.Millisecond * 350)
+          for b.EventsToProcess.Dequeue() != nil{}//delete all of the existing items in the queue
+          b.Lock.Unlock()
+          b.Init()//reinit
+          continue
+        }
+      }
 
       run := event.(*Run)
       logging.Info("builder-worker", "Got Run to execute from queue: ", run.Definition.Name)

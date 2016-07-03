@@ -37,6 +37,12 @@
           } else if (msg.Type == "PHASE-DATA"){
             $rootScope.$broadcast('ws-events-phase-data', {content: msg.Data.content, phase: msg.Data.phase, index: msg.Index});
             $rootScope.$broadcast('ws-event-phase-data-' + msg.Index, {content: msg.Data.content, phase: msg.Data.phase, index: msg.Index});
+          } else if (msg.Type == "RELOAD-QUEUED"){
+            $rootScope.$broadcast('ws-events-reload-queued', {});
+          } else if (msg.Type == "DEF-REFRESH"){
+            $rootScope.$broadcast('ws-events-reload-started', {});
+          } else if (msg.Type == "DEF-REFRESH-COMPLETED"){
+            $rootScope.$broadcast('ws-events-reload-finished', {});
           }
 
         });

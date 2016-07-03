@@ -25,6 +25,7 @@ func registerCoreHandlers() {
 }
 
 func registerApiHandlers(){
+  web.Get("/api/definitions/reload", enqueueReloadHandler, config.All().Web.Domain)
   web.Get("/api/definitions", getDefinitionHandler, config.All().Web.Domain)
   web.Get("/api/history", getHistoryHandler, config.All().Web.Domain)
   web.Get("/api/status", getStatusHandler, config.All().Web.Domain)

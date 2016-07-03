@@ -29,7 +29,7 @@
 
   <body ng-app="baseApp" ng-controller="mainController">
     <div class="ui dimmer" id="overlay" ng-class="{active: dataService.isLoading()}">
-        <div class="ui indeterminate text loader">Loading build data</div>
+        <div class="ui indeterminate text loader">{{dataService.loadingMessage}}</div>
     </div>
 
     <div class="ui grid">

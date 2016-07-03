@@ -1,6 +1,6 @@
 (function() {
 
-    var app = angular.module('baseApp').factory('dataService', ['$rootScope', '$http', '$timeout', 'eventService', dataService]);
+    var app = angular.module('baseApp').factory('dataService', ['$rootScope', '$http', '$timeout', 'eventService', '$window', dataService]);
 
     GET_DEF_URL = "/api/definitions"
     GET_STATUS_URL = "/api/status"
@@ -8,7 +8,7 @@
     GET_STATUS_URL = "/api/status"
 
 
-    function dataService($rootScope, $http, $timeout, eventService){
+    function dataService($rootScope, $http, $timeout, eventService, $window){
       var self = this;
       self.loading = true;//if true dimmer is shown
       self.loadPending = 0;//how many AJAX requests are pending
@@ -20,7 +20,8 @@
       self.buildDefinitions = [];
       self.history = [];
       self.status = {index: -1, run: null};
-
+      self.loadingMessage = "Loading build data";
+      self.reloadQueued = false;
 
 
 
@@ -39,6 +40,7 @@
         return self.status;
       }
       self.queueRun = function(index){
+        if (  self.reloadQueued)return;
         var defName = self.buildDefinitions[index].name;
         $http.get("/api/queue/new?name=" + defName, {}).then(function (response) {
         }, function errorCallback(response) {
@@ -114,8 +116,32 @@
         self.status.index = -1;
         self._loadHistory();
       });
+      $rootScope.$on('ws-events-reload-started', function(event, statusObj){
+        self.loadingMessage = "Definitions reload in progress"
+        self._incrementLoadPendingCounter();
+        self.loading = true;
+      });
+      $rootScope.$on('ws-events-reload-finished', function(event, statusObj){
+        self.loadingMessage = "Definitions reload completed"
+        $window.location.reload(true);
+      });
+      $rootScope.$on('ws-events-reload-queued', function(event, statusObj){
+        self.loadingMessage = "Definitions reload queued, waiting to run"
+        self.reloadQueued = true;
+      });
 
 
+      self.requestDefinitionsReload = function(){
+        self.loadingMessage = "Queuing reload operation"
+        self.loading = true;
+        self._incrementLoadPendingCounter();
+        $http.get("/api/definitions/reload", {}).then(function (response) {
+        }, function errorCallback(response) {
+          console.log(response);
+          self.loadingMessage = "Queuing failed - please refresh your browser."
+          self._error();
+        });
+      }
 
 
       self._incrementLoadPendingCounter = function(){

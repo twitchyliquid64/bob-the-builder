@@ -5,6 +5,7 @@ import (
   "bobthebuilder/logging"
   "github.com/hoisie/web"
   "encoding/json"
+  "time"
 )
 
 
@@ -48,4 +49,9 @@ func getStatusHandler(ctx *web.Context){
 
 func enqueueBuildHandler(ctx *web.Context){
   builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"])
+}
+
+func enqueueReloadHandler(ctx *web.Context){
+  time.Sleep(time.Millisecond * 350)
+  builder.GetInstance().EnqueueReloadEvent()
 }

@@ -5,9 +5,10 @@
   <div class="ui vertical one column segment grid centered">
     <div class="ui column">
       <div class="ui two statistics">
-        <div class="statistic" ng-class="{green: dataService.getStatus().index < 0}">
+        <div class="statistic" ng-class="{green: dataService.getStatus().index < 0 && !dataService.reloadQueued}">
           <div class="value">
-            <span ng-if="dataService.getStatus().index < 0">IDLE</span>
+            <span ng-if="dataService.getStatus().index < 0 && !dataService.reloadQueued">IDLE</span>
+            <span ng-if="dataService.reloadQueued">REFRESHING</span>
             <span ng-if="dataService.getStatus().index >= 0"> <i class="setting loading icon"></i></span>
           </div>
           <div class="label">

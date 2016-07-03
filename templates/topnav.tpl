@@ -1,7 +1,7 @@
 
     <div class="ui fluid large vertical menu" style="height:98vh; border-bottom: none;">
       <div class="ui header item">
-        <i class="server big icon"></i>
+        <i class="refresh big icon" ng-click="dataService.requestDefinitionsReload()"></i>
         {!{.Config.Name}!}
       </div>
 
@@ -27,6 +27,10 @@
         {{dataService.connectionEstablished && !dataService.connectionLost ? "Connected" : ""}}
         {{dataService.error ? "Service Error" : ""}}
         <i class="icon" ng-class="{yellow: dataService.error, red: (dataService.connectionLost && !dataService.error), checkmark: (dataService.connectionEstablished && !dataService.connectionLost), sign: dataService.connectionLost, loading: !dataService.connectionEstablished && !dataService.connectionLost, notched: !dataService.connectionEstablished && !dataService.connectionLost, circle: !dataService.connectionEstablished && !dataService.connectionLost, warning: dataService.connectionLost}"></i>
+      </div>
+      <div class="item" ng-if="dataService.reloadQueued">
+        Definitions reloading ... Please wait.
+        <i class="icon yellow sign"></i>
       </div>
 
     </div>
