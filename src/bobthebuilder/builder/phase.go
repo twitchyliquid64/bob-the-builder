@@ -2,9 +2,10 @@ package builder
 
 import (
   "time"
+  "strings"
 )
 
-
+var CARRIAGE_RETURN_CONTROL_SEQUENCE = "CONTROL<CHAR-RETURN>"
 
 //A phase represents the saved status of a phase.
 //A phase is any routine (such as copy files, install an apt package etc) run in the context of a build definition
@@ -70,6 +71,12 @@ func (p * BasicPhase)Run(r* Run, builder *Builder, defIndex int)int{
 }
 func (p * BasicPhase)WriteOutput(info string, r* Run, builder *Builder, defIndex int){
   p.Outputs = append(p.Outputs, info)
+
+  //to survive JSON parsing - so the frontend knows how to transform the display
+  if strings.Contains(info, "\r") {
+    info = strings.Replace(info, "\r", CARRIAGE_RETURN_CONTROL_SEQUENCE, -1)
+  }
+
   pOut := struct{
     Phase *BasicPhase `json:"phase"`
     Content string `json:"content"`

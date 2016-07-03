@@ -83,7 +83,13 @@
       self.phaseDataEvent = function(args){
         //console.log("defViewController.phaseDataEvent(): ", args);
         //$scope.phases[args.phase.index] = args.phase;
-        $scope.content[args.phase.index] += args.content;
+        if (args.content.indexOf("CONTROL<CHAR-RETURN>") > -1){ //has a /r - transform the current content
+          var spl = $scope.content[args.phase.index].split("\n");
+          var lastLine = spl[spl.length-1];
+          $scope.content[args.phase.index] = $scope.content[args.phase.index].slice(0, -lastLine.length);
+          console.log("Rewriting:", spl, lastLine);
+        }
+        $scope.content[args.phase.index] += args.content.replace("CONTROL<CHAR-RETURN>", "");
         //console.log($scope.phases, $scope.content);
       }
 

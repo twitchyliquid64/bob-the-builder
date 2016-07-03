@@ -1,7 +1,14 @@
+<style>
+.definition-refresh {
+  cursor: pointer;
+  cursor: hand;
+}
+</style>
+
 
     <div class="ui fluid large vertical menu" style="height:98vh; border-bottom: none;">
       <div class="ui header item">
-        <i class="refresh big icon" ng-click="dataService.requestDefinitionsReload()"></i>
+        <i class="definition-refresh refresh big icon" ng-click="dataService.requestDefinitionsReload()"></i>
         {!{.Config.Name}!}
       </div>
 
