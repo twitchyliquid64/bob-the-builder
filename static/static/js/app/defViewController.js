@@ -34,6 +34,17 @@
         if (type == 'ENV_SET')return "Set environment variable";
       }
 
+      self.stepTypeToIcons = {
+        "CMD": {"terminal": true},
+        "EXEC": {"rocket": true},
+        "S3_UPLOAD": {"cloud upload": true},
+        "ENV_SET": {"level down": true}
+      }
+
+      $scope.getStepIcons = function(stepType){
+        return self.stepTypeToIcons[stepType];
+      }
+
       //used for 'run output' section - phase.type corresponds to the value in .Type for the phase struct
       $scope.getPhaseTitle = function(phase){
         if (phase.type == "BASE-INSTALL"){
