@@ -32,13 +32,15 @@
         if (type == 'EXEC')return "Run script";
         if (type == 'S3_UPLOAD')return "S3 file upload";
         if (type == 'ENV_SET')return "Set environment variable";
+        if (type == 'TAR_TO_S3')return "Archive to S3";
       }
 
       self.stepTypeToIcons = {
         "CMD": {"terminal": true},
         "EXEC": {"rocket": true},
         "S3_UPLOAD": {"cloud upload": true},
-        "ENV_SET": {"level down": true}
+        "ENV_SET": {"level down": true},
+        "TAR_TO_S3": {"archive": true}
       }
 
       $scope.getStepIcons = function(stepType){
@@ -63,6 +65,8 @@
           return "S3 file upload";
         } else if (phase.type == "SET_ENV"){
           return "Set environment variable";
+        } else if (phase.type == "TAR_TO_S3"){
+          return "Archive to S3";
         }
       }
       $scope.getStepDetail = function(step){

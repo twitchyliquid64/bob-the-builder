@@ -23,6 +23,8 @@ type BuildDefinition struct {
 
     FileName string `json:"filename"`
     DestinationFileName string  `json:"filename-destination"`
+    Directories []string  `json:"directories"`
+    Files []string  `json:"files"`
 
     Key string `json:"key"`
     Value string `json:"value"`
@@ -135,6 +137,17 @@ func (d *BuildDefinition)genRun()*Run{
       cmd := &SetEnvPhase{
         Key: step.Key,
         Value: step.Value,
+      }
+      cmd.init(len(out.Phases))
+      out.Phases = append(out.Phases, cmd)
+
+    case "TAR_TO_S3":
+      cmd := &TarToS3{
+        Bucket: step.Bucket,
+        Region: step.Region,
+        DestinationPath: step.DestinationFileName,
+        Directories: step.Directories,
+        Files: step.Files,
       }
       cmd.init(len(out.Phases))
       out.Phases = append(out.Phases, cmd)
