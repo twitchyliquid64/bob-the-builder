@@ -74,6 +74,10 @@
           return step.filename;
         }else if (step.type == 'ENV_SET'){
           return step.key;
+        }else if (step.type == 'TAR_TO_S3'){
+          step.files = step.files || [];
+          step.directories = step.directories || [];
+          return "" + step.files.length + " candidate file(s), " + step.directories.length + " candidate directories";
         }else {
           return step.command;
         }
