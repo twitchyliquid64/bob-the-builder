@@ -17,7 +17,7 @@
               <div class="ui label" ng-repeat="package in defObject['apt-packages-required']">
                 {{package}}
               </div>
-              <div ng-if="defObject['apt-packages-required'].length == 0">
+              <div ng-if="defObject['apt-packages-required'] == null || defObject['apt-packages-required'].length == 0">
                 <i>None.</i>
               </div>
             </div>

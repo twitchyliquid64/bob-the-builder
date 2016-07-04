@@ -103,7 +103,7 @@ func (p * TarToS3)Run(r* Run, builder *Builder, defIndex int)int{
     NTry:        10,
     Md5Check:    true,
     Scheme:      "https",
-    Client:      s3gof3r.ClientWithTimeout(5 * time.Second),
+    Client:      s3gof3r.ClientWithTimeout(20 * time.Second),
   }
   s3WriterObject, err := s3Streamer.Bucket(p.Bucket).PutWriter(p.DestinationPath, nil, conf)
   if err != nil {
