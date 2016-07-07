@@ -51,6 +51,32 @@ func enqueueBuildHandler(ctx *web.Context){
   builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web"})
 }
 
+
+type BuildOptionsDTO struct {
+  Name string `json:"name"`
+  Version string `json:"version"`
+  Tags []string `json:"tags"`
+  IsPhysDisabled bool `json:"isPhysDisabled"`
+}
+
+func enqueueBuildHandlerWithOptions(ctx *web.Context){
+  decoder := json.NewDecoder(ctx.Request.Body)
+  var data BuildOptionsDTO
+  err := decoder.Decode(&data)
+  if err != nil {
+      logging.Error("web-definitions-api", "enqueueBuildHandlerWithOptions() failed to decode JSON:", err)
+      ctx.Abort(500, "JSON error")
+      return
+  }
+
+  if (len(data.Tags) == 1 && data.Tags[0] == ""){
+    data.Tags = nil
+  }
+
+  builder.GetInstance().EnqueueBuildEventEx(data.Name, data.Tags, data.Version, data.IsPhysDisabled)
+}
+
+
 func enqueueReloadHandler(ctx *web.Context){
   time.Sleep(time.Millisecond * 350)
   builder.GetInstance().EnqueueReloadEvent()

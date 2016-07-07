@@ -30,6 +30,7 @@ func registerApiHandlers(){
   web.Get("/api/history", getHistoryHandler, config.All().Web.Domain)
   web.Get("/api/status", getStatusHandler, config.All().Web.Domain)
   web.Get("/api/queue/new", enqueueBuildHandler, config.All().Web.Domain)
+  web.Post("/api/queue/newWithOptions", enqueueBuildHandlerWithOptions, config.All().Web.Domain)
 }
 
 func registerCoreTemplates(){

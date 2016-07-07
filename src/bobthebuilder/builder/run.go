@@ -27,6 +27,8 @@ type Run struct {
 
   Phases []phase `json:"phases"`    //Phases which are part of the run.
   Tags []string `json:"tags"`
+
+  PhysDisabled bool
 }
 
 func (r *Run)IsRunning()bool{

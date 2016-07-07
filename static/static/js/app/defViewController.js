@@ -31,6 +31,10 @@
       }
 
       $scope.runOptions = function(){
+        $('#tagsDropdown').dropdown({
+          allowAdditions: true,
+        });
+
         $('#runOptionsModal').modal({
           closable: false,
           dimmerSettings: {
@@ -44,6 +48,22 @@
       $scope.modal = {
         cancel: function(){
           $('#runOptionsModal').modal('hide');
+        },
+        version: '',
+        submit: function(){
+          if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
+          $('#runOptionsModal').modal('hide');
+
+          if ($scope.modal.version == null || $scope.modal.version == ""){
+            $scope.modal.version = "0.0.1";
+          }
+
+          dataService.queueRunWithOptions($routeParams.defID, {
+            tags: $('#tagsDropdown').dropdown('get value').split(),
+            isPhysDisabled: $("input[name='disphys']").prop('checked'),
+            version: $scope.modal.version
+          });
+          $scope.buildQueued = true;
         }
       };
 

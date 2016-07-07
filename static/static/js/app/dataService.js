@@ -48,6 +48,17 @@
           self._error();
         });
       }
+      self.queueRunWithOptions = function(index, options){
+        console.log("queueRunWithOptions: ", options);
+        if (  self.reloadQueued)return;
+
+        options.name = self.buildDefinitions[index].name;
+        $http.post("/api/queue/newWithOptions", options).then(function (response) {
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
       //END EXPOSED METHODS
 
 
