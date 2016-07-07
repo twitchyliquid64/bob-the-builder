@@ -34,6 +34,7 @@ func registerApiHandlers(){
 }
 
 func registerCoreTemplates(){
+  logError(registerTemplate("modals.tpl", "modals"), "Template load error: ")
   logError(registerTemplate("tailcontent.tpl", "tailcontent"), "Template load error: ")
   logError(registerTemplate("headcontent.tpl", "headcontent"), "Template load error: ")
   logError(registerTemplate("index.tpl", "index"), "Template load error: ")

@@ -37,16 +37,20 @@
 
         $('#runOptionsModal').modal({
           closable: false,
+          autofocus: false,
           dimmerSettings: {
             closable: false,
             opacity: 0,
-          }
+          },
+          onApprove: $scope.modal.submit,
+          onDeny: $scope.modal.cancel
         });
         $('#runOptionsModal').modal('show');
       }
 
       $scope.modal = {
         cancel: function(){
+          console.log("Cancel pressed");
           $('#runOptionsModal').modal('hide');
         },
         version: '',
@@ -54,12 +58,13 @@
           if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
           $('#runOptionsModal').modal('hide');
 
+          $scope.modal.version = $("input[name='version']").val();
           if ($scope.modal.version == null || $scope.modal.version == ""){
             $scope.modal.version = "0.0.1";
           }
 
           dataService.queueRunWithOptions($routeParams.defID, {
-            tags: $('#tagsDropdown').dropdown('get value').split(),
+            tags: $('#tagsDropdown').dropdown('get value').split(","),
             isPhysDisabled: $("input[name='disphys']").prop('checked'),
             version: $scope.modal.version
           });

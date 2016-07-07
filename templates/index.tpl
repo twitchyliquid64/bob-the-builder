@@ -42,6 +42,7 @@
       <div class="ui one wide column"/>
     </div>
 
+    {!{template "modals"}!}
 
     {!{template "tailcontent"}!}
 
