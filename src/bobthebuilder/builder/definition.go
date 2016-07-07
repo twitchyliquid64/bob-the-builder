@@ -58,16 +58,14 @@ func (d *BuildDefinition)Validate()bool{
 
 
 
-func (d *BuildDefinition)genRun()*Run{
+func (d *BuildDefinition)genRun(tags []string)*Run{
   out := &Run{
     Definition: d,
     GUID: util.RandAlphaKey(32),
     ExecType: "BUILD",
     Version: "?",
     Status: STATUS_NOT_YET_RUN,
-    Tags: []string{
-      "auto",
-    },
+    Tags: tags,
   }
   pwd, _ := os.Getwd() //cant have error - would have failed in file/util.go
 

@@ -61,7 +61,7 @@
       <div style="flex-grow: 1;"></div>
 
       <div class="ui buttons" style="flex-grow: 0;">
-        <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="run()">
+        <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="runOptions()">
           <i class="right wizard icon"></i>
           Run with options
         </button>
@@ -145,5 +145,45 @@
     </div>
 
   </div>
+
+
+  <div class="ui modal" id="runOptionsModal">
+    <i class="close icon"></i>
+    <div class="header">
+      Run Options
+    </div>
+    <div class="content">
+    <div class="ui form">
+      <div class="field">
+        <label>Version</label>
+        <div class="three fields">
+          <div class="four wide inline field">
+            <label>Major</label>
+            <input type="text" name="version[major]" placeholder="0">
+          </div>
+          <div class="four wide inline field">
+            <label>Minor</label>
+            <input type="text" name="version[minor]" placeholder="1">
+          </div>
+          <div class="inline field">
+            <label>Build</label>
+            <input type="text" name="version[build]" placeholder="1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    <div class="actions">
+      <div class="ui button" ng-click="modal.cancel()">Cancel</div>
+      <div class="ui button primary icon">
+        <i class="icon rocket"></i>
+        Run
+      </div>
+    </div>
+  </div>
+
+
+
 
 </div>

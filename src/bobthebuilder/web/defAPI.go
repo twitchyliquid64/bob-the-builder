@@ -48,7 +48,7 @@ func getStatusHandler(ctx *web.Context){
 }
 
 func enqueueBuildHandler(ctx *web.Context){
-  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"])
+  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web"})
 }
 
 func enqueueReloadHandler(ctx *web.Context){

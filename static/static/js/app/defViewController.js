@@ -20,11 +20,34 @@
         var i = dataService.getStatus().index;
         return i >= 0 && i != $routeParams.defID;
       }
+
+
+
+
       $scope.run = function(){
         if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
         dataService.queueRun($routeParams.defID);
         $scope.buildQueued = true;
       }
+
+      $scope.runOptions = function(){
+        $('#runOptionsModal').modal({
+          closable: false,
+          dimmerSettings: {
+            closable: false,
+            opacity: 0,
+          }
+        });
+        $('#runOptionsModal').modal('show');
+      }
+
+      $scope.modal = {
+        cancel: function(){
+          $('#runOptionsModal').modal('hide');
+        }
+      };
+
+
 
       //used for the 'steps' section - type corresponds to the set type in the JSON definition file.
       $scope.getStepTitle = function(type){
