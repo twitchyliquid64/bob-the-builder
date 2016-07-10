@@ -140,6 +140,7 @@ func (p * S3UploadPhase)Run(r* Run, builder *Builder, defIndex int)int{
     return 0
   } else {
     p.WriteOutput("ERROR.\n", r, builder, defIndex)
+    p.WriteOutput("Error: " + err.Error() + "\n", r, builder, defIndex)
     p.ErrorCode = -5
     p.StatusString = "Upload failed."
     return -5
