@@ -11,6 +11,7 @@ const BASE_FOLDER_NAME = "base"
 
 type BuildDefinition struct {
   Name string `json:"name"`
+  Icon string `json:"icon"`
   AptPackagesRequired []string `json:"apt-packages-required"`
   BaseFolder string `json:"base-folder"`
   GitSrc string `json:"git-src"`

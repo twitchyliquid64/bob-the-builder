@@ -1,5 +1,5 @@
 <div class="ui container " style="padding-top: 18px;">
-  <h1 class="ui header" ng-bind="defObject.name"></h1>
+  <h1 class="ui header"><i class="icon" ng-class="defObject.icon" ng-if="defObject.icon"></i>{{defObject.name}}</h1>
 
   <div class="ui grid" style="margin-top: 11px;">
 
@@ -18,7 +18,7 @@
                 {{package}}
               </div>
               <div ng-if="defObject['apt-packages-required'] == null || defObject['apt-packages-required'].length == 0">
-                <i>None.</i>
+                <i>None</i>
               </div>
             </div>
           </div>
