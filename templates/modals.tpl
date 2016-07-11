@@ -77,7 +77,7 @@
         <div class="ui label">
           version
         </div>
-        <input type="text" name="version" placeholder="0.0.1" style="width: 65px;">
+        <input type="text" name="version" placeholder="0.0.1" style="width: 78px;">
       </div>
     </div>
 

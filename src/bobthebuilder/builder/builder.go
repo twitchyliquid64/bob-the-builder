@@ -69,6 +69,7 @@ func (b *Builder)Init()error{
         logging.Error("builder-init", err)
         continue
       }
+      def.AbsolutePath = fpath
 
       valid := def.Validate()
       if valid{
@@ -188,6 +189,8 @@ func (b* Builder)builderRunLoop(){
 
       b.Lock.Lock()
       b.CompletedBacklog.Enqueue(run)
+      run.Definition.LastVersion = run.Version
+      run.Definition.Flush()
       b.publishEvent(EVT_RUN_FINISHED, run, index)
       b.Lock.Unlock()
 

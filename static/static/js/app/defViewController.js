@@ -35,7 +35,7 @@
           allowAdditions: true,
         });
 
-        $('#runOptionsModal').modal({
+        $('#runOptionsModal').modal({//setup button callbacks + general parameters
           closable: false,
           autofocus: false,
           dimmerSettings: {
@@ -45,6 +45,8 @@
           onApprove: $scope.modal.submit,
           onDeny: $scope.modal.cancel
         });
+
+        $("input[name='version']").val($scope.defObject['last-version'].replace(/\d+$/, function(n){ return ++n }));//set the version to the last version plus one.
         $('#runOptionsModal').modal('show');
       }
 
@@ -62,6 +64,7 @@
           if ($scope.modal.version == null || $scope.modal.version == ""){
             $scope.modal.version = "0.0.1";
           }
+          $scope.defObject['last-version'] = $scope.modal.version;
 
           dataService.queueRunWithOptions($routeParams.defID, {
             tags: $('#tagsDropdown').dropdown('get value').split(","),

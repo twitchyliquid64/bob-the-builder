@@ -3,6 +3,8 @@ package builder
 import (
   "bobthebuilder/logging"
   "bobthebuilder/util"
+  "encoding/json"
+  "io/ioutil"
   "path"
   "os"
 )
@@ -11,30 +13,35 @@ const BASE_FOLDER_NAME = "base"
 
 type BuildDefinition struct {
   Name string `json:"name"`
-  Icon string `json:"icon"`
-  AptPackagesRequired []string `json:"apt-packages-required"`
-  BaseFolder string `json:"base-folder"`
-  GitSrc string `json:"git-src"`
+  Icon string `json:"icon,omitempty"`
+  AptPackagesRequired []string `json:"apt-packages-required,omitempty"`
+  BaseFolder string `json:"base-folder,omitempty"`
+  GitSrc string `json:"git-src,omitempty"`
   Steps []struct {
     Type string `json:"type"`
-    Command string `json:"command"`
-    CanFail bool `json:"can-fail"`
-    Args []string `json:"args"`
+    Command string `json:"command,omitempty"`
+    CanFail bool `json:"can-fail,omitempty"`
+    Args []string `json:"args,omitempty"`
 
 
-    FileName string `json:"filename"`
-    DestinationFileName string  `json:"filename-destination"`
-    Directories []string  `json:"directories"`
-    Files []string  `json:"files"`
+    FileName string `json:"filename,omitempty"`
+    DestinationFileName string  `json:"filename-destination,omitempty"`
+    Directories []string  `json:"directories,omitempty"`
+    Files []string  `json:"files,omitempty"`
 
-    Key string `json:"key"`
-    Value string `json:"value"`
+    Key string `json:"key,omitempty"`
+    Value string `json:"value,omitempty"`
 
     //used for S3 commands
-    Bucket string `json:"bucket"`
-    Region string `json:"region"`
-    ACL string
+    Bucket string `json:"bucket,omitempty"`
+    Region string `json:"region,omitempty"`
+    ACL string `json:"ACL,omitempty"`
   } `json:"steps"`
+
+  AbsolutePath string `json:"-"`
+
+  //stateful information
+  LastVersion string `json:"last-version"`
 
   CurrentRun *Run
 }
@@ -57,9 +64,28 @@ func (d *BuildDefinition)Validate()bool{
 
 
 
+func (d *BuildDefinition)Flush()error{
+  var temp BuildDefinition //make a copy so we can set currentRun to nil
+  temp = *d
+  temp.CurrentRun  = nil
+
+  data, err := json.MarshalIndent(&temp, "", "  ")
+  if err != nil {
+    return err
+  }
+
+  err = ioutil.WriteFile(temp.AbsolutePath, data, 777)
+  return err
+}
+
+
 
 
 func (d *BuildDefinition)genRun(tags []string, version string, physDisabled bool)*Run{
+  if version == "" || version == "?" {
+    version = "0.0.1"
+  }
+
   out := &Run{
     Definition: d,
     GUID: util.RandAlphaKey(32),
