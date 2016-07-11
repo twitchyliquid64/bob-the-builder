@@ -48,7 +48,7 @@ func getStatusHandler(ctx *web.Context){
 }
 
 func enqueueBuildHandler(ctx *web.Context){
-  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web"})
+  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web"}, ctx.Params["version"])
 }
 
 

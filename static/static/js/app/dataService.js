@@ -39,10 +39,13 @@
       self.getStatus = function(){
         return self.status;
       }
-      self.queueRun = function(index){
+      self.queueRun = function(index, version){
         if (  self.reloadQueued)return;
+
+        if (version == null || version == "")version = "0.0.1";
+
         var defName = self.buildDefinitions[index].name;
-        $http.get("/api/queue/new?name=" + defName, {}).then(function (response) {
+        $http.get("/api/queue/new?version=" + version + "&name=" + defName, {}).then(function (response) {
         }, function errorCallback(response) {
           console.log(response);
           self._error();

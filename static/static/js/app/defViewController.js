@@ -26,14 +26,16 @@
 
       $scope.run = function(){
         if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
-        dataService.queueRun($routeParams.defID);
+
+        $scope.defObject['last-version'] = $scope.defObject['last-version'].replace(/\d+$/, function(n){ return ++n });
+        if ($scope.defObject['last-version'] == null || $scope.defObject['last-version'] == "")$scope.defObject['last-version'] = "0.0.1";
+
+        dataService.queueRun($routeParams.defID, $scope.defObject['last-version']);
         $scope.buildQueued = true;
       }
 
       $scope.runOptions = function(){
-        $('#tagsDropdown').dropdown({
-          allowAdditions: true,
-        });
+        $('#tagsDropdown').dropdown({ allowAdditions: true, });
 
         $('#runOptionsModal').modal({//setup button callbacks + general parameters
           closable: false,
@@ -47,8 +49,15 @@
         });
 
         $("input[name='version']").val($scope.defObject['last-version'].replace(/\d+$/, function(n){ return ++n }));//set the version to the last version plus one.
+        if ($scope.defObject['last-version'] == null || $scope.defObject['last-version'] == ""){
+          $("input[name='version']").val("0.0.1");
+        }
         $('#runOptionsModal').modal('show');
       }
+
+
+
+
 
       $scope.modal = {
         cancel: function(){
@@ -61,9 +70,6 @@
           $('#runOptionsModal').modal('hide');
 
           $scope.modal.version = $("input[name='version']").val();
-          if ($scope.modal.version == null || $scope.modal.version == ""){
-            $scope.modal.version = "0.0.1";
-          }
           $scope.defObject['last-version'] = $scope.modal.version;
 
           dataService.queueRunWithOptions($routeParams.defID, {
@@ -74,6 +80,11 @@
           $scope.buildQueued = true;
         }
       };
+
+
+
+
+
 
 
 
@@ -133,6 +144,12 @@
           return step.command;
         }
       }
+
+
+
+
+
+
 
 
 

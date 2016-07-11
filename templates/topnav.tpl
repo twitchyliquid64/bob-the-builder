@@ -25,9 +25,6 @@
         </div>
       </div>
 
-      <a class="item">
-        System Log
-      </a>
       <div class="item">
         {{!dataService.connectionEstablished && !dataService.connectionLost? "Connecting ..." : ""}}
         {{dataService.connectionLost && !dataService.error ? "Connection Lost" : ""}}

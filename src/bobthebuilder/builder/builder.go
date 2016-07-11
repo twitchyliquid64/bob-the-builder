@@ -101,8 +101,8 @@ func (b *Builder)IsRunning()bool{
 
 //Enqueues a build based on the build definition with the given name.
 //returns DefNotFoundErr if the build definition does not exist.
-func (b *Builder)EnqueueBuildEvent(buildDefinitionName string, tags []string)(*Run, error){
-  return b.EnqueueBuildEventEx(buildDefinitionName, tags, "0.0.1", false)
+func (b *Builder)EnqueueBuildEvent(buildDefinitionName string, tags []string, version string)(*Run, error){
+  return b.EnqueueBuildEventEx(buildDefinitionName, tags, version, false)
 }
 
 func (b *Builder)EnqueueBuildEventEx(buildDefinitionName string, tags []string, version string, physDisabled bool)(*Run, error){
