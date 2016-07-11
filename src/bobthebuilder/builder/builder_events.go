@@ -21,6 +21,7 @@ const EVT_RUN_FINISHED = "RUN-FINISHED"
 const EVT_PHASE_STARTED = "PHASE-STARTED"
 const EVT_PHASE_FINISHED = "PHASE-FINISHED"
 const EVT_PHASE_DATA_UPDATE = "PHASE-DATA"
+const EVT_SERVER_STATS = "SERVER-STATS"
 
 
 
@@ -35,6 +36,7 @@ func (b *Builder)UnsubscribeFromEvents(in chan BuilderEvent){
   b.Lock.Lock()
   defer b.Lock.Unlock()
   delete(b.subscribers, in)
+  close(in)
 }
 
 //assumes caller holds the lock.

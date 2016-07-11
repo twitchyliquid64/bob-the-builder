@@ -21,7 +21,7 @@
         var received_msg = evt.data;
         $rootScope.$apply(function(){
           var msg = JSON.parse(evt.data);
-          console.log(msg);
+          if (msg.Type != "SERVER-STATS")console.log(msg);
           if (msg.Type == "RUN-STARTED"){
             $rootScope.$broadcast('ws-events-run-started', {run: msg.Data, index: msg.Index});
             $rootScope.$broadcast('ws-event-run-start-' + msg.Index);
@@ -43,6 +43,8 @@
             $rootScope.$broadcast('ws-events-reload-started', {});
           } else if (msg.Type == "DEF-REFRESH-COMPLETED"){
             $rootScope.$broadcast('ws-events-reload-finished', {});
+          } else if (msg.Type == "SERVER-STATS"){
+            $rootScope.$broadcast('ws-server-stats', msg.Data);
           }
 
         });

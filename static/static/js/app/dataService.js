@@ -22,6 +22,7 @@
       self.status = {index: -1, run: null};
       self.loadingMessage = "Loading build data";
       self.reloadQueued = false;
+      self.serverStats = {prettyMemUsage: "-"};
 
 
 
@@ -142,6 +143,15 @@
       $rootScope.$on('ws-events-reload-queued', function(event, statusObj){
         self.loadingMessage = "Definitions reload queued, waiting to run"
         self.reloadQueued = true;
+      });
+      $rootScope.$on('ws-server-stats', function(event, sStats){
+        self.serverStats = sStats;
+        self.serverStats.prettyMemUsage = Math.round(sStats.mem.ActualFree / 1024 / 1024);
+        if (self.serverStats.prettyMemUsage >= 1000){
+          self.serverStats.prettyMemUsage = (self.serverStats.prettyMemUsage / 1024).toFixed(1) + " GB";
+        } else {
+          self.serverStats.prettyMemUsage = self.serverStats.prettyMemUsage =  + " MB";
+        }
       });
 
 
