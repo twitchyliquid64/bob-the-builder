@@ -37,6 +37,8 @@
       $scope.runOptions = function(){
         $('#tagsDropdown').dropdown({ allowAdditions: true, });
 
+        $rootScope.$broadcast('runOptionsModal-setParamsEvent', $scope.defObject.params);
+
         $('#runOptionsModal').modal({//setup button callbacks + general parameters
           closable: false,
           autofocus: false,

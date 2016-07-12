@@ -5,7 +5,7 @@
     Run Options
   </div>
 
-  <div class="content">
+  <div class="content" ng-controller="runOptionsController">
 
     <h4 class="ui dividing header">
       <i class="options icon"></i>
@@ -13,8 +13,24 @@
         Run parameters
       </div>
     </h4>
-    <div class="ui basic segment"  style="min-height: 50px;">
-      <p>No run parameters exist in the build definition / not implemented.</p>
+    <div class="ui basic segment form"  style="min-height: 50px;">
+      <div ng-repeat="param in buildParams">
+
+        <div ng-if="param.type == 'text'" class="field">
+          <label>{{param.label}}</label>
+          <input type="text" name="{{param.varname}}" value="{{param.default}}" placeholder="{{param.placeholder}}" id="{{'runopt-field-' + $index}}">
+        </div>
+
+
+        <div ng-if="param.type == 'check'" class="field" style="margin-top: 6px;">
+          <div class="ui checkbox">
+            <input type="checkbox" tabindex="0" ng-model="param.default" id="{{'runopt-field-' + $index}}">
+            <label>{{param.label}}</label>
+          </div>
+        </div>
+
+      </div>
+      <p ng-if="buildParams == null || buildParams == undefined || buildParams.length == 0">No run parameters exist in the build definition.</p>
     </div>
 
 

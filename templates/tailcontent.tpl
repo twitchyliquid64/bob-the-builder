@@ -5,4 +5,5 @@
     <script src="/static/js/app/dataService.js"></script>
     <script src="/static/js/app/mainController.js"></script>
     <script src="/static/js/app/defViewController.js"></script>
+    <script src="/static/js/app/runOptionsController.js"></script>
     <script src="/static/js/moment.min.js"></script>

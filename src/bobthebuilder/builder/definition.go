@@ -43,6 +43,22 @@ type BuildDefinition struct {
   //stateful information
   LastVersion string `json:"last-version"`
 
+
+
+
+  Params []struct {
+    Type string `json:"type"`
+    Label string `json:"label"`
+    Varname string `json:"varname"`
+    Placeholder string `json:"placeholder"`
+    Default interface{} `json:"default"`
+  } `json:"params"`
+
+
+
+
+
+
   CurrentRun *Run
 }
 
