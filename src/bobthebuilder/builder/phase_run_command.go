@@ -3,6 +3,7 @@ package builder
 import (
   //"bobthebuilder/logging"
   "os/exec"
+  "strconv"
   "path"
   "time"
   "os"
@@ -44,7 +45,27 @@ func (p * CommandPhase)Run(r* Run, builder *Builder, defIndex int)int{
     os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 700)
   }
 
-  cmd := exec.Command(p.Command, p.Args...)
+  args := make([]string, len(p.Args))
+  copy(args, p.Args)
+
+  for i := 0; i < len(args); i++{
+    var err error
+    old := args[i]
+
+    args[i], err = ExecTemplate(args[i], p, r, builder)
+    if err != nil{
+      p.WriteOutput( "Template Error: " + err.Error() + "\n", r, builder, defIndex)
+      p.End = time.Now()
+      p.Duration = p.End.Sub(p.Start)
+      p.ErrorCode = -10
+      p.StatusString = err.Error()
+      return -10
+    }else if old != args[i] {
+      p.WriteOutput( "parameter " + strconv.Itoa(i) + " rewritten to " + args[i] + ".\n", r, builder, defIndex)
+    }
+  }
+
+  cmd := exec.Command(p.Command, args...)
   cmd.Dir = path.Join(pwd, BUILD_TEMP_FOLDER_NAME)
 
   cmd.Stdout = p

@@ -35,22 +35,23 @@ func (p* SetEnvPhase)phaseError(eCode int, statusString string)int{
 
 func (p * SetEnvPhase)Run(r* Run, builder *Builder, defIndex int)int{
   var err error
+  var key, value string
   p.Start = time.Now()
 
   //run templates to sub in any variable information like dates etc
-  p.Key, err = ExecTemplate(p.Key, p, r, builder)
+  key, err = ExecTemplate(p.Key, p, r, builder)
   if err != nil{
     p.WriteOutput( "Template Error (key): " + err.Error() + "\n", r, builder, defIndex)
     return p.phaseError(-1, "Template error")
   }
-  p.Value, err = ExecTemplate(p.Value, p, r, builder)
+  value, err = ExecTemplate(p.Value, p, r, builder)
   if err != nil{
     p.WriteOutput( "Template Error (value): " + err.Error() + "\n", r, builder, defIndex)
     return p.phaseError(-2, "Template error")
   }
 
-  p.WriteOutput( "Setting environment variable '" + p.Key + "' to '" + p.Value + "'", r, builder, defIndex)
-  os.Setenv(p.Key, p.Value)
+  p.WriteOutput( "Setting environment variable '" + key + "' to '" + value + "'", r, builder, defIndex)
+  os.Setenv(key, value)
 
   p.End = time.Now()
   p.Duration = p.End.Sub(p.Start)
