@@ -41,17 +41,32 @@
       var startListener = $rootScope.$on('runOptionsModal-start', function(event, defObj) {
         self.setupAndShow(defObj);
       });
-      
+
       $scope.$on('$destroy', function() {
         startListener();
       });
+
+      self.getBuildParamsValues = function(){
+        var parameters = {};
+        for (var i = 0; i < $scope.defObj.params.length; i++)
+        {
+          if ($scope.defObj.params[i].type == "text"){
+            parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default;
+          }
+          if ($scope.defObj.params[i].type == "check"){
+            parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default ? "true" : "false";
+          }
+        }
+        console.log("buildParameters: ", parameters);
+        return parameters;
+      }
 
       self.submitPressed = function(){
         var tagArray = $('#runOptionsModal-tagsDropdown').dropdown('get value').split(",")
         var isPhysDisabled = $("#runOptionsModal-disablephys").prop('checked');
         var version = $scope.defObj['last-version'];
         $('#runOptionsModal').modal('hide');
-        $rootScope.$broadcast('runOptionsModal-finished', {version: version, isPhysDisabled: isPhysDisabled, tags: tagArray, defObj: $scope.defObj});
+        $rootScope.$broadcast('runOptionsModal-finished', {version: version, isPhysDisabled: isPhysDisabled, tags: tagArray, defObj: $scope.defObj, params: self.getBuildParamsValues()});
       }
       self.cancelPressed = function(){
         $('#runOptionsModal').modal('hide');

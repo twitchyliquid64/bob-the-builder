@@ -43,11 +43,12 @@
         if($scope.buildQueued || $scope.running)return;
         if(args.defObj.name != $scope.defObject.name)return;
 
-        $scope.defObject = args.defObj;
+        //$scope.defObject = args.defObj; //is updating the defObject with new stuff such a good idea?
         dataService.queueRunWithOptions($routeParams.defID, {
           tags: args.tags,
           isPhysDisabled: args.isPhysDisabled,
-          version: args.version
+          version: args.version,
+          params: args.params
         });
         $scope.buildQueued = true;
         self.lastRunWasWithOptions = true;

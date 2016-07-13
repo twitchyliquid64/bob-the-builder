@@ -28,6 +28,11 @@ func hasTag(tInfo TemplateInformation, wantedTag string)bool{
   return false
 }
 
+func getParameter(tInfo TemplateInformation, wantedVar string)string{
+  v, _ := tInfo.Run.buildVariables[wantedVar]
+  return v
+}
+
 func getBaseTemplateInfoStruct()TemplateInformation{
   return TemplateInformation{
     Day: time.Now().Day(),
@@ -47,6 +52,9 @@ func ExecTemplate(templ string, phase interface{}, r* Run, builder *Builder)(str
   funcMap := template.FuncMap{
     "hasTag": func(tname string)bool{
       return hasTag(tinfo, tname)
+    },
+    "getParameter": func(pname string)string{
+      return getParameter(tinfo, pname)
     },
   }
 

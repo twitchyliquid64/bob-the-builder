@@ -111,6 +111,7 @@ func (d *BuildDefinition)genRun(tags []string, version string, physDisabled bool
     Status: STATUS_NOT_YET_RUN,
     Tags: tags,
     PhysDisabled: physDisabled,
+    buildVariables: map[string]string{},
   }
   pwd, _ := os.Getwd() //cant have error - would have failed in file/util.go
 

@@ -18,7 +18,7 @@
 
         <div ng-if="param.type == 'text'" class="field">
           <label>{{param.label}}</label>
-          <input type="text" name="{{param.varname}}" value="{{param.default}}" placeholder="{{param.placeholder}}" id="{{'runopt-field-' + $index}}">
+          <input type="text" name="{{param.varname}}" ng-model="param.default" placeholder="{{param.placeholder}}" id="{{'runopt-field-' + $index}}">
         </div>
 
 

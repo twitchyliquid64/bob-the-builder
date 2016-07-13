@@ -105,6 +105,7 @@ You may have noticed that a couple of the parameters in certain step types are '
 Additionally, the following functions are available for your templates:
 
  * hasTag(tagName) - returns True if a tag is set for the current run.
+ * getParameter(variablename) - returns the value of the parameter, or '' if none exist. In the case of a checkbox, it returns a type boolean instead of a string.
 
 #### Available parameters
 

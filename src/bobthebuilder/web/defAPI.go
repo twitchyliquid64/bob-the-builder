@@ -80,6 +80,7 @@ type BuildOptionsDTO struct {
   Name string `json:"name"`
   Version string `json:"version"`
   Tags []string `json:"tags"`
+  Params map[string]string `json:"params"`
   IsPhysDisabled bool `json:"isPhysDisabled"`
 }
 
@@ -97,7 +98,7 @@ func enqueueBuildHandlerWithOptions(ctx *web.Context){
     data.Tags = nil
   }
 
-  builder.GetInstance().EnqueueBuildEventEx(data.Name, data.Tags, data.Version, data.IsPhysDisabled)
+  builder.GetInstance().EnqueueBuildEventEx(data.Name, data.Tags, data.Version, data.IsPhysDisabled, data.Params)
 }
 
 

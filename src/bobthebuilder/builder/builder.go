@@ -102,10 +102,10 @@ func (b *Builder)IsRunning()bool{
 //Enqueues a build based on the build definition with the given name.
 //returns DefNotFoundErr if the build definition does not exist.
 func (b *Builder)EnqueueBuildEvent(buildDefinitionName string, tags []string, version string)(*Run, error){
-  return b.EnqueueBuildEventEx(buildDefinitionName, tags, version, false)
+  return b.EnqueueBuildEventEx(buildDefinitionName, tags, version, false, nil)
 }
 
-func (b *Builder)EnqueueBuildEventEx(buildDefinitionName string, tags []string, version string, physDisabled bool)(*Run, error){
+func (b *Builder)EnqueueBuildEventEx(buildDefinitionName string, tags []string, version string, physDisabled bool, parameterOverrides map[string]string)(*Run, error){
   b.Lock.Lock()
   defer b.Lock.Unlock()
   //if b.IsRunning(){
@@ -117,6 +117,7 @@ func (b *Builder)EnqueueBuildEventEx(buildDefinitionName string, tags []string, 
     return nil, err
   }
   run := b.Definitions[index].genRun(tags, version, physDisabled)
+  run.SetDefaultVariables(parameterOverrides)
   b.EventsToProcess.Enqueue(run)
   b.publishEvent(EVT_RUN_QUEUED, run, index)
   b.TriggerWorkerChan <- true
