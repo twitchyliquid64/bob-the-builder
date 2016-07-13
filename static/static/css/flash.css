@@ -1,0 +1,30 @@
+.flashHighlight{
+
+  -moz-animation: flashHighlight 1.5s ease-out;
+  -moz-animation-iteration-count: 1;
+
+  -webkit-animation: flashHighlight 1.5s ease-out;
+  -webkit-animation-iteration-count: 1;
+
+  -ms-animation: flashHighlight 1.5s ease-out;
+  -ms-animation-iteration-count: 1;
+
+}
+
+@-webkit-keyframes flashHighlight {
+    0% { background-color:none;}
+    5% { background-color:#ffc266;}
+    100% {background-color:none;}
+}
+
+@-moz-keyframes flashHighlight {
+    0% { background-color:none;}
+    5% { background-color:#ffc266;}
+    100% {background-color:none;}
+}
+
+@-ms-keyframes flashHighlight {
+    0% { background-color:none;}
+    5% { background-color:#ffc266;}
+    100% {background-color:none;}
+}

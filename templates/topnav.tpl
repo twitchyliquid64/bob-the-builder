@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="item">
+      <div class="item" id="connStatusText">
         {{!dataService.connectionEstablished && !dataService.connectionLost? "Connecting ..." : ""}}
         {{dataService.connectionLost && !dataService.error ? "Connection Lost" : ""}}
         {{dataService.connectionEstablished && !dataService.connectionLost ? "Connected" : ""}}

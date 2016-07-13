@@ -7,3 +7,4 @@
     <script src="/static/js/app/defViewController.js"></script>
     <script src="/static/js/app/runOptionsController.js"></script>
     <script src="/static/js/moment.min.js"></script>
+    <script src="/static/js/flash.js"></script>

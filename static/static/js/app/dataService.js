@@ -122,6 +122,7 @@
       });
       $rootScope.$on('ws-events-closed', function(event, args) {
         self.connectionLost = true;
+        flashHighlightElement($('#connStatusText'));
       });
       $rootScope.$on('ws-events-run-started', function(event, statusObj){
         self.status = statusObj;
@@ -181,6 +182,7 @@
       self._error = function(){
         self.error = true;
         self.connectionLost = true;
+        flashHighlightElement($('#connStatusText'));
       }
 
 
