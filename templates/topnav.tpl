@@ -20,7 +20,7 @@
         <div class="header">Definitions</div>
         <div class="menu">
             <a class="item" ng-repeat="definition in dataService.getDefinitions()" ng-click="navBuild($index)" ng-class="{active: !currentlyDash && (currentIndex == $index)}">
-              <i class="icon" ng-class="definition.icon"></i>{{definition.name}}
+              <i class="icon" ng-class="definition.icon"></i>&nbsp;&nbsp;&nbsp;{{definition.name}}
             </a>
         </div>
       </div>
