@@ -1,11 +1,11 @@
 
 
-<div class="ui modal" id="runOptionsModal">
+<div class="ui modal" id="runOptionsModal" ng-controller="runOptionsController">
   <div class="header">
     Run Options
   </div>
 
-  <div class="content" ng-controller="runOptionsController">
+  <div class="content">
 
     <h4 class="ui dividing header">
       <i class="options icon"></i>
@@ -14,7 +14,7 @@
       </div>
     </h4>
     <div class="ui basic segment form"  style="min-height: 50px;">
-      <div ng-repeat="param in buildParams">
+      <div ng-repeat="param in defObj.params">
 
         <div ng-if="param.type == 'text'" class="field">
           <label>{{param.label}}</label>
@@ -30,7 +30,7 @@
         </div>
 
       </div>
-      <p ng-if="buildParams == null || buildParams == undefined || buildParams.length == 0">No run parameters exist in the build definition.</p>
+      <p ng-if="defObj.params == null || defObj.params == undefined || defObj.params.length == 0">No run parameters exist in the build definition.</p>
     </div>
 
 
@@ -43,7 +43,7 @@
     </h4>
 
     <div class="ui basic segment" style="min-height: 50px;">
-      <div class="ui fluid multiple search selection dropdown" style="border: 0px;" id="tagsDropdown">
+      <div class="ui fluid multiple search selection dropdown" style="border: 0px;" id="runOptionsModal-tagsDropdown">
         <input name="tags" type="hidden">
         <div class="default text"><i class="tags icon"></i> Add tags...</div>
         <div class="menu">
@@ -76,7 +76,7 @@
 
     <div class="ui basic segment" style="min-height: 50px;">
       <div class="ui checkbox">
-        <input type="checkbox" name="disphys">
+        <input type="checkbox" name="disphys" id="runOptionsModal-disablephys">
         <label>Disable physical indicators</label>
       </div>
       <div class="ui checkbox" style="margin-left: 3em;">
@@ -93,7 +93,7 @@
         <div class="ui label">
           version
         </div>
-        <input type="text" name="version" placeholder="0.0.1" style="width: 78px;">
+        <input type="text" name="version" placeholder="0.0.1" ng-model="defObj['last-version']" style="width: 78px;">
       </div>
     </div>
 

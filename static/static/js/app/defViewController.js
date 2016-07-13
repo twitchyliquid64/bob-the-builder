@@ -35,58 +35,20 @@
       }
 
       $scope.runOptions = function(){
-        $('#tagsDropdown').dropdown({ allowAdditions: true, });
-
-        $rootScope.$broadcast('runOptionsModal-setParamsEvent', $scope.defObject.params);
-
-        $('#runOptionsModal').modal({//setup button callbacks + general parameters
-          closable: false,
-          autofocus: false,
-          dimmerSettings: {
-            closable: false,
-            opacity: 0,
-          },
-          onApprove: $scope.modal.submit,
-          onDeny: $scope.modal.cancel
-        });
-
-        $("input[name='version']").val($scope.defObject['last-version'].replace(/\d+$/, function(n){ return ++n }));//set the version to the last version plus one.
-        if ($scope.defObject['last-version'] == null || $scope.defObject['last-version'] == ""){
-          $("input[name='version']").val("0.0.1");
-        }
-        $('#runOptionsModal').modal('show');
+        $rootScope.$broadcast('runOptionsModal-start', $scope.defObject);
       }
+      self.runOptionsFormSubmitted = function(args){
+        if($scope.buildQueued || $scope.running)return;
+        if(args.defObj.name != $scope.defObject.name)return;
 
-
-
-
-
-      $scope.modal = {
-        cancel: function(){
-          console.log("Cancel pressed");
-          $('#runOptionsModal').modal('hide');
-        },
-        version: '',
-        submit: function(){
-          if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
-          $('#runOptionsModal').modal('hide');
-
-          $scope.modal.version = $("input[name='version']").val();
-          $scope.defObject['last-version'] = $scope.modal.version;
-
-          dataService.queueRunWithOptions($routeParams.defID, {
-            tags: $('#tagsDropdown').dropdown('get value').split(","),
-            isPhysDisabled: $("input[name='disphys']").prop('checked'),
-            version: $scope.modal.version
-          });
-          $scope.buildQueued = true;
-        }
-      };
-
-
-
-
-
+        $scope.defObject = args.defObj;
+        dataService.queueRunWithOptions($routeParams.defID, {
+          tags: args.tags,
+          isPhysDisabled: args.isPhysDisabled,
+          version: args.version
+        });
+        $scope.buildQueued = true;
+      }
 
 
 
@@ -221,15 +183,18 @@
           self.phaseDataEvent(args);
         });
       }
+      self.runOptionsFormSubmittedListenerFactory = function(){
+        return $rootScope.$on('runOptionsModal-finished', function(event, args) {
+          self.runOptionsFormSubmitted(args);
+        });
+      }
 
       self.buildFinishListener = self.buildFinishListenerFactory();
       self.buildStartListener = self.buildStartListenerFactory();
       self.buildPhaseStartListener = self.buildPhaseStartListenerFactory();
       self.buildPhaseFinishListener = self.buildPhaseFinishListenerFactory();
       self.buildPhaseDataListener = self.buildPhaseDataListenerFactory();
-
-
-
+      self.runOptionsFormSubmittedListener = self.runOptionsFormSubmittedListenerFactory();
 
       // event handlers
       $rootScope.$on('definitions-loaded', function(event, args) {
@@ -245,11 +210,22 @@
         self.buildPhaseStartListener();
         self.buildPhaseFinishListener();
         self.buildPhaseDataListener();
+        self.runOptionsFormSubmittedListener();
         self.buildFinishListener = self.buildFinishListenerFactory();
         self.buildStartListener = self.buildStartListenerFactory();
         self.buildPhaseStartListener = self.buildPhaseStartListenerFactory();
         self.buildPhaseFinishListener = self.buildPhaseFinishListenerFactory();
         self.buildPhaseDataListener = self.buildPhaseDataListenerFactory();
+        self.runOptionsFormSubmittedListener = self.runOptionsFormSubmittedListenerFactory();
+      });
+
+      $scope.$on('$destroy', function() {//destroy listeners
+        self.buildFinishListener();
+        self.buildStartListener();
+        self.buildPhaseStartListener();
+        self.buildPhaseFinishListener();
+        self.buildPhaseDataListener();
+        self.runOptionsFormSubmittedListener();
       });
     }
 
