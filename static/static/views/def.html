@@ -28,7 +28,7 @@
           <div class="content">
             <p class="header">Base Folder</p>
             <div class="description" ng-bind="defObject['base-folder']" ng-if="defObject['base-folder'].length > 0"></div>
-            <div class="description" ng-if="defObject['base-folder'].length == 0"><i>None</i></div>
+            <div class="description" ng-if="defObject['base-folder'] == null || defObject['base-folder'].length == 0"><i>None</i></div>
           </div>
         </div>
         <div class="item">
@@ -36,7 +36,7 @@
           <div class="content">
             <p class="header">Git Source</p>
             <div class="description" ng-bind="defObject['git-src']" ng-if="defObject['git-src'].length > 0"></div>
-            <div class="description" ng-if="defObject['git-src'].length == 0"><i>None</i></div>
+            <div class="description" ng-if="defObject['git-src'] == null || defObject['git-src'].length == 0"><i>None</i></div>
           </div>
         </div>
         <div class="item">
