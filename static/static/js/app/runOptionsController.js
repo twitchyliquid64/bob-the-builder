@@ -6,6 +6,7 @@
     function runOptionsController($scope, dataService, $location, $routeParams, $rootScope) {
       var self = this;
       $scope.defObj = {};
+      $scope.loadingParams = true;
 
       self.initModal = function(){
         $('#runOptionsModal-tagsDropdown').dropdown({ allowAdditions: true, });
@@ -36,6 +37,7 @@
         $scope.defObj = jQuery.extend({}, definitionObj);//shallow copy
         self.incrementVersion();
         self.initModal();
+        setTimeout(function(){self.initFields();}, 200);
         $('#runOptionsModal').modal('show');
       }
       var startListener = $rootScope.$on('runOptionsModal-start', function(event, defObj) {
@@ -46,6 +48,25 @@
         startListener();
       });
 
+
+      //called just before modal show to initialize any javascript on field views.
+      self.initFields = function(){
+        for (var i = 0; i < $scope.defObj.params.length; i++)
+        {
+          if ($scope.defObj.params[i].type == "branchselect"){
+            $('#runopt-field-' + i).dropdown({
+              apiSettings: {
+                url: '/api/lookup/buildparam?name=' + $scope.defObj.name + '&param=' + i
+              }
+            });
+          }
+        }
+        $scope.loadingParams = false;
+      }
+
+
+
+      //returns the namespace of user-selected build parameters. Defaults are set for untouched fields.
       self.getBuildParamsValues = function(){
         var parameters = {};
         for (var i = 0; i < $scope.defObj.params.length; i++)
@@ -56,11 +77,16 @@
           if ($scope.defObj.params[i].type == "check"){
             parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default ? "true" : "false";
           }
+          if ($scope.defObj.params[i].type == "branchselect"){
+            parameters[$scope.defObj.params[i].varname] = $('#runopt-field-' + i).dropdown('get value');
+          }
         }
         console.log("buildParameters: ", parameters);
         return parameters;
       }
 
+
+      //callbacks called when the user presses a button
       self.submitPressed = function(){
         var tagArray = $('#runOptionsModal-tagsDropdown').dropdown('get value').split(",")
         var isPhysDisabled = $("#runOptionsModal-disablephys").prop('checked');

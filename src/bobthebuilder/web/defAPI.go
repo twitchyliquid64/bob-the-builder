@@ -5,7 +5,9 @@ import (
   "bobthebuilder/logging"
   "github.com/hoisie/web"
   "encoding/json"
+  "os/exec"
   "strconv"
+  "strings"
   "regexp"
   "time"
 )
@@ -45,6 +47,38 @@ func getStatusHandler(ctx *web.Context){
     ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
   } else {
     //logging.Info("web-definitions-api", string(b))
+    ctx.ResponseWriter.Write(b)
+  }
+}
+
+
+func getBuildParamsLookupHandler(ctx *web.Context){
+  paramIndex, _ := strconv.Atoi(ctx.Params["param"])
+  gitURL := builder.GetInstance().GetDefinition(ctx.Params["name"]).Params[paramIndex].Options["git-url"].(string)
+
+  out, err := exec.Command("git", "ls-remote", "--heads", gitURL).Output()
+  if err != nil {
+    logging.Error("web-definitions-api", err)
+    ctx.Abort(500,"{\"success\": true, \"error\": \"Internal Server Error\"}")
+    return
+  }
+
+  branches := []map[string]interface{}{}
+  lines := strings.Split(string(out), "\n")
+  for _, line := range lines{
+    if len(line) <= 4{
+      continue
+    }
+    spl := strings.Split(line, "\t")
+    branches = append(branches, map[string]interface{}{"name": spl[1], "value": spl[0],})
+  }
+
+  out2 := map[string]interface{}{"success": true, "results": branches}
+  b, err := json.Marshal(out2)
+  if err != nil{
+    logging.Error("web-definitions-api", err)
+    ctx.ResponseWriter.Write([]byte("{success: false, error: '" + err.Error() + "'}"))
+  } else {
     ctx.ResponseWriter.Write(b)
   }
 }

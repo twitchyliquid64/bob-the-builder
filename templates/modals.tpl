@@ -10,7 +10,7 @@
     <h4 class="ui dividing header">
       <i class="options icon"></i>
       <div class="content">
-        Run parameters
+        Run parameters <i class="notched circle loading icon" ng-if="loadingParams"></i>
       </div>
     </h4>
     <div class="ui basic segment form"  style="min-height: 50px;">
@@ -26,6 +26,16 @@
           <div class="ui checkbox">
             <input type="checkbox" tabindex="0" ng-model="param.default" id="{{'runopt-field-' + $index}}">
             <label>{{param.label}}</label>
+          </div>
+        </div>
+
+        <div ng-if="param.type == 'branchselect'">
+          <div class="ui fluid search selection dropdown" id="{{'runopt-field-' + $index}}">
+            <input type="hidden" name="treasure">
+            <i class="dropdown icon"></i>
+            <div class="default text">{{param.label}}</div>
+            <div class="menu">
+            </div>
           </div>
         </div>
 

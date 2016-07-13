@@ -53,6 +53,7 @@ type BuildDefinition struct {
     Varname string `json:"varname"`
     Placeholder string `json:"placeholder"`
     Default interface{} `json:"default"`
+    Options map[string]interface{} `json:"options"`
   } `json:"params"`
 
 
