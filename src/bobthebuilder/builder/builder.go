@@ -137,6 +137,16 @@ func (b *Builder)EnqueueReloadEvent(){
 }
 
 
+func (b* Builder)GetDefinition(definitionName string)*BuildDefinition{
+  b.Lock.Lock()
+  defer b.Lock.Unlock()
+  i, _ := b.findDefinitionIndex(definitionName)
+  if i >= 0{
+    return b.Definitions[i]
+  }
+  return nil
+}
+
 //returns the array index of the build definition with the given name.
 //returns DefNotFoundErr if it does not exist.
 //caller should hold b.Lock.

@@ -5,6 +5,8 @@ import (
   "bobthebuilder/logging"
   "github.com/hoisie/web"
   "encoding/json"
+  "strconv"
+  "regexp"
   "time"
 )
 
@@ -47,8 +49,30 @@ func getStatusHandler(ctx *web.Context){
   }
 }
 
+
+func calcNextVersionNumber(defName string)string{
+  re := regexp.MustCompile("\\d+$")
+  bVersion := re.ReplaceAllFunc([]byte(builder.GetInstance().GetDefinition(defName).LastVersion), func(match []byte)[]byte{
+    iMatch, err := strconv.Atoi(string(match))
+    if err != nil{
+      return match
+    } else {
+      return []byte(strconv.Itoa(iMatch+1))
+    }
+  })
+  candidateVersion := string(bVersion)
+  if candidateVersion == "" {
+    return "0.0.1"
+  }
+  return candidateVersion
+}
+
 func enqueueBuildHandler(ctx *web.Context){
-  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web"}, ctx.Params["version"])
+  if ctx.Params["version"] == ""{
+    ctx.Params["version"] = calcNextVersionNumber(ctx.Params["name"])
+  }
+
+  builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web", "default"}, ctx.Params["version"])
 }
 
 

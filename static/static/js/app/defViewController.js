@@ -26,11 +26,7 @@
 
       $scope.run = function(){
         if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
-
-        $scope.defObject['last-version'] = $scope.defObject['last-version'].replace(/\d+$/, function(n){ return ++n });
-        if ($scope.defObject['last-version'] == null || $scope.defObject['last-version'] == "")$scope.defObject['last-version'] = "0.0.1";
-
-        dataService.queueRun($routeParams.defID, $scope.defObject['last-version']);
+        dataService.queueRun($routeParams.defID, "");
         $scope.buildQueued = true;
       }
 
