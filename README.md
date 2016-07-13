@@ -92,17 +92,36 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 
 | Type          | Description           | Parameters  |
 | ------------- |:---------|       ----------------------------------------|
-| *CMD*           | Runs the command with the specified arguments | <ul><li>'command' - name of the command to run. Do not put a path.</li><li>'args' <sup>template</sup> - List of arguments to pass to the command. No escaping permitted.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li> </ul>|
-| *EXEC*           | Runs the script specified in 'command' using bash | <ul><li>'command' - Path to the script relative to the build directory.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li></ul>|
-| *S3_UPLOAD*           | Uploads and overwrites the specified file to AWS. AWS information must be populated in the configuration file. | <ul><li>'filename' <sup>template</sup> - Path to the file relative to the build directory.</li><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' <sup>template</sup> - Path where the file is to be stored on the S3 bucket. If this parameter is empty or not provided, the file path of the source file will be used.</li><li>'ACL' - either 'public' or 'private'. This refers to the ACL applied on the object in S3.</li></ul>|
-| *ENV_SET*           | Allows you to set environment variables for the build system, and any subsequent tasks. | <ul><li>'key' <sup>template</sup> - Name of the environment variable</li><li>'value' <sup>template</sup> - Value to set the environment variable to.</li></ul>|
-| *TAR_TO_S3*           | Adds the given directories contents and the given files to a tar file, which is then compressed with gzip and streamed to S3. AWS information must be populated in the configuration file. This operation is suitable in low memory environments as the archive and compression routines are streamed on the given data. | <ul><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' <sup>template</sup> - Path where the file is to be stored on the S3 bucket.</li><li>'directories' - List of directories whoes files will be recursively added to the archive.</li><li>'files' - List of files which will be added to the archive.</li></ul>|
+| *CMD*         | Runs the command with the specified arguments | <ul><li>'command' - name of the command to run. Do not put a path.</li><li>'args' <sup>template</sup> - List of arguments to pass to the command. No escaping permitted.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li> </ul>|
+| *EXEC*        | Runs the script specified in 'command' using bash | <ul><li>'command' - Path to the script relative to the build directory.</li><li>'can-fail' - if true, the exit code of the command can be zero without failing the run or stopping it from progressing.</li></ul>|
+| *S3_UPLOAD*   | Uploads and overwrites the specified file to AWS. AWS information must be populated in the configuration file. | <ul><li>'filename' <sup>template</sup> - Path to the file relative to the build directory.</li><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' <sup>template</sup> - Path where the file is to be stored on the S3 bucket. If this parameter is empty or not provided, the file path of the source file will be used.</li><li>'ACL' - either 'public' or 'private'. This refers to the ACL applied on the object in S3.</li></ul>|
+| *ENV_SET*     | Allows you to set environment variables for the build system, and any subsequent tasks. | <ul><li>'key' <sup>template</sup> - Name of the environment variable</li><li>'value' <sup>template</sup> - Value to set the environment variable to.</li></ul>|
+| *TAR_TO_S3*   | Adds the given directories contents and the given files to a tar file, which is then compressed with gzip and streamed to S3. AWS information must be populated in the configuration file. This operation is suitable in low memory environments as the archive and compression routines are streamed on the given data. | <ul><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' <sup>template</sup> - Path where the file is to be stored on the S3 bucket.</li><li>'directories' - List of directories whoes files will be recursively added to the archive.</li><li>'files' - List of files which will be added to the archive.</li></ul>|
 
 ##### 'Template' fields
 
 You may have noticed that a couple of the parameters in certain step types are 'templates'. This means they support Go's powerful templating system, which you can use to provide values dynamically. For instance, you can make the S3 uploader types prefix your files with todays date, or substitute in a tag name, or anything else that the go text/template engine supports. See [here](https://golang.org/pkg/text/template/) for details.
 
+Additionally, the following functions are available for your templates:
+
+ * hasTag(tagName) - returns True if a tag is set for the current run.
+
+#### Available parameters
+
+Parameters allow you to enter information to customise your executions.
+
+All entries must have at minimum the following attributes:
+
+ * label - Name of the field.
+ * type - one of the field types specified below.
+ * varname - name of the variable exported to your templates.
+
+| Type          | Description                                                                                                          |
+| ------------- |:---------------------------------------------------------------------------------------------------------------------|
+| *check*       | adds a checkbox to the workflow. You may also specify a default which must be the string value true or false.        |
+| *text*        | adds a text input to the workflow. You may also specify a placeholder.                                               |
+
+
 ### Development Todos ###
- - Implement Artifactory
- - Implement version number system
- - Definition reload button / refresh UI
+ - Finish implementing Build parameters
+ - Implement more template methods

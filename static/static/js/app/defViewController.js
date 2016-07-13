@@ -20,7 +20,12 @@
         var i = dataService.getStatus().index;
         return i >= 0 && i != $routeParams.defID;
       }
-
+      $scope.parseDuration = function(milliseconds){
+        if (milliseconds < (1000 * 50)){
+          return "" + (Math.round(milliseconds / 100) / 10) + " seconds";
+        }
+        return moment.duration(milliseconds, "milliseconds").humanize();
+      }
 
 
 

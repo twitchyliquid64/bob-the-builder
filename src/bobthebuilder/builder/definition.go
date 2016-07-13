@@ -42,6 +42,7 @@ type BuildDefinition struct {
 
   //stateful information
   LastVersion string `json:"last-version"`
+  LastRunTime int64 `json:"last-run-time"`
 
 
 

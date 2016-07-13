@@ -42,8 +42,11 @@
         <div class="item">
           <i class="large archive icon" style="min-width: 40px;"></i>
           <div class="content">
-            <p class="header">Artifacts</p>
-            <div class="description"><div class="ui label">Not-Implemented</div></div>
+            <p class="header">Last run</p>
+            <div class="description">
+              <div class="ui label" ng-if="defObject['last-version'] == undefined || defObject['last-version'] == null || defObject['last-version'] == ''">Unknown</div>
+              <span ng-if="defObject['last-version']">Version {{defObject['last-version']}}<span ng-if="defObject['last-run-time']">, Runtime: {{parseDuration(defObject['last-run-time'])}}</span></span>
+            </div>
           </div>
         </div>
         <div class="item">
@@ -53,7 +56,7 @@
             <div class="description" ng-if="isRunning()">Running ... <i class="setting loading icon"></i></div>
             <div class="description" ng-if="!isRunning() && isOtherDefinitionRunning()">Server busy</i></div>
             <div class="description" ng-if="!isRunning() && !isOtherDefinitionRunning() && !buildQueued">Ready</i></div>
-            <div class="description" ng-if="!isRunning() && !isOtherDefinitionRunning() && buildQueued">Waiting for build slot</i></div>
+            <div class="description" ng-if="!isRunning() && !isOtherDefinitionRunning() && buildQueued">Waiting for run slot</i></div>
           </div>
         </div>
       </div>

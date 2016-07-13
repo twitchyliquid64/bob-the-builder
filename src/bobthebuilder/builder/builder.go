@@ -200,6 +200,7 @@ func (b* Builder)builderRunLoop(){
       b.Lock.Lock()
       b.CompletedBacklog.Enqueue(run)
       run.Definition.LastVersion = run.Version
+      run.Definition.LastRunTime = int64(run.EndTime.Sub(run.StartTime).Seconds() * 1000)
       run.Definition.Flush()
       b.publishEvent(EVT_RUN_FINISHED, run, index)
       b.Lock.Unlock()
