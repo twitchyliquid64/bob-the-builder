@@ -54,14 +54,14 @@ func (p * CommandPhase)Run(r* Run, builder *Builder, defIndex int)int{
 
     args[i], err = ExecTemplate(args[i], p, r, builder)
     if err != nil{
-      p.WriteOutput( "Template Error: " + err.Error() + "\n", r, builder, defIndex)
+      p.WriteOutput( "Template Error (" + strconv.Itoa(i) + "): " + err.Error() + "\n", r, builder, defIndex)
       p.End = time.Now()
       p.Duration = p.End.Sub(p.Start)
       p.ErrorCode = -10
       p.StatusString = err.Error()
       return -10
     }else if old != args[i] {
-      p.WriteOutput( "parameter " + strconv.Itoa(i) + " rewritten to " + args[i] + ".\n", r, builder, defIndex)
+      p.WriteOutput( "Parameter " + strconv.Itoa(i) + " rewritten to " + args[i] + ".\n", r, builder, defIndex)
     }
   }
 
