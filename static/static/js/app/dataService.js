@@ -61,6 +61,15 @@
           self._error();
         });
       }
+      self.requestUpdateDefinitionValuesFromServer = function(){
+        $http.get(GET_DEF_URL, {}).then(function (response) {
+          self.buildDefinitions = response.data;
+          $rootScope.$broadcast('definitions-loaded');
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
       //END EXPOSED METHODS
 
 

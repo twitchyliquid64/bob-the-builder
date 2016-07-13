@@ -33,6 +33,7 @@
         if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
         dataService.queueRun($routeParams.defID, "");
         $scope.buildQueued = true;
+        self.lastRunWasWithOptions = false;
       }
 
       $scope.runOptions = function(){
@@ -49,6 +50,7 @@
           version: args.version
         });
         $scope.buildQueued = true;
+        self.lastRunWasWithOptions = true;
       }
 
 
@@ -123,6 +125,7 @@
         //console.log("defViewController.buildFinishedEvent()");
         $scope.buildQueued = false;
         $scope.running = false;
+        if (!self.lastRunWasWithOptions)dataService.requestUpdateDefinitionValuesFromServer();
       }
       self.buildStartedEvent = function(evt, args){
         //console.log("defViewController.buildStartedEvent()");
