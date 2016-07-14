@@ -58,7 +58,11 @@
             if ($scope.defObj.params[i].type == "branchselect"){
               $('#runopt-field-' + i).dropdown({
                 apiSettings: {
-                  url: '/api/lookup/buildparam?name=' + $scope.defObj.name + '&param=' + i
+                  url: '/api/lookup/buildparam?name=' + $scope.defObj.name + '&param=' + i,
+                  onResponse: function(remoteResponse) {
+                    console.log(remoteResponse);
+                    return remoteResponse;
+                  }
                 }
               });
             }
