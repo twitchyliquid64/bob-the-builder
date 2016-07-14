@@ -25,6 +25,7 @@ type phase interface {
   Run(*Run,*Builder,int)int
   EvaluateShouldSkip(*Run,*Builder,int)bool
   ShouldSkip(*Run,*Builder,int)bool
+  SetStartTime(time.Time)
 }
 
 
@@ -41,6 +42,9 @@ type BasicPhase struct {
   Conditional string `json:"-"`
 }
 
+func (p * BasicPhase)SetStartTime(t time.Time){
+  p.Start = t
+}
 func (p * BasicPhase)SetConditional(c string){
   p.Conditional = c
 }
@@ -104,7 +108,6 @@ func (p * BasicPhase)ShouldSkip(r* Run, builder *Builder, defIndex int)bool{
     p.WriteOutput( "Template Error (step conditional): " + err.Error() + "\n", r, builder, defIndex)
     return true
   }
-  p.WriteOutput( "Skip conditional: " + o + "\n", r, builder, defIndex)
 
   if o == "false"{
     return false
@@ -125,7 +128,7 @@ func (p * BasicPhase)EvaluateShouldSkip(r* Run, builder *Builder, defIndex int)b
     p.End = time.Now()
     p.Duration = p.End.Sub(p.Start)
     p.ErrorCode = 954321
-    p.StatusString = "Phase skipped"
+    p.StatusString = "skip-condition evaluation"
   }
   return skip
 }

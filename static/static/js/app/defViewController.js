@@ -65,6 +65,11 @@
         if (type == 'TAR_TO_S3')return "Archive to S3";
       }
 
+      $scope.getCodeOutput = function(phase){
+        if(phase.errorCode == 954321)return "Phase Skipped";
+        return "Error Code: " + phase.errorCode;
+      }
+
       self.stepTypeToIcons = {
         "CMD": {"terminal": true},
         "EXEC": {"rocket": true},

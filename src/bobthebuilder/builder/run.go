@@ -57,6 +57,7 @@ func (r *Run)Run(builder *Builder, defIndex int){
   //run event already sent to subscribers by Builder, so all we need to do is literally run
 
   for _, phase := range r.Phases{
+    phase.SetStartTime(time.Now())
     builder.publishEvent(EVT_PHASE_STARTED, phase, defIndex)
 
     shouldSkip := phase.EvaluateShouldSkip(r, builder, defIndex)
@@ -70,8 +71,6 @@ func (r *Run)Run(builder *Builder, defIndex int){
         break
       }
     }
-
-
   }
 
   if r.Status == STATUS_NOT_YET_RUN {
