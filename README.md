@@ -54,6 +54,7 @@ The JSON config file is simply a json file you whack in /definitions. It should 
     },
     {
       "type": "CMD",
+      "skip-condition": "{{getParameter `include` | eq `true` | not}}",
       "command": "git",
       "args": [
         "log"

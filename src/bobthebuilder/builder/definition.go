@@ -44,6 +44,7 @@ type BuildParam struct{
 
 type BuildStep struct{
   Type string `json:"type"`
+  Conditional string `json:"skip-condition,omitempty"`
 
   //used in exec/cmd commands
   Command string `json:"command,omitempty"`
@@ -195,6 +196,8 @@ func (d *BuildDefinition)genRun(tags []string, version string, physDisabled bool
       cmd.init(len(out.Phases))
       out.Phases = append(out.Phases, cmd)
     }
+
+    out.Phases[len(out.Phases)-1].SetConditional(step.Conditional)
   }
 
 

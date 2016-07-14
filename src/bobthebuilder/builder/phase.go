@@ -21,7 +21,10 @@ type phase interface {
   GetDuration() time.Duration
   HasFinished() bool
   String()string
+  SetConditional(string)
   Run(*Run,*Builder,int)int
+  EvaluateShouldSkip(*Run,*Builder,int)bool
+  ShouldSkip(*Run,*Builder,int)bool
 }
 
 
@@ -35,8 +38,12 @@ type BasicPhase struct {
   Duration time.Duration `json:"duration"`
   Index int `json:"index"`
   Outputs []string `json:"-"`
+  Conditional string `json:"-"`
 }
 
+func (p * BasicPhase)SetConditional(c string){
+  p.Conditional = c
+}
 func (p * BasicPhase)GetType()string{
   return p.Type
 }
@@ -85,4 +92,40 @@ func (p * BasicPhase)WriteOutput(info string, r* Run, builder *Builder, defIndex
     Content: info,
   }
   builder.publishEvent(EVT_PHASE_DATA_UPDATE, pOut, defIndex)
+}
+
+func (p * BasicPhase)ShouldSkip(r* Run, builder *Builder, defIndex int)bool{
+  if len(p.Conditional) == 0{
+    return false
+  }
+
+  o, err := ExecTemplate(p.Conditional, p, r, builder)
+  if err != nil{
+    p.WriteOutput( "Template Error (step conditional): " + err.Error() + "\n", r, builder, defIndex)
+    return true
+  }
+  p.WriteOutput( "Skip conditional: " + o + "\n", r, builder, defIndex)
+
+  if o == "false"{
+    return false
+  }
+
+  if len(o) > 0 {
+    return true
+  }
+
+  return false
+}
+
+
+func (p * BasicPhase)EvaluateShouldSkip(r* Run, builder *Builder, defIndex int)bool{
+  skip := p.ShouldSkip(r, builder, defIndex)
+  if skip{
+    p.Start = time.Now()
+    p.End = time.Now()
+    p.Duration = p.End.Sub(p.Start)
+    p.ErrorCode = 954321
+    p.StatusString = "Phase skipped"
+  }
+  return skip
 }

@@ -58,12 +58,20 @@ func (r *Run)Run(builder *Builder, defIndex int){
 
   for _, phase := range r.Phases{
     builder.publishEvent(EVT_PHASE_STARTED, phase, defIndex)
-    status := phase.Run(r, builder, defIndex)
-    builder.publishEvent(EVT_PHASE_FINISHED, phase, defIndex)
-    if status < STATUS_SUCCESS {
-      r.Status = STATUS_FAILURE
-      break
+
+    shouldSkip := phase.EvaluateShouldSkip(r, builder, defIndex)
+    if shouldSkip{
+      builder.publishEvent(EVT_PHASE_FINISHED, phase, defIndex)
+    }else{
+      status := phase.Run(r, builder, defIndex)
+      builder.publishEvent(EVT_PHASE_FINISHED, phase, defIndex)
+      if status < STATUS_SUCCESS {
+        r.Status = STATUS_FAILURE
+        break
+      }
     }
+
+
   }
 
   if r.Status == STATUS_NOT_YET_RUN {
@@ -96,17 +104,18 @@ func (r *Run)SetDefaultVariables(overrides map[string]string){
     switch parameter.Type {
     case "check":
       r.buildVariables[parameter.Varname] = interfaceToStringyBoolean(parameter.Default)
+
+    case "select":
+      fallthrough
+    case "branchselect":
+      fallthrough
     case "text":
       if parameter.Default != nil{
         r.buildVariables[parameter.Varname], ok = parameter.Default.(string)
         if !ok{
-          logging.Warning("run-variables-setdefaults", "Could not set default for " + parameter.Varname + ", unexpected type.")
+          logging.Warning("run-variables-setdefaults", "Could not set default for " + parameter.Varname + ", unexpected default type.")
         }
       }
-    case "select":
-      r.buildVariables[parameter.Varname] = parameter.Default.(string)
-    case "branchselect":
-      r.buildVariables[parameter.Varname] = parameter.Default.(string)
     }
   }
 }
