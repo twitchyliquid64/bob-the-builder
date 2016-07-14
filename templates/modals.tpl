@@ -16,7 +16,7 @@
     <div class="ui basic segment form"  style="min-height: 50px;">
       <div ng-repeat="param in defObj.params">
 
-        <div ng-if="param.type == 'text'" class="field">
+        <div ng-if="param.type == 'text'" class="field" style="margin-top: 7px;">
           <label>{{param.label}}</label>
           <input type="text" name="{{param.varname}}" ng-model="param.default" placeholder="{{param.placeholder}}" id="{{'runopt-field-' + $index}}">
         </div>

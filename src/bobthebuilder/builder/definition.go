@@ -36,10 +36,10 @@ type BuildParam struct{
   Type string `json:"type"`
   Label string `json:"label"`
   Varname string `json:"varname"`
-  Placeholder string `json:"placeholder"`
-  Items map[string]interface{} `json:"items"`
+  Placeholder string `json:"placeholder,omitempty"`
+  Items map[string]interface{} `json:"items,omitempty"`
   Default interface{} `json:"default"`
-  Options map[string]interface{} `json:"options"`
+  Options map[string]interface{} `json:"options,omitempty"`
 }
 
 type BuildStep struct{

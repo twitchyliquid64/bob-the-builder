@@ -107,21 +107,64 @@ Additionally, the following functions are available for your templates:
  * hasTag(tagName) - returns True if a tag is set for the current run.
  * getParameter(variablename) - returns the value of the parameter, or '' if none exist. In the case of a checkbox, it returns a type boolean instead of a string.
 
-#### Available parameters
+### Need more configurability? Use Parameters!
 
-Parameters allow you to enter information to customise your executions.
+Parameters allow you to define a form so a user can populate information - just before your definitions run.
 
-All entries must have at minimum the following attributes:
+parameters are setup by adding new structures to the params list (in the JSON file).
+
+All structures must have at minimum the following attributes:
 
  * label - Name of the field.
  * type - one of the field types specified below.
  * varname - name of the variable exported to your templates.
 
-| Type          | Description                                                                                                          |
-| ------------- |:---------------------------------------------------------------------------------------------------------------------|
-| *check*       | adds a checkbox to the workflow. You may also specify a default which must be the string value true or false.        |
-| *text*        | adds a text input to the workflow. You may also specify a placeholder.                                               |
+| Type           | Description                                                                                                          |
+| -------------  |:---------------------------------------------------------------------------------------------------------------------|
+| *check*        | adds a checkbox to the workflow. You may also specify a default which must be the string value true or false.        |
+| *text*         | adds a text input to the workflow. You may also specify a placeholder.                                               |
+| *select*       | adds a dropdown with configurable items.                                                                             |
+| *branchselect* | adds a dropdown which is automatically populated with a list of branches in a remote git repository.                 |
 
+#### Example structures
+
+```json
+{
+  "type": "branchselect",
+  "label": "Branch",
+  "varname": "branch",
+  "default": "master",
+  "options": {
+    "branchNamesOnly": true,
+    "git-url": "https://github.com/twitchyliquid64/bob-the-builder"
+  }
+}
+
+{
+  "type": "select",
+  "label": "Master Control",
+  "varname": "mc",
+  "items": {
+    "Hello": "Hi"
+  },
+  "default": "Hi",
+}
+
+{
+  "type": "text",
+  "label": "Name",
+  "varname": "stuff",
+  "default": "robert",
+}
+
+},
+{
+  "type": "check",
+  "label": "Backup build artifacts",
+  "varname": "backup",
+  "default": true
+}
+```
 
 ### Development Todos ###
  - Finish implementing Build parameters
