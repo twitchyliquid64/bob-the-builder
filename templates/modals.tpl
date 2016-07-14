@@ -31,7 +31,7 @@
 
         <div ng-if="param.type == 'branchselect'">
           <div class="ui fluid search selection dropdown" id="{{'runopt-field-' + $index}}">
-            <input type="hidden" name="treasure">
+            <input type="hidden" name="{{'nm-runopt-field-' + $index}}">
             <i class="dropdown icon"></i>
             <div class="default text">{{param.label}}</div>
             <div class="menu">

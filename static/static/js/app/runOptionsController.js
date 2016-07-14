@@ -38,7 +38,7 @@
         self.incrementVersion();
         self.initModal();
         $scope.loadingParams = true;
-        setTimeout(function(){self.initFields();}, 200);
+        setTimeout(function(){self.initFields();}, 200);//to be sure digest cycles have completed
         $('#runOptionsModal').modal('show');
       }
       var startListener = $rootScope.$on('runOptionsModal-start', function(event, defObj) {
@@ -83,6 +83,9 @@
             }
             if ($scope.defObj.params[i].type == "branchselect"){
               parameters[$scope.defObj.params[i].varname] = $('#runopt-field-' + i).dropdown('get value');
+              if (parameters[$scope.defObj.params[i].varname] == '' && $scope.defObj.params[i].default){
+                parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default
+              }
             }
           }
         }

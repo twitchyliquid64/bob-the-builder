@@ -105,6 +105,8 @@ func (r *Run)SetDefaultVariables(overrides map[string]string){
       }
     case "select":
       r.buildVariables[parameter.Varname] = parameter.Default.(string)
+    case "branchselect":
+      r.buildVariables[parameter.Varname] = parameter.Default.(string)
     }
   }
 }

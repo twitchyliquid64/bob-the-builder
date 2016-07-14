@@ -154,13 +154,13 @@
       });
       $rootScope.$on('ws-server-stats', function(event, sStats){
         self.serverStats = sStats;
-        console.log("ActualFree: ", sStats.mem.ActualFree);
+        //console.log("ActualFree: ", sStats.mem.ActualFree);
         self.serverStats.prettyMemUsage = Math.round(sStats.mem.ActualFree / 1024 / 1024);
-        console.log("prettyMemUsage: ", self.serverStats.prettyMemUsage);
+        //console.log("prettyMemUsage: ", self.serverStats.prettyMemUsage);
         if (self.serverStats.prettyMemUsage > 1024){
           self.serverStats.prettyMemUsage = (self.serverStats.prettyMemUsage / 1024).toFixed(1) + " GB";
         } else {
-          self.serverStats.prettyMemUsage = self.serverStats.prettyMemUsage =  + " MB";
+          self.serverStats.prettyMemUsage = self.serverStats.prettyMemUsage + " MB";
         }
       });
 
