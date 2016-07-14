@@ -28,6 +28,14 @@ func hasTag(tInfo TemplateInformation, wantedTag string)bool{
   return false
 }
 
+func allTags(tInfo TemplateInformation)string{
+  out := ""
+  for _, tag := range tInfo.Run.Tags {
+    out += " " + tag
+  }
+  return out
+}
+
 func getParameter(tInfo TemplateInformation, wantedVar string)string{
   v, _ := tInfo.Run.buildVariables[wantedVar]
   return v
@@ -55,6 +63,9 @@ func ExecTemplate(templ string, phase interface{}, r* Run, builder *Builder)(str
     },
     "getParameter": func(pname string)string{
       return getParameter(tinfo, pname)
+    },
+    "allTags": func()string{
+      return allTags(tinfo)
     },
   }
 

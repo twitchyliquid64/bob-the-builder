@@ -106,6 +106,7 @@ Additionally, the following functions are available for your templates:
 
  * hasTag(tagName) - returns True if a tag is set for the current run.
  * getParameter(variablename) - returns the value of the parameter, or '' if none exist. In the case of a checkbox, it returns a type boolean instead of a string.
+ * allTags() - returns all tags, space delimited.
 
 ### Need more configurability? Use Parameters!
 
@@ -165,7 +166,3 @@ All structures must have at minimum the following attributes:
   "default": true
 }
 ```
-
-### Development Todos ###
- - Finish implementing Build parameters
- - Implement more template methods
