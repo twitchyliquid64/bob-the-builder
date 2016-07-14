@@ -12,61 +12,59 @@ import (
 const BASE_FOLDER_NAME = "base"
 
 type BuildDefinition struct {
+  //high level information
   Name string `json:"name"`
   Icon string `json:"icon,omitempty"`
   AptPackagesRequired []string `json:"apt-packages-required,omitempty"`
   BaseFolder string `json:"base-folder,omitempty"`
   GitSrc string `json:"git-src,omitempty"`
-  Steps []struct {
-    Type string `json:"type"`
-    Command string `json:"command,omitempty"`
-    CanFail bool `json:"can-fail,omitempty"`
-    Args []string `json:"args,omitempty"`
 
+  //list of steps
+  Steps []BuildStep `json:"steps"`
 
-    FileName string `json:"filename,omitempty"`
-    DestinationFileName string  `json:"filename-destination,omitempty"`
-    Directories []string  `json:"directories,omitempty"`
-    Files []string  `json:"files,omitempty"`
-
-    Key string `json:"key,omitempty"`
-    Value string `json:"value,omitempty"`
-
-    //used for S3 commands
-    Bucket string `json:"bucket,omitempty"`
-    Region string `json:"region,omitempty"`
-    ACL string `json:"ACL,omitempty"`
-  } `json:"steps"`
-
-  AbsolutePath string `json:"-"`
-
-  //stateful information
+  //stateful information - persisted across runs
   LastVersion string `json:"last-version"`
   LastRunTime int64 `json:"last-run-time"`
 
-
-
-
-  Params []struct {
-    Type string `json:"type"`
-    Label string `json:"label"`
-    Varname string `json:"varname"`
-    Placeholder string `json:"placeholder"`
-    Default interface{} `json:"default"`
-    Options map[string]interface{} `json:"options"`
-  } `json:"params"`
-
-
-
-
-
+  Params []BuildParam `json:"params"`
 
   CurrentRun *Run
+  AbsolutePath string `json:"-"`
 }
 
+type BuildParam struct{
+  Type string `json:"type"`
+  Label string `json:"label"`
+  Varname string `json:"varname"`
+  Placeholder string `json:"placeholder"`
+  Items map[string]interface{} `json:"items"`
+  Default interface{} `json:"default"`
+  Options map[string]interface{} `json:"options"`
+}
 
+type BuildStep struct{
+  Type string `json:"type"`
 
+  //used in exec/cmd commands
+  Command string `json:"command,omitempty"`
+  CanFail bool `json:"can-fail,omitempty"`
+  Args []string `json:"args,omitempty"`
 
+  //used in file/archive/S3 commands
+  FileName string `json:"filename,omitempty"`
+  DestinationFileName string  `json:"filename-destination,omitempty"`
+  Directories []string  `json:"directories,omitempty"`
+  Files []string  `json:"files,omitempty"`
+
+  //used for environment commands
+  Key string `json:"key,omitempty"`
+  Value string `json:"value,omitempty"`
+
+  //used for S3 commands
+  Bucket string `json:"bucket,omitempty"`
+  Region string `json:"region,omitempty"`
+  ACL string `json:"ACL,omitempty"`
+}
 
 
 func (d *BuildDefinition)Validate()bool{

@@ -22,19 +22,32 @@
         </div>
 
 
-        <div ng-if="param.type == 'check'" class="field" style="margin-top: 6px;">
+        <div ng-if="param.type == 'check'" class="field" style="margin-top: 7px;">
           <div class="ui checkbox">
             <input type="checkbox" tabindex="0" ng-model="param.default" id="{{'runopt-field-' + $index}}">
             <label>{{param.label}}</label>
           </div>
         </div>
 
-        <div ng-if="param.type == 'branchselect'">
+        <div ng-if="param.type == 'branchselect'" style="margin-top: 7px;">
           <div class="ui fluid search selection dropdown" id="{{'runopt-field-' + $index}}">
             <input type="hidden" name="{{'nm-runopt-field-' + $index}}">
             <i class="dropdown icon"></i>
             <div class="default text">{{param.label}}</div>
             <div class="menu">
+            </div>
+          </div>
+        </div>
+
+        <div ng-if="param.type == 'select'" style="margin-top: 7px;">
+          <div class="ui fluid search selection dropdown" id="{{'runopt-field-' + $index}}">
+            <input type="hidden" name="{{'nm-runopt-field-' + $index}}">
+            <i class="dropdown icon"></i>
+            <div class="default text">{{param.label}}</div>
+            <div class="menu">
+              <div class="item" data-value="{{value}}" ng-repeat="(display, value) in param.items">
+                {{display}}
+              </div>
             </div>
           </div>
         </div>

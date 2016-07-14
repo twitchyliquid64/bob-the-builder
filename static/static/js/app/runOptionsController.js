@@ -65,6 +65,8 @@
                   }
                 }
               });
+            } else if ($scope.defObj.params[i].type == "select"){
+              $('#runopt-field-' + i).dropdown();
             }
           }
         }
@@ -86,6 +88,12 @@
               parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default ? "true" : "false";
             }
             if ($scope.defObj.params[i].type == "branchselect"){
+              parameters[$scope.defObj.params[i].varname] = $('#runopt-field-' + i).dropdown('get value');
+              if (parameters[$scope.defObj.params[i].varname] == '' && $scope.defObj.params[i].default){
+                parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default
+              }
+            }
+            if ($scope.defObj.params[i].type == "select"){
               parameters[$scope.defObj.params[i].varname] = $('#runopt-field-' + i).dropdown('get value');
               if (parameters[$scope.defObj.params[i].varname] == '' && $scope.defObj.params[i].default){
                 parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default
