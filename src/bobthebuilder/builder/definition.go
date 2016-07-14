@@ -45,6 +45,7 @@ type BuildParam struct{
 type BuildStep struct{
   Type string `json:"type"`
   Conditional string `json:"skip-condition,omitempty"`
+  HideFromSteps bool `json:"hide-from-steps,omitempty"`
 
   //used in exec/cmd commands
   Command string `json:"command,omitempty"`

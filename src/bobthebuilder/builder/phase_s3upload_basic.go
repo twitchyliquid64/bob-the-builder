@@ -74,7 +74,6 @@ func (p* S3UploadPhase)bucketExistsInBucketSet(bucketName string, buckets *s3.Li
 
 func (p * S3UploadPhase)Run(r* Run, builder *Builder, defIndex int)int{
   var err error
-  p.Start = time.Now()
 
   //run templates to sub in any variable information like dates etc
   p.DestinationFileName, err = ExecTemplate(p.DestinationFileName, p, r, builder)

@@ -118,7 +118,7 @@
           </div>
         </div>
 
-        <div class="step" ng-repeat="step in defObject.steps">
+        <div class="step" ng-repeat="step in defObject.steps" ng-if="!step['hide-from-steps']">
           <i class="icon" ng-class="getStepIcons(step.type)"></i>
           <div class="content">
             <div class="title">{{getStepTitle(step.type)}}</div>

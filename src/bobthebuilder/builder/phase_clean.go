@@ -23,8 +23,6 @@ func (p * CleanPhase)String()string{
 
 
 func (p * CleanPhase)Run(r* Run, builder *Builder, defIndex int)int{
-  p.Start = time.Now()
-
   err := os.RemoveAll(p.DeletePath)
   p.End = time.Now()
   p.Duration = p.End.Sub(p.Start)

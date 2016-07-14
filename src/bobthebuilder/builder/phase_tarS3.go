@@ -57,7 +57,6 @@ func (p* TarToS3)bucketExistsInBucketSet(bucketName string, buckets *s3.ListBuck
 
 func (p * TarToS3)Run(r* Run, builder *Builder, defIndex int)int{
   var err error
-  p.Start = time.Now()
 
   //run templates to sub in any variable information like dates etc
   p.DestinationPath, err = ExecTemplate(p.DestinationPath, p, r, builder)

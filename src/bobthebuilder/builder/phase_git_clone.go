@@ -30,8 +30,6 @@ func (p * GitClonePhase)init(index int){
 
 
 func (p * GitClonePhase)Run(r* Run, builder *Builder, defIndex int)int{
-  p.Start = time.Now()
-
   p.run = r
   p.builder = builder
   p.defIndex = defIndex

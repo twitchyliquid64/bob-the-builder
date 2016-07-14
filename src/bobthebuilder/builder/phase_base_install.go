@@ -25,8 +25,6 @@ func (p * BaseInstallPhase)String()string{
 
 
 func (p * BaseInstallPhase)Run(r* Run, builder *Builder, defIndex int)int{
-  p.Start = time.Now()
-
   pwd, _ := os.Getwd()
   err := copy_folder(p.BaseAbsPath, path.Join(pwd, BUILD_TEMP_FOLDER_NAME), true)
 

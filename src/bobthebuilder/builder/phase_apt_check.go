@@ -28,8 +28,6 @@ func (p * AptGetCheckInstallPhase)init(index int){
 
 
 func (p * AptGetCheckInstallPhase)Run(r* Run, builder *Builder, defIndex int)int{
-  p.Start = time.Now()
-
   p.run = r
   p.builder = builder
   p.defIndex = defIndex

@@ -36,7 +36,6 @@ func (p* SetEnvPhase)phaseError(eCode int, statusString string)int{
 func (p * SetEnvPhase)Run(r* Run, builder *Builder, defIndex int)int{
   var err error
   var key, value string
-  p.Start = time.Now()
 
   //run templates to sub in any variable information like dates etc
   key, err = ExecTemplate(p.Key, p, r, builder)
