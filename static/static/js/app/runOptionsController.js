@@ -37,6 +37,7 @@
         $scope.defObj = jQuery.extend({}, definitionObj);//shallow copy
         self.incrementVersion();
         self.initModal();
+        $scope.loadingParams = true;
         setTimeout(function(){self.initFields();}, 200);
         $('#runOptionsModal').modal('show');
       }
@@ -51,14 +52,16 @@
 
       //called just before modal show to initialize any javascript on field views.
       self.initFields = function(){
-        for (var i = 0; i < $scope.defObj.params.length; i++)
-        {
-          if ($scope.defObj.params[i].type == "branchselect"){
-            $('#runopt-field-' + i).dropdown({
-              apiSettings: {
-                url: '/api/lookup/buildparam?name=' + $scope.defObj.name + '&param=' + i
-              }
-            });
+        if ($scope.defObj.params){
+          for (var i = 0; i < $scope.defObj.params.length; i++)
+          {
+            if ($scope.defObj.params[i].type == "branchselect"){
+              $('#runopt-field-' + i).dropdown({
+                apiSettings: {
+                  url: '/api/lookup/buildparam?name=' + $scope.defObj.name + '&param=' + i
+                }
+              });
+            }
           }
         }
         $scope.loadingParams = false;
@@ -69,16 +72,18 @@
       //returns the namespace of user-selected build parameters. Defaults are set for untouched fields.
       self.getBuildParamsValues = function(){
         var parameters = {};
-        for (var i = 0; i < $scope.defObj.params.length; i++)
-        {
-          if ($scope.defObj.params[i].type == "text"){
-            parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default;
-          }
-          if ($scope.defObj.params[i].type == "check"){
-            parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default ? "true" : "false";
-          }
-          if ($scope.defObj.params[i].type == "branchselect"){
-            parameters[$scope.defObj.params[i].varname] = $('#runopt-field-' + i).dropdown('get value');
+        if ($scope.defObj.params){
+          for (var i = 0; i < $scope.defObj.params.length; i++)
+          {
+            if ($scope.defObj.params[i].type == "text"){
+              parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default;
+            }
+            if ($scope.defObj.params[i].type == "check"){
+              parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default ? "true" : "false";
+            }
+            if ($scope.defObj.params[i].type == "branchselect"){
+              parameters[$scope.defObj.params[i].varname] = $('#runopt-field-' + i).dropdown('get value');
+            }
           }
         }
         console.log("buildParameters: ", parameters);
