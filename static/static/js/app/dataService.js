@@ -6,6 +6,7 @@
     GET_STATUS_URL = "/api/status"
     GET_HISTORY_URL = "/api/history"
     GET_STATUS_URL = "/api/status"
+    GET_DEF_FILE_URL = "/api/file/definitions"
 
 
     function dataService($rootScope, $http, $timeout, eventService, $window){
@@ -73,7 +74,19 @@
       //END EXPOSED METHODS
 
 
-
+      self.getDefinitionFile = function(index, cb){
+        $http.get(GET_DEF_FILE_URL + "?did=" + index, {
+          transformResponse: [function (data) {
+              // Do whatever you want!
+              return data;
+          }]
+        }).then(function (response) {
+          cb(response.data);
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
 
 
       self._loadDefinitions = function(){//called at end of factory (init)

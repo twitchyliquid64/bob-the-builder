@@ -28,6 +28,10 @@
       }
 
 
+      $scope.edit = function(){
+        console.log("edit()");
+        $location.path("/edit/definition/" + $routeParams.defID + "/" + $scope.defObject.name);
+      }
 
       $scope.run = function(){
         if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running

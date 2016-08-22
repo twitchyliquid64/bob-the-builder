@@ -1,0 +1,46 @@
+<div class="ui container " style="padding-top: 18px;">
+
+  <h1 class="ui header">
+    <i class="icon write large" ></i>
+    <div class="content">
+      Editing definition: {{name}}
+    </div>
+  </h1>
+
+  <style type="text/css" media="screen">
+    #editor{
+      position: relative; /* Added */
+    }
+
+     .ace_editor {
+         position: absolute !important;
+         top: 0;
+         right: 0;
+         bottom: 0;
+         left: 0;
+     }
+
+   </style>
+
+   <div style="flex-grow: 1;"></div>
+     <div class="ui buttons" style="flex-grow: 0;">
+       <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="runOptions()">
+         <i class="right undo icon"></i>
+         Back to run
+       </button>
+       <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="run()">
+         <i class="right save icon"></i>
+         Save
+       </button>
+     </div>
+   </div>
+
+  <div id="editorContainer" style="position: relative;">
+    <pre id="editor">
+    </pre>
+
+    <div class="ui dimmer" ng-class="{active: loading}">
+      <div class="ui loader"></div>
+    </div>
+  </div>
+</div>
