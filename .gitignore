@@ -12,3 +12,4 @@ fix.sh
 build.sh
 bob-the-builder
 config.json
+bin/*
