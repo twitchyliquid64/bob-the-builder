@@ -10,10 +10,17 @@ import (
 	//"errors"
 )
 
+//Run() initialises the web server based on the configuration package.
 func Run() {
-	logging.Info("web", "Initialised server on ", config.All().Web.Listener)
-	//web.RunTLS(config.All().Web.Listener, config.TLS())
-	web.Run(config.All().Web.Listener)
+
+	if config.All().TLS.PrivateKey == "" {
+		logging.Info("web", "Initialised HTTP server on ", config.All().Web.Listener)
+		web.Run(config.All().Web.Listener)
+	} else {
+		logging.Info("web", "Initialised HTTPS server on ", config.All().Web.Listener)
+		web.RunTLS(config.All().Web.Listener, config.TLS())
+	}
+
 }
 
 func documentationHandler(ctx *web.Context) {
