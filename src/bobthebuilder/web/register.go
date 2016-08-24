@@ -23,6 +23,7 @@ func Initialise() {
 func registerCoreHandlers() {
 	web.Get("/", indexMainPage, config.All().Web.Domain)
 	web.Get("/ws/events", websocket.Handler(ws_EventServer), config.All().Web.Domain)
+	web.Get("/documentation/readme", documentationHandler, config.All().Web.Domain)
 }
 
 func registerApiHandlers() {

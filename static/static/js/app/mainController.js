@@ -7,6 +7,7 @@
       var self = this;
       $scope.dataService = dataService;
       $scope.currentlyDash = $location.path() == "/";
+      $scope.currentlyDocumentation = $location.path() == ""
       $scope.currentIndex = $routeParams.defID;
 
       $scope.$on('$routeChangeSuccess', function() { //apparently routeParams isnt always immediately populated
@@ -23,6 +24,11 @@
       $scope.navDashboard = function(){
         $location.path("/");
         $scope.currentlyDash = true;
+      }
+
+      $scope.documentation = function(){
+        $scope.currentlyDocumentation = true;
+        $location.path("/documentation");
       }
     }
 

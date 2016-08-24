@@ -25,6 +25,10 @@
         </div>
       </div>
 
+      <a class="item" ng-class="{active: currentlyDocumentation}" ng-click="documentation()">
+        Documentation
+      </a>
+
       <div class="item" id="connStatusText">
         {{!dataService.connectionEstablished && !dataService.connectionLost? "Connecting ..." : ""}}
         {{dataService.connectionLost && !dataService.error ? "Connection Lost" : ""}}
