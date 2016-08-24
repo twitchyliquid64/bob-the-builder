@@ -88,6 +88,14 @@
         });
       }
 
+      self.saveDefinitionFile = function(index, data){
+        $http.post("/api/file/definitions/save?did=index", data).then(function (response) {
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
+
 
       self._loadDefinitions = function(){//called at end of factory (init)
         self._incrementLoadPendingCounter();

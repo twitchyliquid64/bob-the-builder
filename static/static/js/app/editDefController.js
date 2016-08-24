@@ -21,6 +21,15 @@
       });
       editor.resize();
 
+      $scope.back = function(){
+        $location.path("/definition/" + $routeParams.defID);
+      }
+
+      $scope.save = function(){
+        $scope.back()
+        dataService.saveDefinitionFile($scope.defID, self.editor.getValue());
+      }
+
       dataService.getDefinitionFile($routeParams.defID, function(data){
         console.log(data);
         self.editor.setValue(data, -1);

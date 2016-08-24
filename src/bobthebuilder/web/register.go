@@ -33,6 +33,7 @@ func registerApiHandlers() {
 	web.Get("/api/queue/new", enqueueBuildHandler, config.All().Web.Domain)
 	web.Get("/api/lookup/buildparam", getBuildParamsLookupHandler, config.All().Web.Domain)
 	web.Get("/api/file/definitions", getDefinitionJSONHandler, config.All().Web.Domain)
+	web.Post("/api/file/definitions/save", saveDefinitionJSONHandler, config.All().Web.Domain)
 	web.Post("/api/queue/newWithOptions", enqueueBuildHandlerWithOptions, config.All().Web.Domain)
 }
 

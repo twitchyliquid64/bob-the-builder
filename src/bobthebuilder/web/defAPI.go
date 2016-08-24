@@ -5,7 +5,6 @@ import (
 	"bobthebuilder/logging"
 	"bobthebuilder/util"
 	"encoding/json"
-	"io/ioutil"
 	"regexp"
 	"strconv"
 	"time"
@@ -49,15 +48,6 @@ func getStatusHandler(ctx *web.Context) {
 		//logging.Info("web-definitions-api", string(b))
 		ctx.ResponseWriter.Write(b)
 	}
-}
-
-// /api/file/definitions
-func getDefinitionJSONHandler(ctx *web.Context) {
-	did, _ := strconv.Atoi(ctx.Params["did"])
-	def := builder.GetInstance().Definitions[did]
-	d, _ := ioutil.ReadFile(def.AbsolutePath)
-	ctx.ContentType("text/plain")
-	ctx.ResponseWriter.Write(d)
 }
 
 func getBuildParamsLookupHandler(ctx *web.Context) {
