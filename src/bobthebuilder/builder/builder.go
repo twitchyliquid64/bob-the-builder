@@ -79,7 +79,7 @@ func (b *Builder) Init() error {
 		}
 	}
 
-	time.Sleep(time.Millisecond * 150)
+	time.Sleep(time.Millisecond * 20)
 	b.publishEvent(EVT_DEF_REFRESH_FINISHED, time.Now().Unix(), -1)
 	return nil
 }
@@ -177,7 +177,7 @@ func (b *Builder) builderRunLoop() {
 				switch event.(string) {
 				case "RELOAD":
 					logging.Info("builder-worker", "Now refreshing definitions")
-					time.Sleep(time.Millisecond * 350)
+					time.Sleep(time.Millisecond * 150)
 					for b.EventsToProcess.Dequeue() != nil {
 					} //delete all of the existing items in the queue
 					b.Lock.Unlock()
@@ -190,7 +190,7 @@ func (b *Builder) builderRunLoop() {
 			_, isDefUpdate := event.(DefUpdateEvent)
 			if isDefUpdate {
 				logging.Info("builder-worker", "Now updating definition")
-				time.Sleep(time.Millisecond * 350)
+				time.Sleep(time.Millisecond * 150)
 				for b.EventsToProcess.Dequeue() != nil {
 				} //delete all of the existing items in the queue
 				b.updateDefinition(event.(DefUpdateEvent).Def, event.(DefUpdateEvent).JsonData)

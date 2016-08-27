@@ -4,7 +4,10 @@ import (
 	"bobthebuilder/builder"
 	"bobthebuilder/logging"
 	"io/ioutil"
+	"os"
+	"path"
 	"strconv"
+	"strings"
 
 	"github.com/hoisie/web"
 )
@@ -28,4 +31,28 @@ func saveDefinitionJSONHandler(ctx *web.Context) {
 
 	did, _ := strconv.Atoi(ctx.Params["did"])
 	builder.GetInstance().EnqueueDefinitionUpdateEvent(did, jsonData)
+}
+
+func getBaseFileHandler(ctx *web.Context) {
+	relPathUnsafe := ctx.Params["path"]
+
+	pwd, _ := os.Getwd()
+	baseFolder := path.Join(pwd, builder.BASE_FOLDER_NAME)
+
+	absPathUnsafe := path.Clean(path.Join(baseFolder, relPathUnsafe))
+	if strings.HasPrefix(absPathUnsafe, baseFolder) {
+		d, err := ioutil.ReadFile(absPathUnsafe)
+		if err != nil {
+			logging.Error("web-file-api", "getBaseFileHandler() read error: ", err)
+			ctx.Abort(500, "read error")
+		} else {
+			ctx.ContentType("text/plain")
+			ctx.ResponseWriter.Write(d)
+		}
+	} else {
+		//attempted LFI attack - return error
+		logging.Error("web-file-api", "getBaseFileHandler() rejected request for: "+relPathUnsafe)
+		ctx.Abort(403, "only base files are accessible")
+		return
+	}
 }

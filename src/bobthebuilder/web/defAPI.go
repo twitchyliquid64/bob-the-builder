@@ -120,6 +120,6 @@ func enqueueBuildHandlerWithOptions(ctx *web.Context) {
 }
 
 func enqueueReloadHandler(ctx *web.Context) {
-	time.Sleep(time.Millisecond * 350)
+	time.Sleep(time.Millisecond * 120)
 	builder.GetInstance().EnqueueReloadEvent()
 }

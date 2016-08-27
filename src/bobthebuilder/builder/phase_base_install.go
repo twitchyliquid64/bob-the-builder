@@ -1,56 +1,53 @@
 package builder
 
-
 import (
-  "bobthebuilder/logging"
-  "time"
-  "path"
-  "io"
-  "os"
+	"bobthebuilder/logging"
+	"io"
+	"os"
+	"path"
+	"time"
 )
 
-
-type BaseInstallPhase struct{
-  BasicPhase
-  BaseAbsPath string
-}
-func (p * BaseInstallPhase)init(index int){
-  p.Type = "BASE-INSTALL"
-  p.StatusString = PHASE_STATUS_READY
-  p.Index = index
-}
-func (p * BaseInstallPhase)String()string{
-  return "(phase)" + p.Type + " -- " + p.StatusString + " (" + p.BaseAbsPath + ")"
+type BaseInstallPhase struct {
+	BasicPhase
+	BaseAbsPath string
 }
 
-
-func (p * BaseInstallPhase)Run(r* Run, builder *Builder, defIndex int)int{
-  pwd, _ := os.Getwd()
-  err := copy_folder(p.BaseAbsPath, path.Join(pwd, BUILD_TEMP_FOLDER_NAME), true)
-
-  p.End = time.Now()
-  p.Duration = p.End.Sub(p.Start)
-
-  if err == nil{
-    p.ErrorCode = 0
-    p.StatusString = "Install successful"
-    p.WriteOutput("Base install successful.", r, builder, defIndex)
-    return 0
-  } else {
-    p.ErrorCode = -1
-    logging.Error("phase-clean", err)
-    p.StatusString = "Error"
-    p.WriteOutput("Error: " + p.StatusString, r, builder, defIndex)
-    return -1
-  }
+func (p *BaseInstallPhase) init(index int) {
+	p.Type = "BASE-INSTALL"
+	p.StatusString = PHASE_STATUS_READY
+	p.Index = index
+}
+func (p *BaseInstallPhase) String() string {
+	return "(phase)" + p.Type + " -- " + p.StatusString + " (" + p.BaseAbsPath + ")"
 }
 
+func (p *BaseInstallPhase) Run(r *Run, builder *Builder, defIndex int) int {
+	pwd, _ := os.Getwd()
 
+	//make sure build dir exists
+	if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
+		os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 0777)
+	}
 
+	err := copy_folder(p.BaseAbsPath, path.Join(pwd, BUILD_TEMP_FOLDER_NAME), true)
 
+	p.End = time.Now()
+	p.Duration = p.End.Sub(p.Start)
 
-
-
+	if err == nil {
+		p.ErrorCode = 0
+		p.StatusString = "Install successful"
+		p.WriteOutput("Base install successful.", r, builder, defIndex)
+		return 0
+	} else {
+		p.ErrorCode = -1
+		logging.Error("phase-clean", err)
+		p.StatusString = "Error"
+		p.WriteOutput("Error: "+p.StatusString, r, builder, defIndex)
+		return -1
+	}
+}
 
 func copy_folder(source string, dest string, start bool) (err error) {
 
@@ -70,7 +67,7 @@ func copy_folder(source string, dest string, start bool) (err error) {
 
 	for _, obj := range objects {
 
-		sourcefilepointer := path.Join(source,obj.Name())
+		sourcefilepointer := path.Join(source, obj.Name())
 
 		destinationfilepointer := path.Join(dest, obj.Name())
 
@@ -89,11 +86,6 @@ func copy_folder(source string, dest string, start bool) (err error) {
 	}
 	return
 }
-
-
-
-
-
 
 func copy_file(source string, dest string) (err error) {
 	sourcefile, err := os.Open(source)

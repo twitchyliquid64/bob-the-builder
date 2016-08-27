@@ -7,6 +7,7 @@
     GET_HISTORY_URL = "/api/history"
     GET_STATUS_URL = "/api/status"
     GET_DEF_FILE_URL = "/api/file/definitions"
+    GET_FILE_URL = "/api/file/base"
 
 
     function dataService($rootScope, $http, $timeout, eventService, $window){
@@ -73,6 +74,20 @@
       }
       //END EXPOSED METHODS
 
+
+      self.getFile = function(path, cb){
+        $http.get(GET_FILE_URL + "?path=" + path, {
+          transformResponse: [function (data) {
+              // Do whatever you want!
+              return data;
+          }]
+        }).then(function (response) {
+          cb(response.data);
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
 
       self.getDefinitionFile = function(index, cb){
         $http.get(GET_DEF_FILE_URL + "?did=" + index, {
@@ -206,7 +221,7 @@
       self._decrementLoadPendingCounter = function(){
         self.loadPending -= 1;
         if (self.loadPending == 0){
-          $timeout(function(){self.loading = false;}, 400);
+          $timeout(function(){self.loading = false;}, 120);
         }
       }
       self._error = function(){
