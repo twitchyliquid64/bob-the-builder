@@ -89,6 +89,14 @@
         });
       }
 
+      self.saveFile = function(path, data){
+        $http.post("/api/file/base/save?path=" + path, data).then(function (response) {
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
+
       self.getDefinitionFile = function(index, cb){
         $http.get(GET_DEF_FILE_URL + "?did=" + index, {
           transformResponse: [function (data) {
@@ -104,7 +112,7 @@
       }
 
       self.saveDefinitionFile = function(index, data){
-        $http.post("/api/file/definitions/save?did=index", data).then(function (response) {
+        $http.post("/api/file/definitions/save?did=" + index, data).then(function (response) {
         }, function errorCallback(response) {
           console.log(response);
           self._error();

@@ -28,3 +28,17 @@
     5% { background-color:#ffc266;}
     100% {background-color:none;}
 }
+
+
+
+
+
+
+
+
+.showHover{
+  display: none !important;
+}
+.edit_hovercontainer:hover .showHover{
+  display: inline-block !important;
+}

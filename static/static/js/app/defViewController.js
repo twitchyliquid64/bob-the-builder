@@ -32,6 +32,13 @@
         console.log("edit()");
         $location.path("/edit/definition/" + $routeParams.defID + "/" + $scope.defObject.name);
       }
+      $scope.editStep = function(step){
+        if (step.type == "EXEC"){
+          $location.path("/edit/file/" + $routeParams.defID + "/" + $scope.defObject['base-folder'] + "/" + step.command);
+        } else {
+          $location.path("/edit/definition/" + $routeParams.defID + "/" + $scope.defObject.name);
+        }
+      }
 
       $scope.run = function(){
         if($scope.buildQueued || $scope.running)return;//cant queue another one when one is queued or already running
