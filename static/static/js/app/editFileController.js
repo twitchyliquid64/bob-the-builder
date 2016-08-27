@@ -27,7 +27,14 @@
       editor.resize();
 
       $scope.back = function(){
-        $location.path("/definition/" + $routeParams.defID);
+        if ($scope.defID >= 0)
+          $location.path("/definition/" + $routeParams.defID);
+        else
+          $location.path("/browser/");
+      }
+
+      $scope.isFromDefinition = function(){
+        return $scope.defID >= 0;
       }
 
       $scope.save = function(){

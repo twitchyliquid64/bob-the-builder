@@ -56,6 +56,25 @@
         }
       }
 
+      $scope.canDownloadFileSelection = function(){
+        if ($scope.tree.currentNode && $scope.tree.currentNode.type == 'file'){
+          return ($scope.tree.currentNode.id.match(/\/build\//g) || []).length;
+        }else {
+          return false;
+        }
+      }
+
+      $scope.edit = function(){
+        if ($scope.tree.currentNode && $scope.tree.currentNode.type == 'file'){
+          if (($scope.tree.currentNode.id.match(/\/base\//g) || []).length){
+            $location.path("/edit/file/-1/" + $scope.tree.currentNode.id.replace(/^\/base\//, ''));
+          }
+          if (($scope.tree.currentNode.id.match(/\/definitions\//g) || []).length){
+            $location.path("/edit/definition/-1/" + $scope.tree.currentNode.id.replace(/^\/definitions\//, ''));
+          }
+        }
+      }
+
       dataService.getBrowserFileData(function(data){
         $scope.treedata = [
           { "label" : "Run Definitions", "id" : "/definitions", "type": "folder", "children" : data.definitions, "collapsed": true, "media": "-"},
