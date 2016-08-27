@@ -15,3 +15,4 @@
     <link rel="stylesheet" type="text/css" href="/static/css/modal.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/dropdown.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/flash.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/treeview.css">

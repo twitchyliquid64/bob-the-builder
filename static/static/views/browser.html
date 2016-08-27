@@ -1,0 +1,81 @@
+<div class="ui container " style="padding-top: 18px;">
+
+  <h1 class="ui header">
+    <div class="content">
+      Browser
+    </div>
+  </h1>
+
+
+  <div class="ui grid">
+    <div class="ten wide column">
+      <h4 class="ui header" style="flex-grow: 0;">Current path: {{tree.currentNode.id}}</h4>
+      <div
+          data-angular-treeview="true"
+          data-tree-id="tree"
+          data-tree-model="treedata"
+          data-node-id="id"
+          data-node-label="label"
+          data-node-children="children" >
+      </div>
+    </div>
+    <div class="six wide column stretched">
+      <div ng-show="tree.currentNode"  style="flex-grow: 0;" class="ui">
+        <h4 class="ui header" style="flex-grow: 0;">Details</h4>
+
+        <div class="ui divided list" style=" flex-grow: 0; top: 0px;">
+          <div class="item">
+            <i class="large cubes icon" style="min-width: 40px;"></i>
+            <div class="content">
+              <p><b>Name:</b> {{tree.currentNode.label}}</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large info icon" style="min-width: 40px;"></i>
+            <div class="content">
+              <p><b>Type:</b> {{tree.currentNode.type}}</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large disk outline icon" style="min-width: 40px;"></i>
+            <div class="content">
+              <p><b>Size:</b> {{tree.currentNode.size | bytes}}</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large film icon" style="min-width: 40px;"></i>
+            <div class="content">
+              <p><b>Media:</b> {{tree.currentNode.media}}</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large terminal icon" style="min-width: 40px;"></i>
+            <div class="content">
+              <p><b>Permissions:</b> {{convertUnixBitstoPermsString(tree.currentNode.bits)}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="three ui buttons" style="flex-grow: 0;">
+          <button class="ui icon button medium" ng-click="new()" ng-if="canNewFolderSelection()">
+            <i class="folder outline icon"></i>
+            New
+          </button>
+          <button class="ui icon button medium" ng-click="new()" ng-if="canNewFileSelection()">
+            <i class="file outline icon"></i>
+            New
+          </button>
+          <button class="ui icon button medium blue" ng-if="canEditSelection()" ng-click="edit()">
+            <i class="right edit icon"></i>
+            Edit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

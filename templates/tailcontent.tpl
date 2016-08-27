@@ -1,5 +1,6 @@
 
     <script src="/static/js/angular-route.min.js"></script>
+    <script src="/static/js/angular-treeview.js"></script>
     <script src="/static/js/app/baseApp.js"></script>
     <script src="/static/js/app/eventService.js"></script>
     <script src="/static/js/app/dataService.js"></script>
@@ -8,6 +9,7 @@
     <script src="/static/js/app/runOptionsController.js"></script>
     <script src="/static/js/app/editDefController.js"></script>
     <script src="/static/js/app/editFileController.js"></script>
+    <script src="/static/js/app/browserController.js"></script>
     <script src="/static/js/moment.min.js"></script>
     <script src="/static/js/flash.js"></script>
 

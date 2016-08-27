@@ -8,6 +8,7 @@
     GET_STATUS_URL = "/api/status"
     GET_DEF_FILE_URL = "/api/file/definitions"
     GET_FILE_URL = "/api/file/base"
+    GET_ALL_FILES_URL = "/api/files"
 
 
     function dataService($rootScope, $http, $timeout, eventService, $window){
@@ -74,6 +75,15 @@
       }
       //END EXPOSED METHODS
 
+
+      self.getBrowserFileData = function(cb){
+        $http.get(GET_ALL_FILES_URL).then(function (response) {
+          cb(response.data);
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
 
       self.getFile = function(path, cb){
         $http.get(GET_FILE_URL + "?path=" + path, {
