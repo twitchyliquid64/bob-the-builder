@@ -161,18 +161,24 @@
         //console.log($scope.phases, $scope.content);
       }
       self.phaseDataEvent = function(args){
-        //console.log("defViewController.phaseDataEvent(): ", args);
+        console.log("defViewController.phaseDataEvent(): ", args);
         //$scope.phases[args.phase.index] = args.phase;
-        if ($scope.contentCursor != -1){
-          $scope.content[args.phase.index] = $scope.content[args.phase.index].slice(0, $scope.contentCursor);
-          $scope.contentCursor = -1;
-        }
+        $scope.content[args.phase.index] += args.content
 
-        if (args.content.indexOf("CONTROL<CHAR-RETURN>") > -1){ //has a /r - transform the current content
-          $scope.contentCursor = $scope.content[args.phase.index].lastIndexOf("\n");
-          if ($scope.contentCursor == -1)$scope.contentCursor = 0;
+        controlIndex = $scope.content[args.phase.index].indexOf("CONTROL<CHAR-RETURN>");
+        count = 0
+        while (controlIndex > -1 && count < 8){ //has a /r - transform the content
+          count += 1;
+          //console.log("Control Index: " + controlIndex);
+          relevantContent = $scope.content[args.phase.index].slice(0, controlIndex);
+          //console.log("Relevant content: " + relevantContent);
+          lastNewLine = relevantContent.lastIndexOf("\n");
+          //console.log("Last New Line: " + lastNewLine);
+          $scope.content[args.phase.index] = relevantContent.slice(0, lastNewLine+1) + $scope.content[args.phase.index].slice(controlIndex + "CONTROL<CHAR-RETURN>".length);
+          //console.log("Content: " + $scope.content[args.phase.index]);
+          controlIndex = $scope.content[args.phase.index].indexOf("CONTROL<CHAR-RETURN>");
+          //console.log("Control Index: " + controlIndex);
         }
-        $scope.content[args.phase.index] += args.content.replace("CONTROL<CHAR-RETURN>", "");
         //console.log($scope.phases, $scope.content);
       }
 
