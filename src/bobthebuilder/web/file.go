@@ -5,6 +5,7 @@ import (
 	"bobthebuilder/logging"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path"
@@ -169,6 +170,9 @@ func iterateFolderToTreeviewJSON(absPath string, base string) (out TreeviewFileD
 
 	if stat.IsDir() {
 		out.Type = "folder"
+		if stat.Name() == ".git" {
+			return TreeviewFileDTO{}, errors.New("Ignore")
+		}
 		var cFiles []os.FileInfo
 		cFiles, err = f.Readdir(-1)
 		if err != nil {
@@ -178,7 +182,9 @@ func iterateFolderToTreeviewJSON(absPath string, base string) (out TreeviewFileD
 		for _, fi := range cFiles {
 			fDTO, err := iterateFolderToTreeviewJSON(path.Join(absPath, fi.Name()), base)
 			if err != nil {
-				logging.Error("web-file-api", "iterateFolderToTreeviewJSON("+absPath+") error: ", err)
+				if err.Error() != "Ignore" {
+					logging.Error("web-file-api", "iterateFolderToTreeviewJSON("+absPath+") error: ", err)
+				}
 				continue
 			}
 			out.Children = append(out.Children, fDTO)

@@ -29,7 +29,7 @@
         Documentation
       </a>
       <a class="item" ng-class="{active: currentlyBrowser}" ng-click="browser()">
-        Browser
+        MDS Browser
       </a>
 
 
