@@ -205,3 +205,64 @@ func getMediaType(path string) string {
 	}
 	return "-"
 }
+
+func newFolderHandler(ctx *web.Context) {
+	relPathUnsafe := ctx.Params["path"]
+	if strings.HasPrefix(relPathUnsafe, "/base/") {
+		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
+	}
+
+	pwd, _ := os.Getwd()
+
+	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	if safe {
+		err := os.Mkdir(absPath, 0770)
+		if err != nil {
+			ctx.Abort(200, "{\"error\": \""+err.Error()+"\", \"success\": false}")
+			return
+		}
+		ctx.Abort(200, "{\"success\": true}")
+		logging.Info("web-file-api", "Created new folder: "+absPath)
+	}
+}
+
+func newFileHandler(ctx *web.Context) {
+	relPathUnsafe := ctx.Params["path"]
+	if strings.HasPrefix(relPathUnsafe, "/base/") {
+		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
+	}
+
+	pwd, _ := os.Getwd()
+
+	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	if safe {
+		f, err := os.OpenFile(absPath, os.O_EXCL|os.O_CREATE, 0770)
+		if err != nil {
+			ctx.Abort(200, "{\"error\": \""+err.Error()+"\", \"success\": false}")
+			f.Close()
+			return
+		}
+		ctx.Abort(200, "{\"success\": true}")
+		logging.Info("web-file-api", "Created new folder: "+absPath)
+	}
+}
+
+func deleteHandler(ctx *web.Context) {
+	relPathUnsafe := ctx.Params["path"]
+	if strings.HasPrefix(relPathUnsafe, "/base/") {
+		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
+	}
+
+	pwd, _ := os.Getwd()
+
+	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	if safe {
+		err := os.RemoveAll(absPath)
+		if err != nil {
+			ctx.Abort(200, "{\"error\": \""+err.Error()+"\", \"success\": false}")
+			return
+		}
+		ctx.Abort(200, "{\"success\": true}")
+		logging.Info("web-file-api", "Delete: "+absPath)
+	}
+}

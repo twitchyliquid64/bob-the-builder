@@ -183,7 +183,6 @@ All structures must have at minimum the following attributes:
 
 - [ ] Implement remaining actions in the browser
 - [x] Rename browser to MDS browser
-- [ ] Fix CR bug in run output
-- [ ] Mars
+- [X] Fix CR bug in run output
 - [ ] Better / more documentation
 - [ ] Some (minimal) documentation on the edit definition pages

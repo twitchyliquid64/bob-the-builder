@@ -61,11 +61,11 @@
         </div>
 
         <div class="three ui buttons" style="flex-grow: 0;">
-          <button class="ui icon button medium" ng-click="new()" ng-if="canNewFolderSelection()">
+          <button class="ui icon button medium" ng-click="newFolder()" ng-if="canNewFolderSelection()">
             <i class="folder outline icon"></i>
             New
           </button>
-          <button class="ui icon button medium" ng-click="new()" ng-if="canNewFileSelection()">
+          <button class="ui icon button medium" ng-click="newFile()" ng-if="canNewFileSelection()">
             <i class="file outline icon"></i>
             New
           </button>
@@ -76,6 +76,10 @@
           <button class="ui icon button medium blue" ng-if="canDownloadFileSelection()" ng-click="edit()">
             <i class="right download icon"></i>
             Download
+          </button>
+          <button class="ui icon button medium red" ng-if="canDeleteFileSelection()" ng-click="delete()">
+            <i class="right delete icon"></i>
+            Del
           </button>
         </div>
       </div>

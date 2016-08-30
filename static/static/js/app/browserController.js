@@ -1,9 +1,9 @@
 (function () {
 
     angular.module('baseApp')
-        .controller('browserController', ['$scope', 'dataService', '$location', '$routeParams', '$rootScope', browserController]);
+        .controller('browserController', ['$scope', 'dataService', '$location', '$routeParams', '$rootScope', '$http', browserController]);
 
-    function browserController($scope, dataService, $location, $routeParams, $rootScope) {
+    function browserController($scope, dataService, $location, $routeParams, $rootScope, $http) {
       var self = this;
       $scope.path = $routeParams.path;
       $scope.loading = true;
@@ -64,6 +64,71 @@
         }
       }
 
+      $scope.canDeleteFileSelection = function(){
+        if ($scope.tree.currentNode){
+          return ($scope.tree.currentNode.id.match(/\/base\//g) || []).length;
+        }else {
+          return false;
+        }
+      }
+
+      $scope.delete = function(){
+        console.log($scope.tree.currentNode.id);
+        if (confirm("Are you sure you want to delete: " + $scope.tree.currentNode.id + "?")){
+          $http.get("/api/file/delete?path=" + $scope.tree.currentNode.id, {}).then(function (response) {
+            console.log(response);
+            $scope.treedata = [{ "label" : "Loading ... Please Wait.", "id" : "main:build", "type": "file", "children" : []}];
+            self.update()
+          }, function errorCallback(response) {
+            console.log(response);
+          });
+        }
+      }
+
+      $scope.newFile = function(){
+        var fileName = prompt("Please enter the name of the new file.", "");
+        if (fileName == null || fileName == ""){
+          return;
+        }
+
+        console.log($scope.tree.currentNode.id + "/" + fileName);
+        $http.get("/api/file/new/file?path=" + $scope.tree.currentNode.id + "/" + fileName, {}).then(function (response) {
+          console.log(response);
+          if (response.data.success){
+            var newNode = { "label" : fileName, "id" : $scope.tree.currentNode.id + "/" + fileName, "type": "file", "media": "-"};
+            if ($scope.tree.currentNode.children){
+              $scope.tree.currentNode.children[$scope.tree.currentNode.children.length] = newNode;
+            } else {
+              $scope.tree.currentNode.children = [newNode];
+            }
+          }
+        }, function errorCallback(response) {
+          console.log(response);
+        });
+      }
+
+      $scope.newFolder = function(){
+        var folderName = prompt("Please enter the name of the new folder.", "");
+        if (folderName == null || folderName == ""){
+          return;
+        }
+
+        console.log($scope.tree.currentNode.id + "/" + folderName);
+        $http.get("/api/file/new/folder?path=" + $scope.tree.currentNode.id + "/" + folderName, {}).then(function (response) {
+          console.log(response);
+          if (response.data.success){
+            var newNode = { "label" : folderName, "id" : $scope.tree.currentNode.id + "/" + folderName, "type": "folder", "media": "-", "collapsed": true};
+            if ($scope.tree.currentNode.children){
+              $scope.tree.currentNode.children[$scope.tree.currentNode.children.length] = newNode;
+            } else {
+              $scope.tree.currentNode.children = [newNode];
+            }
+          }
+        }, function errorCallback(response) {
+          console.log(response);
+        });
+      }
+
       $scope.edit = function(){
         if ($scope.tree.currentNode && $scope.tree.currentNode.type == 'file'){
           if (($scope.tree.currentNode.id.match(/\/base\//g) || []).length){
@@ -75,13 +140,16 @@
         }
       }
 
-      dataService.getBrowserFileData(function(data){
-        $scope.treedata = [
-          { "label" : "Run Definitions", "id" : "/definitions", "type": "folder", "children" : data.definitions, "collapsed": true, "media": "-"},
-          { "label" : "Build workspace", "id" : "/build", "type": "folder", "children" : data.build, "collapsed": true, "media": "-"},
-          { "label" : "Base folders", "id" : "/base", "type": "folder", "children" : data.base, "collapsed": true, "media": "-"}
-        ];
-      })
+      self.update = function(){
+        dataService.getBrowserFileData(function(data){
+          $scope.treedata = [
+            { "label" : "Run Definitions", "id" : "/definitions", "type": "folder", "children" : data.definitions, "collapsed": true, "media": "-"},
+            { "label" : "Build workspace", "id" : "/build", "type": "folder", "children" : data.build, "collapsed": true, "media": "-"},
+            { "label" : "Base folders", "id" : "/base", "type": "folder", "children" : data.base, "collapsed": true, "media": "-"}
+          ];
+        })
+      }
+      self.update();
 
 
     }
