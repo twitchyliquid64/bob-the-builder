@@ -37,14 +37,37 @@ type Builder struct {
 	subscribers map[chan BuilderEvent]bool
 }
 
-// (Re)load all build definitions.
+func (b *Builder) loadDefinitionFile(fpath string) error {
+	bData, err := ioutil.ReadFile(fpath)
+	if err != nil {
+		return err
+	}
+
+	var def BuildDefinition
+	err = json.Unmarshal(bData, &def)
+	if err != nil {
+		return err
+	}
+	def.AbsolutePath = fpath
+
+	valid := def.Validate()
+	if valid {
+		b.Definitions = append(b.Definitions, &def)
+		b.CurrentRun = nil
+		logging.Info("builder-init", def.Name+" - definition ready.")
+	} else {
+		return errors.New("Definition failed validation")
+	}
+	return nil
+}
+
+// Init (Re)load all build definitions.
 func (b *Builder) Init() error {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
 
 	b.Definitions = []*BuildDefinition{} //clear our definitions
 	b.CurrentRun = nil
-
 	b.publishEvent(EVT_DEF_REFRESH, time.Now().Unix(), -1)
 
 	defFiles, err := util.GetFilenameListInFolder(DEFINITIONS_FOLDER_NAME, DEFINITIONS_FILE_SUFFIX)
@@ -53,29 +76,11 @@ func (b *Builder) Init() error {
 	}
 
 	for _, fpath := range defFiles { //parse each configuration file - TODO: Split the parse-validate-insert into a separate function to allow a ParseDefinition([]byte) interface.
-		bData, err := ioutil.ReadFile(fpath)
+		err := b.loadDefinitionFile(fpath)
 		if err != nil {
 			logging.Error("builder-init", "Error reading build definition for "+path.Base(fpath)+". Skipping.")
 			logging.Error("builder-init", err)
 			continue
-		}
-
-		var def BuildDefinition
-		err = json.Unmarshal(bData, &def)
-		if err != nil {
-			logging.Error("builder-init", "Error parsing build definition for "+path.Base(fpath)+". Skipping.")
-			logging.Error("builder-init", err)
-			continue
-		}
-		def.AbsolutePath = fpath
-
-		valid := def.Validate()
-		if valid {
-			b.Definitions = append(b.Definitions, &def)
-			b.CurrentRun = nil
-			logging.Info("builder-init", def.Name+" - definition ready.")
-		} else {
-			logging.Warning("builder-init", "Skipping "+path.Base(fpath)+" ("+def.Name+").")
 		}
 	}
 
@@ -84,7 +89,7 @@ func (b *Builder) Init() error {
 	return nil
 }
 
-//Returns true if a Run (build) is currently executing.
+// IsRunning Returns true if a Run (build) is currently executing.
 func (b *Builder) IsRunning() bool {
 	if b.CurrentRun != nil && b.CurrentRun.IsRunning() {
 		return true
@@ -93,6 +98,7 @@ func (b *Builder) IsRunning() bool {
 	return false
 }
 
+// EnqueueDefinitionUpdateEvent updates the existing definition at defID with the JSON blob contained in jsonData.
 func (b *Builder) EnqueueDefinitionUpdateEvent(defID int, jsonData []byte) {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
@@ -102,8 +108,8 @@ func (b *Builder) EnqueueDefinitionUpdateEvent(defID int, jsonData []byte) {
 	b.TriggerWorkerChan <- true
 }
 
-//Enqueues a build based on the build definition with the given name.
-//returns DefNotFoundErr if the build definition does not exist.
+// EnqueueBuildEvent enqueues a build based on the build definition with the given name.
+// returns DefNotFoundErr if the build definition does not exist.
 func (b *Builder) EnqueueBuildEvent(buildDefinitionName string, tags []string, version string) (*Run, error) {
 	return b.EnqueueBuildEventEx(buildDefinitionName, tags, version, false, nil)
 }
@@ -111,9 +117,6 @@ func (b *Builder) EnqueueBuildEvent(buildDefinitionName string, tags []string, v
 func (b *Builder) EnqueueBuildEventEx(buildDefinitionName string, tags []string, version string, physDisabled bool, parameterOverrides map[string]string) (*Run, error) {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
-	//if b.IsRunning(){
-	//  return nil, BuildRunningErr
-	//}
 
 	index, err := b.findDefinitionIndex(buildDefinitionName)
 	if err != nil {
@@ -165,6 +168,48 @@ func (b *Builder) GetDefinitionsSerialisable() interface{} {
 	return b.Definitions
 }
 
+func (b *Builder) processOutOfBandEvent(event string) {
+	switch event {
+	case "RELOAD":
+		logging.Info("builder-worker", "Now refreshing definitions")
+		time.Sleep(time.Millisecond * 150)
+		for b.EventsToProcess.Dequeue() != nil {
+		} //delete all of the existing items in the queue
+		b.Lock.Unlock()
+		b.Init() //reinit
+	}
+}
+
+func (b *Builder) processDefinitionUpdateEvent(event DefUpdateEvent) {
+	logging.Info("builder-worker", "Now updating definition")
+	time.Sleep(time.Millisecond * 150)
+	for b.EventsToProcess.Dequeue() != nil {
+	} //delete all of the existing items in the queue
+	b.updateDefinition(event.Def, event.JsonData)
+	b.Lock.Unlock()
+	b.Init() //reinit
+}
+
+func (b *Builder) executeRun(run *Run) {
+	logging.Info("builder-worker", "Got Run to execute from queue: ", run.Definition.Name)
+	go b.ledBeaconFlashLoop(run)
+	go b.ledFlasherLoop(run)
+	index, _ := b.findDefinitionIndex(run.Definition.Name)
+	run.SetupForRun()
+	b.publishEvent(EVT_RUN_STARTED, run, index)
+	b.CurrentRun = run
+
+	b.Lock.Unlock()
+	run.Run(b, index)
+	b.Lock.Lock()
+
+	b.CompletedBacklog.Enqueue(run)
+	run.Definition.LastVersion = run.Version
+	run.Definition.LastRunTime = int64(run.EndTime.Sub(run.StartTime).Seconds() * 1000)
+	run.Definition.Flush()
+	b.publishEvent(EVT_RUN_FINISHED, run, index)
+}
+
 //Do not call. This is run once on init.
 func (b *Builder) builderRunLoop() {
 	for <-b.TriggerWorkerChan {
@@ -174,55 +219,21 @@ func (b *Builder) builderRunLoop() {
 
 			_, isOutOfBandEvent := event.(string) //TODO: refactor out of this method
 			if isOutOfBandEvent {
-				switch event.(string) {
-				case "RELOAD":
-					logging.Info("builder-worker", "Now refreshing definitions")
-					time.Sleep(time.Millisecond * 150)
-					for b.EventsToProcess.Dequeue() != nil {
-					} //delete all of the existing items in the queue
-					b.Lock.Unlock()
-					b.Init() //reinit
-					continue
-				}
-			}
-
-			//process if it is a definition update
-			_, isDefUpdate := event.(DefUpdateEvent)
-			if isDefUpdate {
-				logging.Info("builder-worker", "Now updating definition")
-				time.Sleep(time.Millisecond * 150)
-				for b.EventsToProcess.Dequeue() != nil {
-				} //delete all of the existing items in the queue
-				b.updateDefinition(event.(DefUpdateEvent).Def, event.(DefUpdateEvent).JsonData)
-				b.Lock.Unlock()
-				b.Init() //reinit
+				b.processOutOfBandEvent(event.(string))
 				continue
 			}
 
-			//process if it is a run
+			_, isDefUpdate := event.(DefUpdateEvent)
+			if isDefUpdate {
+				b.processDefinitionUpdateEvent(event.(DefUpdateEvent))
+				continue
+			}
+
+			//only remaining option - event is a run
 			run := event.(*Run)
-			logging.Info("builder-worker", "Got Run to execute from queue: ", run.Definition.Name)
-			go b.ledBeaconFlashLoop(run)
-			go b.ledFlasherLoop(run)
-			index, _ := b.findDefinitionIndex(run.Definition.Name)
-			run.SetupForRun()
-			b.publishEvent(EVT_RUN_STARTED, run, index)
-			b.CurrentRun = run
-			b.Lock.Unlock()
-
-			run.Run(b, index)
-
-			b.Lock.Lock()
-			b.CompletedBacklog.Enqueue(run)
-			run.Definition.LastVersion = run.Version
-			run.Definition.LastRunTime = int64(run.EndTime.Sub(run.StartTime).Seconds() * 1000)
-			run.Definition.Flush()
-			b.publishEvent(EVT_RUN_FINISHED, run, index)
-			b.Lock.Unlock()
-
-		} else {
-			b.Lock.Unlock()
+			b.executeRun(run)
 		}
+		b.Lock.Unlock()
 	}
 }
 
@@ -260,14 +271,14 @@ func (b *Builder) ledFlasherLoop(run *Run) {
 	}
 }
 
-//Returns a list of recent runs.
+// GetHistory returns a list of recent runs.
 func (b *Builder) GetHistory() []interface{} {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
 	return b.CompletedBacklog.Values()
 }
 
-//returns the index of the currently running definition, and the currently running run. Returns -1, nil if nothing is running.
+// GetStatus returns the index of the currently running definition, and the currently running run. Returns -1, nil if nothing is running.
 func (b *Builder) GetStatus() (currIndex int, currentRun *Run) {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
@@ -283,7 +294,7 @@ func (b *Builder) GetStatus() (currIndex int, currentRun *Run) {
 
 //code for events subscription/publishing system is in builder_events.go
 
-//Creates a new builder object. Run in package init(), so keep this method simple.
+// New creates a new builder object. Run in package init(), so keep this method simple.
 func New() *Builder {
 	out := &Builder{
 		CurrentRun:        nil,
