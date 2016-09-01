@@ -30,6 +30,28 @@
         dataService.saveDefinitionFile($scope.defID, self.editor.getValue());
       }
 
+
+
+
+      self.cancelPressed = function(){
+        $('#miniDocumentationModal').modal('hide');
+      }
+      $scope.openDocs = function(){
+        $('#miniDocumentationModal').modal({//setup button callbacks + general parameters
+          closable: true,
+          autofocus: true,
+          dimmerSettings: {
+            closable: false,
+            opacity: 0,
+          },
+          onDeny: self.cancelPressed
+        });
+        $('#miniDocumentationModal').modal('show');
+        $('#documentation-defedit').accordion();
+      }
+
+
+
       dataService.getDefinitionFile($routeParams.defID, function(data){
         console.log(data);
         self.editor.setValue(data, -1);

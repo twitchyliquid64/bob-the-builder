@@ -1,4 +1,4 @@
-<div class="ui container " style="padding-top: 18px;">
+<div class="ui container " id="def-edit-container" style="padding-top: 18px;">
 
   <h1 class="ui header">
     <i class="icon write large" ></i>
@@ -22,24 +22,29 @@
 
    </style>
 
-   <div style="flex-grow: 1;"></div>
-   <div class="ui buttons" style="flex-grow: 0;">
-     <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="back()">
-       <i class="right undo icon"></i>
-       Back to run
-     </button>
-     <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="save()">
-       <i class="right save icon"></i>
-       Save
-     </button>
-   </div>
+ <div style="flex-grow: 1;"></div>
+ <div class="three ui buttons" style="flex-grow: 0;">
+   <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="back()">
+     <i class="right undo icon"></i>
+     Back to run
+   </button>
+   <button class="ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="openDocs()">
+     <i class="right list layout icon"></i>
+     Documentation
+   </button>
+   <button class="positive ui icon button medium" ng-class="{loading: buildQueued||running, disabled: buildQueued||running}" ng-click="save()">
+     <i class="right save icon"></i>
+     Save
+   </button>
+ </div>
 
   <div id="editorContainer" style="position: relative;">
-    <pre id="editor">
+    <pre id="editor" style="z-index: 5;">
     </pre>
+  </div>
 
-    <div class="ui dimmer" ng-class="{active: loading}">
-      <div class="ui loader"></div>
-    </div>
+
+  <div class="ui dimmer" ng-class="{active: loading}">
+    <div class="ui loader"></div>
   </div>
 </div>

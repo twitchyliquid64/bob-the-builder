@@ -33,7 +33,7 @@
     </div>
 
     <div class="ui grid">
-      <div class="four wide column">
+      <div class="four wide column" id="sidebar">
         {!{template "topnav" .}!}
       </div>
       <div class="eleven wide column">
