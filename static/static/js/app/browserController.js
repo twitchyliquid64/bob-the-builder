@@ -85,6 +85,11 @@
         }
       }
 
+      $scope.download = function(){
+        var URL = "/api/file/download/workspace?path=" + $scope.tree.currentNode.id.replace(/^\/build\//, '');
+        var win = window.open(URL, '_blank');
+      }
+
       $scope.newFile = function(){
         var fileName = prompt("Please enter the name of the new file.", "");
         if (fileName == null || fileName == ""){

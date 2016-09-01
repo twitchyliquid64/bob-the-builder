@@ -11,6 +11,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"io"
 
 	"github.com/hoisie/web"
 )
@@ -72,6 +73,34 @@ func getBaseFileHandler(ctx *web.Context) {
 	}
 }
 
+
+func downloadWorkspaceFileHandler(ctx *web.Context){
+	relPathUnsafe := ctx.Params["path"]
+
+	pwd, _ := os.Getwd()
+	baseFolder := path.Join(pwd, builder.BUILD_TEMP_FOLDER_NAME)
+
+	safe, absPath := sanitizePath(baseFolder, relPathUnsafe)
+	if safe {
+		fi, err := os.Open(absPath)
+    if err != nil {
+			logging.Error("web-file-api", "downloadWorkspaceFileHandler() read error: " + err.Error())
+			ctx.Abort(403, string(fileError(err.Error())))
+			return
+    }
+		defer fi.Close()
+
+		ctx.SetHeader("Content-Disposition", "attachment; filename=\"" + path.Base(absPath) + "\"", true)
+		io.Copy(ctx.ResponseWriter, fi)
+	} else {
+		//attempted LFI attack - return error
+		logging.Error("web-file-api", "downloadWorkspaceFileHandler() rejected request for: "+relPathUnsafe)
+		ctx.Abort(403, "only base files are accessible")
+		return
+	}
+}
+
+
 func saveBaseFileHandler(ctx *web.Context) {
 	relPathUnsafe := ctx.Params["path"]
 
@@ -115,14 +144,14 @@ func getBrowserFilesData(ctx *web.Context) {
 	baseDTO, err := iterateFolderToTreeviewJSON(baseFolder, pwd)
 	if err != nil {
 		logging.Error("web-definitions-api", err)
-		ctx.Abort(500, "{error: '"+err.Error()+"'}")
+		ctx.Abort(500, string(fileError(err.Error())))
 		return
 	}
 	defFolder := path.Join(pwd, builder.DEFINITIONS_FOLDER_NAME)
 	defDTO, err := iterateFolderToTreeviewJSON(defFolder, pwd)
 	if err != nil {
 		logging.Error("web-definitions-api", err)
-		ctx.Abort(500, "{error: '"+err.Error()+"'}")
+		ctx.Abort(500, string(fileError(err.Error())))
 		return
 	}
 	buildFolder := path.Join(pwd, builder.BUILD_TEMP_FOLDER_NAME)
@@ -138,7 +167,7 @@ func getBrowserFilesData(ctx *web.Context) {
 	})
 	if err != nil {
 		logging.Error("web-definitions-api", err)
-		ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
+		ctx.ResponseWriter.Write(fileError(err.Error()))
 	} else {
 		ctx.ResponseWriter.Write(b)
 	}
@@ -218,7 +247,7 @@ func newFolderHandler(ctx *web.Context) {
 	if safe {
 		err := os.Mkdir(absPath, 0770)
 		if err != nil {
-			ctx.Abort(200, "{\"error\": \""+err.Error()+"\", \"success\": false}")
+			ctx.Abort(200, string(fileError(err.Error())))
 			return
 		}
 		ctx.Abort(200, "{\"success\": true}")
@@ -238,13 +267,22 @@ func newFileHandler(ctx *web.Context) {
 	if safe {
 		f, err := os.OpenFile(absPath, os.O_EXCL|os.O_CREATE, 0770)
 		if err != nil {
-			ctx.Abort(200, "{\"error\": \""+err.Error()+"\", \"success\": false}")
+			ctx.Abort(200, string(fileError(err.Error())))
 			f.Close()
 			return
 		}
 		ctx.Abort(200, "{\"success\": true}")
 		logging.Info("web-file-api", "Created new folder: "+absPath)
 	}
+}
+
+func fileError(error string)[]byte{
+	out := map[string]interface{}{
+		"error": error,
+		"success": false,
+	}
+	b, _ := json.Marshal(&out)
+	return b
 }
 
 func deleteHandler(ctx *web.Context) {
@@ -259,7 +297,7 @@ func deleteHandler(ctx *web.Context) {
 	if safe {
 		err := os.RemoveAll(absPath)
 		if err != nil {
-			ctx.Abort(200, "{\"error\": \""+err.Error()+"\", \"success\": false}")
+			ctx.Abort(200, string(fileError(err.Error())))
 			return
 		}
 		ctx.Abort(200, "{\"success\": true}")
