@@ -136,6 +136,7 @@ All structures must have at minimum the following attributes:
 | *text*         | adds a text input to the workflow. You may also specify a placeholder.                                               |
 | *select*       | adds a dropdown with configurable items.                                                                             |
 | *branchselect* | adds a dropdown which is automatically populated with a list of branches in a remote git repository.                 |
+| *file* | _Not yet built._ adds a file upload field which will place the contents of the given file in a file on the workspace.                 |
 
 #### Example structures
 
@@ -174,6 +175,12 @@ All structures must have at minimum the following attributes:
   "label": "Backup build artifacts",
   "varname": "backup",
   "default": true
+},
+{
+  "type": "file",
+  "label": "Upload configuration",
+  "varname": "file_input_filename",
+  "filename": "input.json"
 }
 ```
 
@@ -183,6 +190,7 @@ All structures must have at minimum the following attributes:
 
 - [ ] Implement remaining actions in the browser
 - [x] Rename browser to MDS browser
-- [X] Fix CR bug in run output
+- [x] Fix CR bug in run output
+- [ ] Implement new file field
 - [ ] Better / more documentation
-- [ ] Some (minimal) documentation on the edit definition pages
+- [ ] Quick-reference documentation for writing definition files
