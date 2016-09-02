@@ -36,6 +36,7 @@ type BuildParam struct{
   Type string `json:"type"`
   Label string `json:"label"`
   Varname string `json:"varname"`
+  Filename string `json:"filename"`
   Placeholder string `json:"placeholder,omitempty"`
   Items map[string]interface{} `json:"items,omitempty"`
   Default interface{} `json:"default"`

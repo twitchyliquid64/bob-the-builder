@@ -4,6 +4,9 @@ import (
   "bobthebuilder/logging"
   "sync"
   "time"
+  "io/ioutil"
+  "os"
+  "path"
 )
 
 const STATUS_NOT_YET_RUN = -42
@@ -85,7 +88,7 @@ func (r *Run)Run(builder *Builder, defIndex int){
 
 //iterate through given parameters and set them to default values.
 func (r *Run)SetDefaultVariables(overrides map[string]string){
-  logging.Info("run-variables-setdefaults", overrides)
+  //logging.Info("run-variables-setdefaults", overrides)
 
   for _, parameter := range r.Definition.Params {
     if parameter.Varname == ""{
@@ -94,16 +97,33 @@ func (r *Run)SetDefaultVariables(overrides map[string]string){
 
     if overrides != nil{
       if _, ok := overrides[parameter.Varname]; ok{
-        r.buildVariables[parameter.Varname] = overrides[parameter.Varname]
+        if parameter.Type == "file" {
+          r.buildVariables[parameter.Varname] = parameter.Filename
+          pwd, _ := os.Getwd()
+
+          //make sure build dir exists
+          if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
+            os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 0777)
+          }
+
+          err := ioutil.WriteFile(path.Join(pwd, BUILD_TEMP_FOLDER_NAME, parameter.Filename), []byte(overrides[parameter.Varname]), 0777)
+          if err != nil {
+            logging.Error("run-variables-setdefaults", "Could not save file parameter " + parameter.Varname + ": " + err.Error())
+          }
+        } else {
+          r.buildVariables[parameter.Varname] = overrides[parameter.Varname]
+        }
         continue
       }
     }
 
+    //if we are at this stage no build parameter was specified. Populate with defaults...
     var ok bool
     switch parameter.Type {
     case "check":
       r.buildVariables[parameter.Varname] = interfaceToStringyBoolean(parameter.Default)
-
+    case "file":
+      r.buildVariables[parameter.Varname] = ""
     case "select":
       fallthrough
     case "branchselect":
