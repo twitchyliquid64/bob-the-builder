@@ -73,7 +73,14 @@
         $scope.loadingParams = false;
       }
 
-
+      $scope.fileChange = function(event){
+        var files = event.target.files;
+        var reader = new FileReader();
+        reader.readAsBinaryString(files[0]);
+        reader.onload = function(e){
+            $scope.defObj.params[parseInt(event.target.id.split("-")[2])].data = e.target.result;
+        }
+      }
 
       //returns the namespace of user-selected build parameters. Defaults are set for untouched fields.
       self.getBuildParamsValues = function(){
@@ -83,6 +90,9 @@
           {
             if ($scope.defObj.params[i].type == "text"){
               parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default;
+            }
+            if ($scope.defObj.params[i].type == "file"){
+              parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].data;
             }
             if ($scope.defObj.params[i].type == "check"){
               parameters[$scope.defObj.params[i].varname] = $scope.defObj.params[i].default ? "true" : "false";
@@ -118,5 +128,17 @@
         $('#runOptionsModal').modal('hide');
       }
     }
+
+
+
+    angular.module('baseApp').directive('fileChange', function() {
+      return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+          var onChangeHandler = scope.$eval(attrs.fileChange);
+          element.bind('change', onChangeHandler);
+        }
+      };
+    });
 
 })();

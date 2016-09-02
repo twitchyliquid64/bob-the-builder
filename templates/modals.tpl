@@ -106,6 +106,11 @@
           </div>
         </div>
 
+        <div ng-if="param.type == 'file'" class="field" style="margin-top: 7px;">
+          <label>{{param.label}}</label>
+          <input type="file" name="{{param.varname}}" id="{{'runopt-field-' + $index}}" file-change="fileChange">
+        </div>
+
       </div>
       <p ng-if="defObj.params == null || defObj.params == undefined || defObj.params.length == 0">No run parameters exist in the build definition.</p>
     </div>
