@@ -48,9 +48,17 @@
         }
       }
 
+      $scope.canNewDefFileSelection = function(){
+        if ($scope.tree.currentNode && $scope.tree.currentNode.type == 'folder'){
+          return ($scope.tree.currentNode.id.match(/\/definitions/g) || []).length;
+        }else {
+          return false;
+        }
+      }
+
       $scope.canNewFileSelection = function(){
         if ($scope.tree.currentNode && $scope.tree.currentNode.type == 'folder'){
-          return !($scope.tree.currentNode.id.match(/\/build/g) || []).length;
+          return ($scope.tree.currentNode.id.match(/\/base/g) || []).length;
         }else {
           return false;
         }
@@ -111,6 +119,30 @@
           console.log(response);
         });
       }
+
+      ///api/file/new/definition
+      $scope.newDefinition = function(){
+        var fileName = prompt("Please enter the name of the new definition file.", "");
+        if (fileName == null || fileName == ""){
+          return;
+        }
+
+        console.log($scope.tree.currentNode.id + "/" + fileName);
+        $http.get("/api/file/new/definition?path=" + $scope.tree.currentNode.id + "/" + fileName, {}).then(function (response) {
+          console.log(response);
+          if (response.data.success){
+            var newNode = { "label" : fileName, "id" : $scope.tree.currentNode.id + "/" + fileName, "type": "file", "media": "JSON definition file"};
+            if ($scope.tree.currentNode.children){
+              $scope.tree.currentNode.children[$scope.tree.currentNode.children.length] = newNode;
+            } else {
+              $scope.tree.currentNode.children = [newNode];
+            }
+          }
+        }, function errorCallback(response) {
+          console.log(response);
+        });
+      }
+
 
       $scope.newFolder = function(){
         var folderName = prompt("Please enter the name of the new folder.", "");

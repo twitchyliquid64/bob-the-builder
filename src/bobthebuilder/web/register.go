@@ -41,6 +41,7 @@ func registerApiHandlers() {
 	web.Get("/api/file/new/folder", newFolderHandler, config.All().Web.Domain)
 	web.Get("/api/file/delete", deleteHandler, config.All().Web.Domain)
 	web.Get("/api/file/new/file", newFileHandler, config.All().Web.Domain)
+	web.Get("/api/file/new/definition", newDefFileHandler, config.All().Web.Domain)
 	web.Get("/api/file/download/workspace", downloadWorkspaceFileHandler, config.All().Web.Domain)
 	web.Post("/api/file/definitions/save", saveDefinitionJSONHandler, config.All().Web.Domain)
 	web.Post("/api/file/base/save", saveBaseFileHandler, config.All().Web.Domain)

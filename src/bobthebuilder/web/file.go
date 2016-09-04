@@ -6,12 +6,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
 	"strings"
-	"io"
 
 	"github.com/hoisie/web"
 )
@@ -73,8 +73,7 @@ func getBaseFileHandler(ctx *web.Context) {
 	}
 }
 
-
-func downloadWorkspaceFileHandler(ctx *web.Context){
+func downloadWorkspaceFileHandler(ctx *web.Context) {
 	relPathUnsafe := ctx.Params["path"]
 
 	pwd, _ := os.Getwd()
@@ -83,14 +82,14 @@ func downloadWorkspaceFileHandler(ctx *web.Context){
 	safe, absPath := sanitizePath(baseFolder, relPathUnsafe)
 	if safe {
 		fi, err := os.Open(absPath)
-    if err != nil {
-			logging.Error("web-file-api", "downloadWorkspaceFileHandler() read error: " + err.Error())
+		if err != nil {
+			logging.Error("web-file-api", "downloadWorkspaceFileHandler() read error: "+err.Error())
 			ctx.Abort(403, string(fileError(err.Error())))
 			return
-    }
+		}
 		defer fi.Close()
 
-		ctx.SetHeader("Content-Disposition", "attachment; filename=\"" + path.Base(absPath) + "\"", true)
+		ctx.SetHeader("Content-Disposition", "attachment; filename=\""+path.Base(absPath)+"\"", true)
 		io.Copy(ctx.ResponseWriter, fi)
 	} else {
 		//attempted LFI attack - return error
@@ -99,7 +98,6 @@ func downloadWorkspaceFileHandler(ctx *web.Context){
 		return
 	}
 }
-
 
 func saveBaseFileHandler(ctx *web.Context) {
 	relPathUnsafe := ctx.Params["path"]
@@ -226,11 +224,27 @@ func iterateFolderToTreeviewJSON(absPath string, base string) (out TreeviewFileD
 }
 
 func getMediaType(path string) string {
+	path = strings.ToLower(path)
 	if strings.HasSuffix(path, ".json") {
 		return "JSON"
 	}
 	if strings.HasSuffix(path, ".sh") {
 		return "Unix script"
+	}
+	if strings.HasSuffix(path, ".py") {
+		return "Python script"
+	}
+	if strings.HasSuffix(path, ".c") {
+		return "C source"
+	}
+	if strings.HasSuffix(path, ".go") {
+		return "Golang source"
+	}
+	if strings.HasSuffix(path, ".png") {
+		return "image/png"
+	}
+	if strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".jpeg") {
+		return "image/jpg"
 	}
 	return "-"
 }
@@ -268,17 +282,57 @@ func newFileHandler(ctx *web.Context) {
 		f, err := os.OpenFile(absPath, os.O_EXCL|os.O_CREATE, 0770)
 		if err != nil {
 			ctx.Abort(200, string(fileError(err.Error())))
-			f.Close()
 			return
 		}
+		f.Close()
 		ctx.Abort(200, "{\"success\": true}")
-		logging.Info("web-file-api", "Created new folder: "+absPath)
+		logging.Info("web-file-api", "Created new file: "+absPath)
 	}
 }
 
-func fileError(error string)[]byte{
+func newDefFileHandler(ctx *web.Context) {
+	relPathUnsafe := ctx.Params["path"]
+	if !strings.HasSuffix(relPathUnsafe, builder.DEFINITIONS_FILE_SUFFIX) {
+		relPathUnsafe = relPathUnsafe + builder.DEFINITIONS_FILE_SUFFIX
+	}
+	if strings.HasPrefix(relPathUnsafe, "/definitions/") {
+		relPathUnsafe = strings.Replace(relPathUnsafe, "/definitions", builder.DEFINITIONS_FOLDER_NAME, 1)
+	}
+
+	pwd, _ := os.Getwd()
+
+	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	if safe {
+		f, err := os.OpenFile(absPath, os.O_EXCL|os.O_CREATE|os.O_WRONLY, 0770)
+		if err != nil {
+			ctx.Abort(200, string(fileError(err.Error())))
+			return
+		}
+		_, err = f.Write([]byte(`
+			{
+			  "name": "New Definition",
+			  "icon": "rocket",
+			  "steps": []
+			}
+			`))
+		if err != nil {
+			ctx.Abort(200, string(fileError(err.Error())))
+			return
+		}
+		err = f.Close()
+		if err != nil {
+			ctx.Abort(200, string(fileError(err.Error())))
+			return
+		}
+		ctx.Abort(200, "{\"success\": true}")
+		logging.Info("web-file-api", "Created new definition file: "+absPath)
+		builder.GetInstance().EnqueueReloadEvent()
+	}
+}
+
+func fileError(error string) []byte {
 	out := map[string]interface{}{
-		"error": error,
+		"error":   error,
 		"success": false,
 	}
 	b, _ := json.Marshal(&out)
