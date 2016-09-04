@@ -62,7 +62,7 @@
           $scope.loading = false;
         });
       } else {
-        $http.get("http://localhost:8010/api/definition/getIdByName?fname="+$routeParams.name).then(function (response) {
+        $http.get("/api/definition/getIdByName?fname="+$routeParams.name).then(function (response) {
           $location.path("/edit/definition/" + response.data + "/" + $routeParams.name);
         }, function errorCallback(response) {
           console.log(response);
