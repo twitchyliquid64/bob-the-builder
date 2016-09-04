@@ -151,6 +151,17 @@ func (b *Builder) GetDefinition(definitionName string) *BuildDefinition {
 	return nil
 }
 
+func (b *Builder) GetDefinitionByFilename(fileName string) int {
+	b.Lock.Lock()
+	defer b.Lock.Unlock()
+	for i, def := range b.Definitions {
+		if path.Base(def.AbsolutePath) == fileName {
+			return i
+		}
+	}
+	return -1
+}
+
 //returns the array index of the build definition with the given name.
 //returns DefNotFoundErr if it does not exist.
 //caller should hold b.Lock.

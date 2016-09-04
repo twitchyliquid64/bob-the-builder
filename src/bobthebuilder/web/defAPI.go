@@ -123,3 +123,8 @@ func enqueueReloadHandler(ctx *web.Context) {
 	time.Sleep(time.Millisecond * 120)
 	builder.GetInstance().EnqueueReloadEvent()
 }
+
+func getDefIndexByIdHandler(ctx *web.Context) {
+	def := builder.GetInstance().GetDefinitionByFilename(ctx.Params["fname"])
+	ctx.ResponseWriter.Write([]byte(strconv.Itoa(def)))
+}
