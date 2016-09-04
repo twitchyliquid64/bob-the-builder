@@ -200,6 +200,6 @@ All structures must have at minimum the following attributes:
 - [ ] Implement remaining actions in the browser
 - [x] Rename browser to MDS browser
 - [x] Fix CR bug in run output
-- [ ] Implement new file field
-- [ ] Better / more documentation
-- [ ] Quick-reference documentation for writing definition files
+- [x] Implement new file field
+- [x] Better / more documentation
+- [x] Quick-reference documentation for writing definition files

@@ -47,7 +47,11 @@
           onDeny: self.cancelPressed
         });
         $('#miniDocumentationModal').modal('show');
-        $('#documentation-defedit').accordion();
+        $('#documentation-defedit').accordion({
+          onOpen: function(){
+            $('#miniDocumentationModal').modal('refresh');
+          }
+        });
       }
 
 

@@ -123,7 +123,7 @@
         }else if (step.type == 'TAR_TO_S3'){
           step.files = step.files || [];
           step.directories = step.directories || [];
-          return "" + step.files.length + " candidate file(s), " + step.directories.length + " candidate directories";
+          return "" + step.files.length + " candidate file(s), " + step.directories.length + " candidate dirs";
         }else {
           return step.command;
         }
