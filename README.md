@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/twitchyliquid64/bob-the-builder.svg?branch=master)](https://travis-ci.org/twitchyliquid64/bob-the-builder)
+
 ### What is bob the builder? ###
 
 Bob-the-builder adds a frontend and framework around your scripts. Whilst intended for automating builds, it can be used to assist the running of any UNIX script or program.
