@@ -116,6 +116,10 @@ func enqueueBuildHandlerWithOptions(ctx *web.Context) {
 		data.Tags = nil
 	}
 
+	if data.Version == "" {
+		data.Version = calcNextVersionNumber(data.Name)
+	}
+
 	builder.GetInstance().EnqueueBuildEventEx(data.Name, data.Tags, data.Version, data.IsPhysDisabled, data.Params)
 }
 
