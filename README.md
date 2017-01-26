@@ -19,6 +19,7 @@ Bob-the-builder adds a frontend and framework around your scripts. Whilst intend
 * Install Go
 * Get a copy of this repository
 * 'go build'
+* Make sure the 'definitions' and 'bases' folder exist in your working directory.
 * './bobthebuilder' or 'bobthebuilder.exe' (make sure config.json is in your working directory)
 * Follow the steps below to setup your first build definition
 
@@ -147,7 +148,7 @@ All structures must have at minimum the following attributes:
 | *text*         | adds a text input to the workflow. You may also specify a placeholder.                                               |
 | *select*       | adds a dropdown with configurable items.                                                                             |
 | *branchselect* | adds a dropdown which is automatically populated with a list of branches in a remote git repository.                 |
-| *file* | _Not yet built._ adds a file upload field which will place the contents of the given file in a file on the workspace.                 |
+| *file*         | adds a file upload field which will place the contents of the given file in a file on the workspace.                 |
 
 #### Example structures
 
@@ -199,7 +200,7 @@ All structures must have at minimum the following attributes:
 ### Todo
 
 
-- [ ] Add more valid tags
+- [x] Add more valid tags
 - [ ] Support parameter customizations for CRON jobs
 - [ ] Support sending an email on success / failure
-- [ ] cronController to ingest crons-loaded event and refresh datasource.
+- [x] cronController to ingest crons-loaded event and refresh datasource.

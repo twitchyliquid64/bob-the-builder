@@ -65,11 +65,31 @@
         setTimeout(function(){self.init();}, 200);
       }
 
+      self.buildCronUpdatedListenerFactory = function(){
+        return $rootScope.$on('crons-loaded', function(event, args) {
+          setTimeout(function(){self.init();}, 200);
+          if (dataService.getCrons() == "null"){
+            $scope.crons = [];
+          } else {
+            $scope.crons = dataService.getCrons() || [];
+          }
+        });
+      }
+
+      self.cronUpdatedListener = self.buildCronUpdatedListenerFactory();
+
       $scope.$on('$routeChangeSuccess', function() { //apparently routeParams isnt always immediately populated
         if ($location.path().startsWith("/cron")){
           $('#cron-accordion').accordion();
           setTimeout(function(){self.init();}, 200);
-          $scope.crons = dataService.getCrons();
+          if (dataService.getCrons() == "null"){
+            $scope.crons = [];
+          } else {
+            $scope.crons = dataService.getCrons() || [];
+          }
+
+          self.cronUpdatedListener();
+          self.cronUpdatedListener = self.buildCronUpdatedListenerFactory();
         }
       });
     }

@@ -369,6 +369,22 @@
             <div class="ui purple empty circular label"></div>
             Backup
           </div>
+          <div class="item" data-value="build">
+            <div class="ui orange empty circular label"></div>
+            Build
+          </div>
+          <div class="item" data-value="deploy">
+            <div class="ui blue empty circular label"></div>
+            Deploy
+          </div>
+          <div class="item" data-value="batch">
+            <div class="ui teal empty circular label"></div>
+            Batch
+          </div>
+          <div class="item" data-value="verify">
+            <div class="ui pink empty circular label"></div>
+            Verify
+          </div>
         </div>
       </div>
     </div>
