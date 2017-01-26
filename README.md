@@ -199,9 +199,7 @@ All structures must have at minimum the following attributes:
 ### Todo
 
 
-- [ ] Implement remaining actions in the browser
-- [x] Rename browser to MDS browser
-- [x] Fix CR bug in run output
-- [x] Implement new file field
-- [x] Better / more documentation
-- [x] Quick-reference documentation for writing definition files
+- [ ] Add more valid tags
+- [ ] Support parameter customizations for CRON jobs
+- [ ] Support sending an email on success / failure
+- [ ] cronController to ingest crons-loaded event and refresh datasource.
