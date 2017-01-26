@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/robfig/cron"
 	"github.com/stianeikeland/go-rpio"
 	ring "github.com/zfjagann/golang-ring"
 )
@@ -32,6 +33,8 @@ type Builder struct {
 	EventsToProcess   *ring.Ring
 	TriggerWorkerChan chan bool
 	CompletedBacklog  *ring.Ring
+
+	Cron *cron.Cron
 
 	//subscribers to events
 	subscribers map[chan BuilderEvent]bool
@@ -61,10 +64,26 @@ func (b *Builder) loadDefinitionFile(fpath string) error {
 	return nil
 }
 
+// CronEntries returns a list of Cron entries setup on the system.
+func (b *Builder) CronEntries()[]CronRecord {
+	return readCron()
+}
+
+// UpdateCron updates cron entries.
+func (b *Builder) UpdateCron(data []CronRecord) {
+	updateCron(data)
+	b.EnqueueReloadEvent()
+}
+
 // Init (Re)load all build definitions.
 func (b *Builder) Init() error {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
+
+	b.Cron.Stop()
+	b.Cron = cron.New()
+	initCron(b.Cron, b)
+	b.Cron.Start()
 
 	b.Definitions = []*BuildDefinition{} //clear our definitions
 	b.CurrentRun = nil
@@ -313,6 +332,7 @@ func New() *Builder {
 		TriggerWorkerChan: make(chan bool, MAX_EVENT_QUEUE_SIZE),
 		CompletedBacklog:  &ring.Ring{},
 		subscribers:       map[chan BuilderEvent]bool{},
+		Cron: 						 cron.New(),
 	}
 	out.EventsToProcess.SetCapacity(MAX_EVENT_QUEUE_SIZE)
 	out.CompletedBacklog.SetCapacity(MAX_HISTORY_BACKLOG_SIZE)

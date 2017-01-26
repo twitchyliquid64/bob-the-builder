@@ -31,6 +31,9 @@
       <a class="item" ng-class="{active: currentlyBrowser}" ng-click="browser()">
         MDS Browser
       </a>
+      <a class="item" ng-class="{active: currentlyCron}" ng-click="cron()">
+        Cron entries
+      </a>
 
 
       <div class="item" id="connStatusText">

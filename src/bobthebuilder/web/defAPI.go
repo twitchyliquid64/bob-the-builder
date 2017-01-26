@@ -24,6 +24,33 @@ func getDefinitionHandler(ctx *web.Context) {
 	}
 }
 
+func getCronHandler(ctx *web.Context) {
+	out := builder.GetInstance().CronEntries()
+	b, err := json.Marshal(out)
+	if err != nil {
+		logging.Error("web-cron-api", err)
+		ctx.ResponseWriter.Write([]byte("{error: '" + err.Error() + "'}"))
+	} else {
+		//logging.Info("web-definitions-api", string(b))
+		ctx.ResponseWriter.Write(b)
+	}
+}
+
+func updateCronHandler(ctx *web.Context) {
+	decoder := json.NewDecoder(ctx.Request.Body)
+	var data []builder.CronRecord
+	err := decoder.Decode(&data)
+	logging.Info("debug", data)
+	if err != nil {
+		logging.Error("web-cron-api", "updateCronHandler() failed to decode JSON:", err)
+		ctx.Abort(500, "JSON error")
+		return
+	}
+
+	builder.GetInstance().UpdateCron(data)
+}
+
+
 func getHistoryHandler(ctx *web.Context) {
 	out := builder.GetInstance().GetHistory()
 	b, err := json.Marshal(out)

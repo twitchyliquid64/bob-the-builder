@@ -9,6 +9,7 @@
     GET_DEF_FILE_URL = "/api/file/definitions"
     GET_FILE_URL = "/api/file/base"
     GET_ALL_FILES_URL = "/api/files"
+    GET_CRON_URL = "/api/cron"
 
 
     function dataService($rootScope, $http, $timeout, eventService, $window){
@@ -26,6 +27,7 @@
       self.loadingMessage = "Loading build data";
       self.reloadQueued = false;
       self.serverStats = {prettyMemUsage: "-"};
+      self.crons = [];
 
 
 
@@ -36,6 +38,9 @@
       }
       self.getDefinitions = function(){
         return self.buildDefinitions;
+      }
+      self.getCrons = function(){
+        return self.crons;
       }
       self.getHistory = function(){
         return self.history;
@@ -64,6 +69,18 @@
           self._error();
         });
       }
+
+      self.updateCronEntries = function(crons){
+        console.log("updateCronEntries: ", crons);
+        if (  self.reloadQueued)return;
+
+        $http.post("/api/queue/cron", crons).then(function (response) {
+        }, function errorCallback(response) {
+          console.log(response);
+          self._error();
+        });
+      }
+
       self.requestUpdateDefinitionValuesFromServer = function(){
         $http.get(GET_DEF_URL, {}).then(function (response) {
           self.buildDefinitions = response.data;
@@ -129,6 +146,18 @@
         });
       }
 
+      self._loadCrons = function(){//called at end of factory (init)
+        self._incrementLoadPendingCounter();
+        $http.get(GET_CRON_URL, {}).then(function (response) {
+          self.crons = response.data;
+          $rootScope.$broadcast('crons-loaded');
+          self._decrementLoadPendingCounter();
+        }, function errorCallback(response) {
+          console.log(response);
+          self._decrementLoadPendingCounter();
+          self._error();
+        });
+      }
 
       self._loadDefinitions = function(){//called at end of factory (init)
         self._incrementLoadPendingCounter();
@@ -254,6 +283,7 @@
       self._loadDefinitions();
       self._loadHistory();
       self._loadStatus();
+      self._loadCrons();
       return self;
     };
 

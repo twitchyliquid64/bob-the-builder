@@ -10,6 +10,7 @@
     <script src="/static/js/app/editDefController.js"></script>
     <script src="/static/js/app/editFileController.js"></script>
     <script src="/static/js/app/browserController.js"></script>
+    <script src="/static/js/app/cronController.js"></script>
     <script src="/static/js/moment.min.js"></script>
     <script src="/static/js/flash.js"></script>
 

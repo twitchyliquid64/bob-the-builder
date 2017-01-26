@@ -47,6 +47,9 @@ func registerApiHandlers() {
 	web.Post("/api/file/base/save", saveBaseFileHandler, config.All().Web.Domain)
 
 	web.Post("/api/queue/newWithOptions", enqueueBuildHandlerWithOptions, config.All().Web.Domain)
+
+	web.Get("/api/cron", getCronHandler, config.All().Web.Domain)
+	web.Post("/api/queue/cron", updateCronHandler, config.All().Web.Domain)
 }
 
 func registerCoreTemplates() {

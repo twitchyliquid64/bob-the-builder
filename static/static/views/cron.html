@@ -1,0 +1,90 @@
+<div class="ui container " style="padding-top: 18px;">
+
+  <h1 class="ui header">
+    <div class="content">
+      Cron entries
+    </div>
+  </h1>
+
+
+  <div>
+    <div class="ui styled fluid accordion" id="cron-accordion">
+      <div ng-repeat="entry in crons track by $index">
+        <div class="title">
+          <i class="dropdown icon"></i>
+          <div class="ui label"><i class="code icon"></i> {{entry.TargetDefinition}}</div> - {{entry.Spec}}
+        </div>
+        <div class="content">
+          <form class="ui form">
+            <div class="field">
+              <label>Target Job</label>
+              <div class="ui fluid search selection dropdown" id="{{'target-definition-select-' + $index}}">
+                <input type="hidden" name="target-definition-field-1">
+                <i class="dropdown icon"></i>
+                <div class="default text">{{entry.TargetDefinition}}</div>
+                <div class="menu">
+                  <div class="item" data-value="{{def.name}}" ng-repeat="def in dataService.getDefinitions()">
+                    {{def.name}}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>TimeSpec</label>
+              <input type="text" ng-change="setDirty()" name="timespec" ng-model="entry.Spec" placeholder="Time Spec (ie: @every 30m10s)">
+            </div>
+
+            <div class="field">
+              <label>Tags</label>
+              <div class="ui fluid multiple search selection dropdown" style="border: 0px;" id="{{'cron-tagsDropdown-' + $index}}">
+                <input name="tags" type="hidden">
+                <div class="default text"><i class="tags icon"></i> Add tags...</div>
+                <div class="menu">
+                  <div class="item" data-value="production">
+                    <div class="ui red empty circular label"></div>
+                    Production
+                  </div>
+                  <div class="item" data-value="staging">
+                    <div class="ui yellow empty circular label"></div>
+                    Staging
+                  </div>
+                  <div class="item" data-value="test">
+                    <div class="ui green empty circular label"></div>
+                    Test
+                  </div>
+                  <div class="item" data-value="backup">
+                    <div class="ui purple empty circular label"></div>
+                    Backup
+                  </div>
+                  <div class="item" data-value="cron">
+                    <div class="ui black empty circular label"></div>
+                    Cron
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Actions</label>
+              <button class="ui icon button" ng-click="delete($index)">
+                <i class="trash icon"></i>
+              </button>
+              <button class="ui icon button" ng-click="clone($index)">
+                <i class="copy icon"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <button class="ui primary button" style="margin-top: 8px;" ng-disabled="disabled()" ng-click="doSave()">
+      Save
+    </button>
+    <button class="ui icon button" ng-click="add()">
+      <i class="add icon"></i>
+    </button>
+  </div>
+
+</div>

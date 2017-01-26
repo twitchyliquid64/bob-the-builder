@@ -10,6 +10,7 @@
         $routeProvider.when('/edit/definition/:defID/:name', {templateUrl: '/static/views/editdef.html', controller: 'editDefController'});
         $routeProvider.when('/edit/file/:defID/:path*', {templateUrl: '/static/views/editbasefile.html', controller: 'editFileController'});
         $routeProvider.when("/documentation", {templateUrl: "/documentation/readme"});
+        $routeProvider.when("/cron", {templateUrl: "/static/views/cron.html", controller: 'cronController'});
         $routeProvider.when("/browser/:path*?", {templateUrl: "/static/views/browser.html", controller: 'browserController'});
     }]);
 })();

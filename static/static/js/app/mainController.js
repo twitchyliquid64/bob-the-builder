@@ -19,7 +19,9 @@
 
       $scope.browser = function(){
         $location.path("/browser/");
-
+      }
+      $scope.cron = function(){
+        $location.path("/cron");
       }
 
       $scope.navDashboard = function(){
@@ -35,6 +37,7 @@
         $scope.currentlyDocumentation = $location.path() == "/documentation";
         $scope.currentIndex = $routeParams.defID;
         $scope.currentlyBrowser = $location.path().startsWith("/browser/");
+        $scope.currentlyCron = $location.path().startsWith("/cron");
       }
       $scope.updateActiveStatus();
 
