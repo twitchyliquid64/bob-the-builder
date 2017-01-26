@@ -149,7 +149,7 @@
       self._loadCrons = function(){//called at end of factory (init)
         self._incrementLoadPendingCounter();
         $http.get(GET_CRON_URL, {}).then(function (response) {
-          self.crons = response.data;
+          self.crons = response.data || [];
           $rootScope.$broadcast('crons-loaded');
           self._decrementLoadPendingCounter();
         }, function errorCallback(response) {
