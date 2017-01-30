@@ -19,6 +19,7 @@ type CronRecord struct {
   TargetDefinition string
   Tags []string
   Params map[string]string
+  DisablePhys bool
 }
 
 func updateCron(data []CronRecord) {
@@ -64,7 +65,7 @@ func initCron(cronManager *cron.Cron, builder *Builder){
 func buildCronFunc(rec CronRecord, builder *Builder)func(){
   return func(){
     logging.Info("cron", "Starting job for ", rec.TargetDefinition)
-    builder.EnqueueBuildEventEx(rec.TargetDefinition, rec.Tags, calcNextVersionNumber(rec.TargetDefinition, builder), false, rec.Params)
+    builder.EnqueueBuildEventEx(rec.TargetDefinition, rec.Tags, calcNextVersionNumber(rec.TargetDefinition, builder), rec.DisablePhys, rec.Params)
   }
 }
 

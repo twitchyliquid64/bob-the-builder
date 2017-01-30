@@ -385,6 +385,10 @@
             <div class="ui pink empty circular label"></div>
             Verify
           </div>
+          <div class="item" data-value="manual">
+            <div class="ui cyan empty circular label"></div>
+            Manual
+          </div>
         </div>
       </div>
     </div>

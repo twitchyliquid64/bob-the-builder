@@ -17,6 +17,14 @@
         editor.session.setMode("ace/mode/json");
       if ($scope.path.substr($scope.path.length-3) === ".sh")
         editor.session.setMode("ace/mode/nix");
+      if ($scope.path.substr($scope.path.length-3) === ".py")
+        editor.session.setMode("ace/mode/python");
+      if ($scope.path.substr($scope.path.length-4) === ".css")
+        editor.session.setMode("ace/mode/css");
+      if ($scope.path.substr($scope.path.length-3) === ".js")
+        editor.session.setMode("ace/mode/javascript");
+      if ($scope.path.substr($scope.path.length-3) === ".html")
+        editor.session.setMode("ace/mode/html");
 
       editor.renderer.setScrollMargin(10, 10);
       editor.setOptions({
