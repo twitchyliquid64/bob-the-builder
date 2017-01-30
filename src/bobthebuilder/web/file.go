@@ -18,6 +18,11 @@ import (
 
 // /api/file/definitions
 func getDefinitionJSONHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	did, _ := strconv.Atoi(ctx.Params["did"])
 	def := builder.GetInstance().Definitions[did]
 	d, _ := ioutil.ReadFile(def.AbsolutePath)
@@ -26,6 +31,11 @@ func getDefinitionJSONHandler(ctx *web.Context) {
 }
 
 func saveDefinitionJSONHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	jsonData, err := ioutil.ReadAll(ctx.Request.Body) //no need to close Body
 	if err != nil {
 		logging.Error("web-file-api", "saveDefinitionJSONHandler() failed read:", err)
@@ -50,6 +60,11 @@ func sanitizePath(base, inPath string) (safe bool, absPath string) {
 }
 
 func getBaseFileHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 
 	pwd, _ := os.Getwd()
@@ -74,6 +89,11 @@ func getBaseFileHandler(ctx *web.Context) {
 }
 
 func downloadWorkspaceFileHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 
 	pwd, _ := os.Getwd()
@@ -100,6 +120,11 @@ func downloadWorkspaceFileHandler(ctx *web.Context) {
 }
 
 func saveBaseFileHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 
 	pwd, _ := os.Getwd()
@@ -137,6 +162,11 @@ type TreeviewFileDTO struct {
 }
 
 func getBrowserFilesData(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	pwd, _ := os.Getwd()
 	baseFolder := path.Join(pwd, builder.BASE_FOLDER_NAME)
 	baseDTO, err := iterateFolderToTreeviewJSON(baseFolder, pwd)
@@ -250,6 +280,11 @@ func getMediaType(path string) string {
 }
 
 func newFolderHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 	if strings.HasPrefix(relPathUnsafe, "/base/") {
 		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
@@ -270,6 +305,11 @@ func newFolderHandler(ctx *web.Context) {
 }
 
 func newFileHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 	if strings.HasPrefix(relPathUnsafe, "/base/") {
 		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
@@ -291,6 +331,11 @@ func newFileHandler(ctx *web.Context) {
 }
 
 func newDefFileHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 	if !strings.HasSuffix(relPathUnsafe, builder.DEFINITIONS_FILE_SUFFIX) {
 		relPathUnsafe = relPathUnsafe + builder.DEFINITIONS_FILE_SUFFIX
@@ -340,6 +385,11 @@ func fileError(error string) []byte {
 }
 
 func deleteHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
 	relPathUnsafe := ctx.Params["path"]
 	if strings.HasPrefix(relPathUnsafe, "/base/") {
 		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
