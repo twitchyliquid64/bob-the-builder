@@ -196,6 +196,10 @@ All structures must have at minimum the following attributes:
 }
 ```
 
+### Server config
+
+You can see all the available settings defined in this struct [here](https://github.com/twitchyliquid64/bob-the-builder/blob/master/src/bobthebuilder/config/structure.go#L5).
+
 
 ### Todo
 
