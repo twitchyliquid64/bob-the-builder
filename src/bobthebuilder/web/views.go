@@ -9,6 +9,11 @@ import (
 
 
 func indexMainPage(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
+
   t := templates.Lookup("index")
   if t == nil {
           logging.Error("web", "No template found.")

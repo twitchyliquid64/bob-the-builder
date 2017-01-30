@@ -2,6 +2,7 @@ package web
 
 import (
 	"bobthebuilder/builder"
+	"bobthebuilder/config"
 	"bobthebuilder/logging"
 	"bobthebuilder/util"
 	"encoding/json"
@@ -12,7 +13,34 @@ import (
 	"github.com/hoisie/web"
 )
 
+func requestBasicAuth(ctx *web.Context) {
+	ctx.Header().Set("WWW-Authenticate", "Basic realm=\"Pushtart:"+config.All().Name+"\"")
+	ctx.WriteHeader(401)
+	ctx.Write([]byte("401 Unauthorized\n"))
+}
+
+func needAuthChallenge(ctx *web.Context) bool{
+	if !config.All().Web.RequireBasicAuth{
+		return false
+	}
+	username, pwd, ok := ctx.Request.BasicAuth()
+	if !ok {
+		return true //Did not provide basic auth info
+	}
+
+	if candidate_pwd, user_known := config.All().Web.AuthPairs[username]; user_known {
+		if candidate_pwd == pwd{
+			return false
+		}
+	}
+	return true
+}
+
 func getDefinitionHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
 	out := builder.GetInstance().GetDefinitionsSerialisable()
 	b, err := json.Marshal(out)
 	if err != nil {
@@ -25,6 +53,10 @@ func getDefinitionHandler(ctx *web.Context) {
 }
 
 func getCronHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
 	out := builder.GetInstance().CronEntries()
 	b, err := json.Marshal(out)
 	if err != nil {
@@ -37,6 +69,10 @@ func getCronHandler(ctx *web.Context) {
 }
 
 func updateCronHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
 	decoder := json.NewDecoder(ctx.Request.Body)
 	var data []builder.CronRecord
 	err := decoder.Decode(&data)
@@ -52,6 +88,10 @@ func updateCronHandler(ctx *web.Context) {
 
 
 func getHistoryHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
 	out := builder.GetInstance().GetHistory()
 	b, err := json.Marshal(out)
 	if err != nil {
@@ -78,6 +118,10 @@ func getStatusHandler(ctx *web.Context) {
 }
 
 func getBuildParamsLookupHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
 	paramIndex, _ := strconv.Atoi(ctx.Params["param"])
 
 	branches, err := util.GetGitLookupData(builder.GetInstance().GetDefinition(ctx.Params["name"]).Params[paramIndex].Options)
@@ -156,6 +200,10 @@ func enqueueReloadHandler(ctx *web.Context) {
 }
 
 func getDefIndexByIdHandler(ctx *web.Context) {
+	if needAuthChallenge(ctx){
+		requestBasicAuth(ctx)
+		return
+	}
 	def := builder.GetInstance().GetDefinitionByFilename(ctx.Params["fname"])
 	ctx.ResponseWriter.Write([]byte(strconv.Itoa(def)))
 }

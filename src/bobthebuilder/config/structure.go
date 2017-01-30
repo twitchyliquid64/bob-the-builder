@@ -12,6 +12,8 @@ type Config struct {
 	Web struct{							//Details needed to get the website part working.
 		Domain string					//Domain should be in the form example.com
 		Listener string				//Address:port (address can be omitted) where the HTTPS listener will bind.
+		RequireBasicAuth bool //If set, will require HTTP Basic authentication with one of the user:pass pairs in AuthPairs
+		AuthPairs map[string]string
 	}
 
 	RaspberryPi struct {
