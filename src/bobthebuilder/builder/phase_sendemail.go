@@ -46,24 +46,38 @@ func (p * SendEmailPhase)Run(r* Run, builder *Builder, defIndex int)int{
     return p.phaseError(-1, "Incomplete gmail configuration")
   }
 
-  if p.SendOnFailure && r.Status < STATUS_SUCCESS {
-    p.WriteOutput( "Sending notification for failure condition.", r, builder, defIndex)
-    errorCode, errorMsg := p.Send(r.Definition.Name + " failure", p.MakeLog("The definition failed to execute.", r, builder, defIndex), r, builder, defIndex)
-    if errorCode != STATUS_SUCCESS {
-      return p.phaseError(errorCode, errorMsg)
+  sent := false
+
+  if p.SendOnFailure {
+    if r.Status < STATUS_SUCCESS {
+      p.WriteOutput( "Sending notification for failure condition.", r, builder, defIndex)
+      errorCode, errorMsg := p.Send(r.Definition.Name + " failure", p.MakeLog("The definition failed to execute.", r, builder, defIndex), r, builder, defIndex)
+      if errorCode != STATUS_SUCCESS {
+        return p.phaseError(errorCode, errorMsg)
+      }
+      sent = true
     }
-  } else if p.SendOnSuccess && r.Status == STATUS_SUCCESS {
-    p.WriteOutput( "Sending notification for success condition.", r, builder, defIndex)
-    errorCode, errorMsg := p.Send(r.Definition.Name + " success", p.MakeLog("The definition executed successfully.", r, builder, defIndex), r, builder, defIndex)
-    if errorCode != STATUS_SUCCESS {
-      return p.phaseError(errorCode, errorMsg)
+  }
+  if p.SendOnSuccess {
+    if r.Status == STATUS_SUCCESS {
+      p.WriteOutput( "Sending notification for success condition.", r, builder, defIndex)
+      errorCode, errorMsg := p.Send(r.Definition.Name + " success", p.MakeLog("The definition executed successfully.", r, builder, defIndex), r, builder, defIndex)
+      if errorCode != STATUS_SUCCESS {
+        return p.phaseError(errorCode, errorMsg)
+      }
+      sent = true
     }
   }
 
   p.End = time.Now()
   p.Duration = p.End.Sub(p.Start)
   p.ErrorCode = 0
-  p.StatusString = "Send successful"
+  if !sent {
+    p.WriteOutput( "No triggers - aborting send.", r, builder, defIndex)
+    p.StatusString = "Send not required"
+  } else {
+    p.StatusString = "Send successful"
+  }
   return 0
 }
 
