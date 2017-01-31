@@ -113,6 +113,8 @@
           return "Set environment variable";
         } else if (phase.type == "TAR_TO_S3"){
           return "Archive to S3";
+        } else if (phase.type == "SEND_EMAIL"){
+          return "Send Email";
         }
       }
       $scope.getStepDetail = function(step){

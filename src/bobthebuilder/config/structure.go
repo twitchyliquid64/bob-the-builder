@@ -29,4 +29,11 @@ type Config struct {
 		SecretKey string
 		Token string
 	}
+
+	Gmail struct {
+		Enable bool
+		FromAddress string
+		Password string
+		DefaultToAddress string
+	}
 }

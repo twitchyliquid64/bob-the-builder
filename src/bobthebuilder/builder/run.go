@@ -29,6 +29,8 @@ type Run struct {
 	Phases []phase  `json:"phases"` //Phases which are part of the run.
 	Tags   []string `json:"tags"`
 
+	PostBuildPhases []phase  `json:"post-phases"` //Phases which are run at the end of the build regardless of result.
+
 	//todo: convert value to own type
 	buildVariables map[string]string
 
@@ -76,6 +78,18 @@ func (r *Run) Run(builder *Builder, defIndex int) {
 
 	if r.Status == STATUS_NOT_YET_RUN {
 		r.Status = STATUS_SUCCESS
+	}
+
+	for _, phase := range r.PostBuildPhases {
+		phase.SetStartTime(time.Now())
+		builder.publishEvent(EVT_PHASE_STARTED, phase, defIndex)
+
+		status := phase.Run(r, builder, defIndex)
+		builder.publishEvent(EVT_PHASE_FINISHED, phase, defIndex)
+		if status < STATUS_SUCCESS {
+			r.Status = STATUS_FAILURE
+			break
+		}
 	}
 
 	// ...

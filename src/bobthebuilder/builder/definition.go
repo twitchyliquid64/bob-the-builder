@@ -19,6 +19,8 @@ type BuildDefinition struct {
 	BaseFolder          string   `json:"base-folder,omitempty"`
 	GitSrc              string   `json:"git-src,omitempty"`
 	HideFromLog				  bool   	 `json:"hide-from-log,omitempty"`
+	NotifyOnFailure		 	bool   	 `json:"notify-on-failure,omitempty"`
+	NotifyOnSuccess		 	bool   	 `json:"notify-on-success,omitempty"`
 
 	//list of steps
 	Steps []BuildStep `json:"steps"`
@@ -195,6 +197,15 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 		}
 
 		out.Phases[len(out.Phases)-1].SetConditional(step.Conditional)
+	}
+
+	if d.NotifyOnFailure || d.NotifyOnSuccess {
+		cmd := &SendEmailPhase{
+			SendOnFailure: d.NotifyOnFailure,
+			SendOnSuccess: d.NotifyOnSuccess,
+		}
+		cmd.init(len(out.Phases))
+		out.PostBuildPhases = append(out.PostBuildPhases, cmd)
 	}
 
 	return out

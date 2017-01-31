@@ -17,6 +17,7 @@ type phase interface {
   GetErrorCode() int                       //0 == success. Other codes are dependent on type.
 
   GetStart() time.Time
+  GetOutputs() []string
   GetEnd() time.Time
   GetDuration() time.Duration
   HasFinished() bool
@@ -65,6 +66,9 @@ func (p * BasicPhase)GetEnd()time.Time{
 }
 func (p * BasicPhase)GetDuration()time.Duration{
   return p.Duration
+}
+func (p * BasicPhase)GetOutputs()[]string{
+  return p.Outputs
 }
 func (p * BasicPhase)HasFinished()bool{
   return !(p.End == time.Time{})
