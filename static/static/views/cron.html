@@ -87,8 +87,8 @@
 
             <div class="field">
               <div class="ui checkbox">
-                <input type="checkbox" tabindex="0" id="phys" class="hidden" ng-model="entry.DisablePhys">
-                <label for="phys">Disable physical indicators</label>
+                <input type="checkbox" tabindex="0" id="{{'phys-' + $index}}" class="hidden" ng-model="entry.DisablePhys">
+                <label for="{{'phys-' + $index}}">Disable physical indicators</label>
               </div>
             </div>
 
