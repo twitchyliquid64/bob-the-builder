@@ -118,7 +118,7 @@ func (p * SendEmailPhase)MakeLog(prefix string, r* Run, builder *Builder, defInd
     t := phase.GetType()
     if t == "CLEAN" || t == "APT-CHECK" || t == "S3UP_BASIC" || t == "SET_ENV" || t == "TAR_TO_S3" || t == "BASE-INSTALL" || t == "SEND_EMAIL" {
       out += "<tr>"
-      out += "<td>Output</td><td>" + html.EscapeString(strings.Join(phase.GetOutputs(), "<br>")) + "</td>"
+      out += "<td>Output</td><td>" + strings.Replace(html.EscapeString(strings.Join(phase.GetOutputs(), "<br>")), html.EscapeString("<br>"), "<br>", -1) + "</td>"
       out += "</tr>"
     }
 
