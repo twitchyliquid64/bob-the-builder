@@ -65,6 +65,16 @@
               <td>	If this boolean is set, the result of the execution will not be shown on the dashboard.</td>
               <td><div class="ui teal horizontal label">Optional</div></td>
             </tr>
+            <tr>
+              <td>notify-on-failure</td>
+              <td>	If this boolean is set and Gmail configuration is present, a email will be sent if the execution fails.</td>
+              <td><div class="ui teal horizontal label">Optional</div></td>
+            </tr>
+            <tr>
+              <td>notify-on-success</td>
+              <td>	If this boolean is set and Gmail configuration is present, a email will be sent if the execution succeeds.</td>
+              <td><div class="ui teal horizontal label">Optional</div></td>
+            </tr>
           </tbody>
         </table>
       </div>

@@ -32,8 +32,8 @@ type Config struct {
 
 	Gmail struct {
 		Enable bool
-		FromAddress string
-		Password string
-		DefaultToAddress string
+		FromAddress string	//Gmail address the mail is coming from. SOMETHIN@gmail.com
+		Password string			//App password for accessing Gmail.
+		DefaultToAddress string	//Default address to send mail to, unless overridden elsewhere.
 	}
 }
