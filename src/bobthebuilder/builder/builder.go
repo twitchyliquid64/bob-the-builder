@@ -233,7 +233,9 @@ func (b *Builder) executeRun(run *Run) {
 	run.Run(b, index)
 	b.Lock.Lock()
 
-	b.CompletedBacklog.Enqueue(run)
+	if !run.Definition.HideFromLog {
+		b.CompletedBacklog.Enqueue(run)
+	}
 	run.Definition.LastVersion = run.Version
 	run.Definition.LastRunTime = int64(run.EndTime.Sub(run.StartTime).Seconds() * 1000)
 	run.Definition.Flush()

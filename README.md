@@ -98,6 +98,7 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 | *git-src*       | This option should be set if you want to clone a git repository into your build area before running the steps. The passed value is passed to 'git clone <passed value> .' which downloads the contents of the repo into the build folder.  |
 | *apt-packages-required*  | This option should be set if you want to ensure a set of apt-get packages are installed on your system. If you system does not support apt-get, do not set this field in the JSON file.  |
 | *params*  | List of configurable parameters which can be set to customize the build.  |
+| *hide-from-log* | If this boolean is set, the result of the execution will not be shown on the dashboard. |
 
 
 

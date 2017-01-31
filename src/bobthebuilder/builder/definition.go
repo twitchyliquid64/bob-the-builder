@@ -18,6 +18,7 @@ type BuildDefinition struct {
 	AptPackagesRequired []string `json:"apt-packages-required,omitempty"`
 	BaseFolder          string   `json:"base-folder,omitempty"`
 	GitSrc              string   `json:"git-src,omitempty"`
+	HideFromLog				  bool   	 `json:"hide-from-log,omitempty"`
 
 	//list of steps
 	Steps []BuildStep `json:"steps"`

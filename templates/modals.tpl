@@ -60,6 +60,11 @@
               <td>A JSON list of build parameters, which allow you to specific input data to the build.</td>
               <td><div class="ui teal horizontal label">Optional</div></td>
             </tr>
+            <tr>
+              <td>hide-from-log</td>
+              <td>	If this boolean is set, the result of the execution will not be shown on the dashboard.</td>
+              <td><div class="ui teal horizontal label">Optional</div></td>
+            </tr>
           </tbody>
         </table>
       </div>
