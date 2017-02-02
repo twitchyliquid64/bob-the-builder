@@ -74,6 +74,7 @@
         if (type == 'S3_UPLOAD')return "S3 file upload";
         if (type == 'ENV_SET')return "Set environment variable";
         if (type == 'TAR_TO_S3')return "Archive to S3";
+        if (type == 'SEND_EMAIL')return "Send Email";
       }
 
       $scope.getCodeOutput = function(phase){
@@ -86,7 +87,8 @@
         "EXEC": {"rocket": true},
         "S3_UPLOAD": {"cloud upload": true},
         "ENV_SET": {"level down": true},
-        "TAR_TO_S3": {"archive": true}
+        "TAR_TO_S3": {"archive": true},
+        "SEND_EMAIL": {"send": true}
       }
 
       $scope.getStepIcons = function(stepType){
@@ -126,6 +128,8 @@
           step.files = step.files || [];
           step.directories = step.directories || [];
           return "" + step.files.length + " candidate file(s), " + step.directories.length + " candidate dirs";
+        }else if (step.type == 'SEND_EMAIL'){
+          return step.to ? step.to.join(',') : 'Sends an email to the default address.';
         }else {
           return step.command;
         }

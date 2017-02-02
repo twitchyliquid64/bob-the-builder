@@ -66,6 +66,9 @@ type BuildStep struct {
 	Key   string `json:"key,omitempty"`
 	Value string `json:"value,omitempty"`
 
+	//used for send email command
+	AllOutput bool `json:"all-output,omitempty"`
+
 	//used for S3 commands
 	Bucket string `json:"bucket,omitempty"`
 	Region string `json:"region,omitempty"`
@@ -180,6 +183,14 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 			cmd := &SetEnvPhase{
 				Key:   step.Key,
 				Value: step.Value,
+			}
+			cmd.init(len(out.Phases))
+			out.Phases = append(out.Phases, cmd)
+
+		case "SEND_EMAIL":
+			cmd := &SendEmailPhase{
+				SendManual: true,
+				SendAllOutput: step.AllOutput,
 			}
 			cmd.init(len(out.Phases))
 			out.Phases = append(out.Phases, cmd)

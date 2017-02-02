@@ -11,6 +11,9 @@ import (
 type SendEmailPhase struct{
   BasicPhase
 
+  SendManual bool
+  SendAllOutput bool
+
   // special cases - control behaviour
   SendOnFailure bool
   SendOnSuccess bool
@@ -51,7 +54,7 @@ func (p * SendEmailPhase)Run(r* Run, builder *Builder, defIndex int)int{
   if p.SendOnFailure {
     if r.Status < STATUS_SUCCESS {
       p.WriteOutput( "Sending notification for failure condition.", r, builder, defIndex)
-      errorCode, errorMsg := p.Send(r.Definition.Name + " failure", p.MakeLog("The definition failed to execute.", r, builder, defIndex), r, builder, defIndex)
+      errorCode, errorMsg := p.Send(r.Definition.Name + " failure", p.MakeLog("The definition failed to execute.", r, builder, defIndex, p.SendAllOutput), r, builder, defIndex)
       if errorCode != STATUS_SUCCESS {
         return p.phaseError(errorCode, errorMsg)
       }
@@ -61,12 +64,19 @@ func (p * SendEmailPhase)Run(r* Run, builder *Builder, defIndex int)int{
   if p.SendOnSuccess {
     if r.Status == STATUS_SUCCESS {
       p.WriteOutput( "Sending notification for success condition.", r, builder, defIndex)
-      errorCode, errorMsg := p.Send(r.Definition.Name + " success", p.MakeLog("The definition executed successfully.", r, builder, defIndex), r, builder, defIndex)
+      errorCode, errorMsg := p.Send(r.Definition.Name + " success", p.MakeLog("The definition executed successfully.", r, builder, defIndex, p.SendAllOutput), r, builder, defIndex)
       if errorCode != STATUS_SUCCESS {
         return p.phaseError(errorCode, errorMsg)
       }
       sent = true
     }
+  }
+  if p.SendManual{
+    errorCode, errorMsg := p.Send(r.Definition.Name + " success", p.MakeLog("", r, builder, defIndex, p.SendAllOutput), r, builder, defIndex)
+    if errorCode != STATUS_SUCCESS {
+      return p.phaseError(errorCode, errorMsg)
+    }
+    sent = true
   }
 
   p.End = time.Now()
@@ -105,28 +115,33 @@ func (p * SendEmailPhase)Send(subject, content string, r* Run, builder *Builder,
 }
 
 
-func (p * SendEmailPhase)MakeLog(prefix string, r* Run, builder *Builder, defIndex int)string{
+func (p * SendEmailPhase)MakeLog(prefix string, r* Run, builder *Builder, defIndex int, allOutput bool)string{
   var out string
-  out += "<p>" + prefix + "</p><h3>Execution Summary</h3>"
+  out += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/htm=l4/strict.dtd\"><html><head></head><body><p>" + prefix + "</p><h3>Execution Summary</h3>"
   for _, phase := range r.Phases {
-    out += "<b>" + phase.String() + "</b>"
+
+    if phase.GetStatusString() == PHASE_STATUS_READY{
+      continue
+    }
+
+    out += "<b>" + html.EscapeString(phase.String()) + "</b>"
     out += "<table><tr><td>&nbsp;</td><td><table>"
     out += "<tr>"
-    out += "<td>Status</td><td>" + phase.GetStatusString() + "</td>"
+    out += "<td>Status</td><td><i>" + html.EscapeString(phase.GetStatusString()) + "</i></td>"
     out += "</tr>"
 
     t := phase.GetType()
-    if t == "CLEAN" || t == "APT-CHECK" || t == "S3UP_BASIC" || t == "SET_ENV" || t == "TAR_TO_S3" || t == "BASE-INSTALL" || t == "SEND_EMAIL" {
+    if t == "CLEAN" || t == "APT-CHECK" || t == "S3UP_BASIC" || t == "SET_ENV" || t == "TAR_TO_S3" || t == "BASE-INSTALL" || t == "SEND_EMAIL" || allOutput {
       out += "<tr>"
-      out += "<td>Output</td><td>" + strings.Replace(html.EscapeString(strings.Join(phase.GetOutputs(), "<br>")), html.EscapeString("<br>"), "<br>", -1) + "</td>"
+      out += "<td>&nbsp;</td><td>" + strings.Replace(html.EscapeString(strings.Join(phase.GetOutputs(), "<br>")), html.EscapeString("<br>"), "<br>", -1) + "</td>"
       out += "</tr>"
     }
 
     out += "<tr>"
     out += "<td>Code</td><td>" + strconv.Itoa(phase.GetErrorCode()) + "</td>"
     out += "</tr>"
-    out += "</table><br></td></tr></table>"
+    out += "</table></td></tr></table>"
   }
-  out += ""
+  out += "</body></html>"
   return out
 }
