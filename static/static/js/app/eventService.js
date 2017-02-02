@@ -5,7 +5,7 @@
       var self = this;
       var location = window.location;
       self.connected = false;
-      var ws = new WebSocket("ws://" + location.hostname+(location.port ? ':'+location.port: '') + "/ws/events");
+      var ws = new WebSocket((location.protocol === 'https:'? "wss://" : "ws://") + location.hostname+(location.port ? ':'+location.port: '') + "/ws/events");
 
       ws.onopen = function()
       {
