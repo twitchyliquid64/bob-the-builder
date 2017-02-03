@@ -113,6 +113,7 @@ The JSON config file is simply a json file you whack in /definitions. It should 
 | *S3_UPLOAD*   | Uploads and overwrites the specified file to AWS. AWS information must be populated in the configuration file. | <ul><li>'filename' <sup>template</sup> - Path to the file relative to the build directory.</li><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' <sup>template</sup> - Path where the file is to be stored on the S3 bucket. If this parameter is empty or not provided, the file path of the source file will be used.</li><li>'ACL' - either 'public' or 'private'. This refers to the ACL applied on the object in S3.</li></ul>|
 | *ENV_SET*     | Allows you to set environment variables for the build system, and any subsequent tasks. | <ul><li>'key' <sup>template</sup> - Name of the environment variable</li><li>'value' <sup>template</sup> - Value to set the environment variable to.</li></ul>|
 | *TAR_TO_S3*   | Adds the given directories contents and the given files to a tar file, which is then compressed with gzip and streamed to S3. AWS information must be populated in the configuration file. This operation is suitable in low memory environments as the archive and compression routines are streamed on the given data. | <ul><li>'region' - Name of the AWS region the bucket is in..</li><li>'bucket' - Name of the AWS bucket.</li><li>'filename-destination' <sup>template</sup> - Path where the file is to be stored on the S3 bucket.</li><li>'directories' - List of directories whoes files will be recursively added to the archive.</li><li>'files' - List of files which will be added to the archive.</li></ul>|
+| *SEND_EMAIL*     | Sends an email using Gmail configuration in `config.json`. | <ul><li>'subject' <sup>template</sup> - Email subject</li><li>'prefix' <sup>template</sup> - The body of the email, or the start of the email if `all-output` is set.</li><li>'all-output' - Boolean which, if set, will include a summary of the execution and it's output so far.</li><li>'to' - List of email addresses to send to.</li></ul>|
 
 ##### Additional step attributes
 
@@ -122,6 +123,7 @@ These fields can be set on any step.
 | ----- |:------------|
 | HideFromSteps | This is a boolean field. If set to true, the step will not appear in the UI (top-right) when viewing the definition. |
 | Conditional | This is a template field which allows you to define an expression, where it will skip evaluation of the step if the expression evaluates len(output) > 0 and output != 'false'. This field can be omitted - in which case the step will always evaluate. |
+| id | Human-readable identifier for this step. Used with the `getOutput <id>` template function to get the output of a previously run step. |
 
 ##### 'Template' fields
 

@@ -47,6 +47,7 @@ type BuildParam struct {
 }
 
 type BuildStep struct {
+	ID						string `json:"id,omitempty"`
 	Type          string `json:"type"`
 	Conditional   string `json:"skip-condition,omitempty"`
 	HideFromSteps bool   `json:"hide-from-steps,omitempty"`
@@ -68,6 +69,9 @@ type BuildStep struct {
 
 	//used for send email command
 	AllOutput bool `json:"all-output,omitempty"`
+	To []string		 `json:"to,omitempty"`
+	Subject string `json:"subject,omitempty"`
+	Prefix string	 `json:"prefix,omitempty"`
 
 	//used for S3 commands
 	Bucket string `json:"bucket,omitempty"`
@@ -134,14 +138,14 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 	}
 
 	if d.GitSrc != "" { //if we are sourcing files from git, that needs to happen first for reasons.
-		p := &GitClonePhase{ //generate phase to clone in a git repo
+		p := &GitClonePhase{ //generate phase to clone in a git repovalue
 			GitSrcPath: d.GitSrc,
 		}
 		p.init(len(out.Phases))
 		out.Phases = append(out.Phases, p)
 	}
 
-	if d.BaseFolder != "" { //next, copy in any static files specified.
+	if d.BaseFolder != "" { //next, copy in any static files specified.Value to set the environment variable to
 		p := &BaseInstallPhase{ //generate phase to copy in files
 			BaseAbsPath: path.Join(pwd, BASE_FOLDER_NAME, d.BaseFolder),
 		}
@@ -191,6 +195,9 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 			cmd := &SendEmailPhase{
 				SendManual: true,
 				SendAllOutput: step.AllOutput,
+				Destinations: step.To,
+				Prefix: step.Prefix,
+				SubjectOverride: step.Subject,
 			}
 			cmd.init(len(out.Phases))
 			out.Phases = append(out.Phases, cmd)
@@ -208,6 +215,7 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 		}
 
 		out.Phases[len(out.Phases)-1].SetConditional(step.Conditional)
+		out.Phases[len(out.Phases)-1].SetID(step.ID)
 	}
 
 	if d.NotifyOnFailure || d.NotifyOnSuccess {

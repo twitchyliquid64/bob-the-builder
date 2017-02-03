@@ -13,12 +13,14 @@ type SendEmailPhase struct{
 
   SendManual bool
   SendAllOutput bool
+  Prefix string
 
   // special cases - control behaviour
   SendOnFailure bool
   SendOnSuccess bool
 
   Destinations []string
+  SubjectOverride string
 }
 
 func (p * SendEmailPhase)init(index int){
@@ -72,7 +74,21 @@ func (p * SendEmailPhase)Run(r* Run, builder *Builder, defIndex int)int{
     }
   }
   if p.SendManual{
-    errorCode, errorMsg := p.Send(r.Definition.Name + " success", p.MakeLog("", r, builder, defIndex, p.SendAllOutput), r, builder, defIndex)
+    var err error
+    var prefix string
+    prefix, err = ExecTemplate(p.Prefix, p, r, builder)
+    if err != nil{
+      p.WriteOutput( "Template Error (prefix): " + err.Error() + "\n", r, builder, defIndex)
+    }
+
+    content := prefix
+    if p.SendAllOutput {
+      content = p.MakeLog(prefix, r, builder, defIndex, p.SendAllOutput)
+    } else {
+      p.WriteOutput( "Content: " + content + "\n", r, builder, defIndex)
+    }
+
+    errorCode, errorMsg := p.Send(r.Definition.Name + " success", content, r, builder, defIndex)
     if errorCode != STATUS_SUCCESS {
       return p.phaseError(errorCode, errorMsg)
     }
@@ -92,6 +108,15 @@ func (p * SendEmailPhase)Run(r* Run, builder *Builder, defIndex int)int{
 }
 
 func (p * SendEmailPhase)Send(subject, content string, r* Run, builder *Builder, defIndex int)(errorcode int, errorMsg string){
+  if p.SubjectOverride != "" {
+    var err error
+    subject, err = ExecTemplate(p.SubjectOverride, p, r, builder)
+    if err != nil{
+      p.WriteOutput( "Template Error (subject): " + err.Error() + "\n", r, builder, defIndex)
+    }
+    p.WriteOutput( "Subject: " + subject + "\n", r, builder, defIndex)
+  }
+
   email := Compose(subject, content)
   email.From = config.All().Gmail.FromAddress
   email.Password = config.All().Gmail.Password

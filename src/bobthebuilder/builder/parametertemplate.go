@@ -4,6 +4,8 @@ import (
   "text/template"
   "time"
   "bytes"
+  "html"
+  "strings"
 )
 
 type TemplateInformation struct {
@@ -41,6 +43,19 @@ func getParameter(tInfo TemplateInformation, wantedVar string)string{
   return v
 }
 
+func htmlEscape(in string)string{
+  return html.EscapeString(in)
+}
+
+func getOutput(tInfo TemplateInformation, id string)string{
+  for _, p := range tInfo.Run.Phases {
+    if p.GetID() == id {
+        return strings.Join(p.GetOutputs(), "\n")
+    }
+  }
+  return ""
+}
+
 func getBaseTemplateInfoStruct()TemplateInformation{
   return TemplateInformation{
     Day: time.Now().Day(),
@@ -67,6 +82,10 @@ func ExecTemplate(templ string, phase interface{}, r* Run, builder *Builder)(str
     "allTags": func()string{
       return allTags(tinfo)
     },
+    "getOutput": func(id string)string{
+      return getOutput(tinfo, id)
+    },
+    "htmlEscape": htmlEscape,
   }
 
   resultBuf := new(bytes.Buffer)

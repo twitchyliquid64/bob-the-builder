@@ -16,6 +16,8 @@ type phase interface {
 
   GetErrorCode() int                       //0 == success. Other codes are dependent on type.
 
+  GetID() string
+  SetID(c string)
   GetStart() time.Time
   GetOutputs() []string
   GetEnd() time.Time
@@ -32,6 +34,7 @@ type phase interface {
 
 
 type BasicPhase struct {
+  ID string `json:"id"`
   Type string `json:"type"`
   StatusString string `json:"status"`
   ErrorCode int `json:"errorCode"`
@@ -49,8 +52,14 @@ func (p * BasicPhase)SetStartTime(t time.Time){
 func (p * BasicPhase)SetConditional(c string){
   p.Conditional = c
 }
+func (p * BasicPhase)SetID(c string){
+  p.ID = c
+}
 func (p * BasicPhase)GetType()string{
   return p.Type
+}
+func (p * BasicPhase)GetID()string{
+  return p.ID
 }
 func (p * BasicPhase)GetStatusString()string{
   return p.StatusString
