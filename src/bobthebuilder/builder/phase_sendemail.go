@@ -117,31 +117,52 @@ func (p * SendEmailPhase)Send(subject, content string, r* Run, builder *Builder,
 
 func (p * SendEmailPhase)MakeLog(prefix string, r* Run, builder *Builder, defIndex int, allOutput bool)string{
   var out string
-  out += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/htm=l4/strict.dtd\"><html><head></head><body><p>" + prefix + "</p><h3>Execution Summary</h3>"
+  out += "<p>" + prefix + "</p>\n<p style=\"font-size: 21px;\"><b>Execution Summary</b></p>\n\n"
   for _, phase := range r.Phases {
 
     if phase.GetStatusString() == PHASE_STATUS_READY{
       continue
     }
 
-    out += "<b>" + html.EscapeString(phase.String()) + "</b>"
-    out += "<table><tr><td>&nbsp;</td><td><table>"
+    out += "<b style=\"font-size: 17px;\">" + html.EscapeString(statusStyled(phase.GetErrorCode(), phase.String())) + "</b>\n"
+    out += "<table>"
     out += "<tr>"
-    out += "<td>Status</td><td><i>" + html.EscapeString(phase.GetStatusString()) + "</i></td>"
-    out += "</tr>"
+    out += "<td style=\"font-weight: bold;\">Status</td><td><i>" + html.EscapeString(phase.GetStatusString()) + "</i></td>"
+    out += "</tr>\n"
 
     t := phase.GetType()
     if t == "CLEAN" || t == "APT-CHECK" || t == "S3UP_BASIC" || t == "SET_ENV" || t == "TAR_TO_S3" || t == "BASE-INSTALL" || t == "SEND_EMAIL" || allOutput {
       out += "<tr>"
       out += "<td>&nbsp;</td><td>" + strings.Replace(html.EscapeString(strings.Join(phase.GetOutputs(), "<br>")), html.EscapeString("<br>"), "<br>", -1) + "</td>"
-      out += "</tr>"
+      out += "</tr>\n"
     }
 
     out += "<tr>"
-    out += "<td>Code</td><td>" + strconv.Itoa(phase.GetErrorCode()) + "</td>"
+    out += "<td style=\"font-weight: bold;\">Ex</td><td>" + emailErrorCodeStyled(phase.GetErrorCode()) + "</td>"
     out += "</tr>"
-    out += "</table></td></tr></table>"
+    out += "</table> <br><br>\n"
   }
-  out += "</body></html>"
+  out += ""
   return out
+}
+
+func statusStyled(code int, status string)string{
+  if code == 954321 {
+    return "<span style=\"color: brown; text-decoration: line-through;\"> Execution skipped </span>"
+  }
+  if code == 0 {
+    return status
+  }
+  return "<span style=\"color: red;\">" + status + "</span>"
+}
+
+func emailErrorCodeStyled(code int)string{
+  if code == 954321 {
+    return "<span style=\"color: green;\"> --- </span>"
+  }
+
+  if code == 0{
+    return "<span style=\"color: green;\">0</span>"
+  }
+  return "<span style=\"color: red;\">" + strconv.Itoa(code) + "</span>"
 }
