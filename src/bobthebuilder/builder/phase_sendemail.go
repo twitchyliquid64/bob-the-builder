@@ -149,7 +149,7 @@ func (p * SendEmailPhase)MakeLog(prefix string, r* Run, builder *Builder, defInd
       continue
     }
 
-    out += "<b style=\"font-size: 17px;\">" + html.EscapeString(statusStyled(phase.GetErrorCode(), phase.String())) + "</b>\n"
+    out += "<b style=\"font-size: 17px;\">" + statusStyled(phase.GetErrorCode(), html.EscapeString(phase.String())) + "</b>\n"
     out += "<table>"
     out += "<tr>"
     out += "<td style=\"font-weight: bold;\">Status</td><td><i>" + html.EscapeString(phase.GetStatusString()) + "</i></td>"
