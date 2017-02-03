@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+	"os/exec"
+	"strings"
 
 	"github.com/hoisie/web"
 )
@@ -32,6 +34,15 @@ func needAuthChallenge(ctx *web.Context) bool{
 		if candidate_pwd == pwd{
 			return false
 		}
+	}
+
+	out, err := exec.Command("python", "auth/pam-auth.py", username, pwd).Output()
+	if err != nil {
+		logging.Error("web-auth-pam", err)
+		return true
+	}
+	if strings.HasPrefix(string(out), "OK") {
+		return false
 	}
 	return true
 }

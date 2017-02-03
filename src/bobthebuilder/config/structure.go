@@ -13,6 +13,7 @@ type Config struct {
 		Domain string					//Domain should be in the form example.com
 		Listener string				//Address:port (address can be omitted) where the HTTPS listener will bind.
 		RequireBasicAuth bool //If set, will require HTTP Basic authentication with one of the user:pass pairs in AuthPairs
+		PamAuth bool					//If set, attempt to auth the user using PAM and authorize if it succeeds.
 		AuthPairs map[string]string
 	}
 
