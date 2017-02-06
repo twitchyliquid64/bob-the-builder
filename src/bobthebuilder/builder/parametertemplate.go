@@ -86,6 +86,11 @@ func ExecTemplate(templ string, phase interface{}, r* Run, builder *Builder)(str
       return getOutput(tinfo, id)
     },
     "htmlEscape": htmlEscape,
+    "strContains": strings.Contains,
+    "strHasPrefix": strings.HasPrefix,
+    "strSplit": strings.Split,
+    "strHasSuffix": strings.HasSuffix,
+    "strReplace": strings.Replace,
   }
 
   resultBuf := new(bytes.Buffer)

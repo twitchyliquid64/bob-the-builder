@@ -211,5 +211,5 @@ You can see all the available settings defined in this struct [here](https://git
 
 - [x] Add more valid tags
 - [ ] Support parameter customizations for CRON jobs
-- [ ] Support sending an email on success / failure
+- [x] Support sending an email on success / failure
 - [x] cronController to ingest crons-loaded event and refresh datasource.
