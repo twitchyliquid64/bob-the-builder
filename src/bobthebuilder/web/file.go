@@ -19,7 +19,7 @@ import (
 // /api/file/definitions
 func getDefinitionJSONHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -32,7 +32,7 @@ func getDefinitionJSONHandler(ctx *web.Context) {
 
 func saveDefinitionJSONHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -61,7 +61,7 @@ func sanitizePath(base, inPath string) (safe bool, absPath string) {
 
 func getBaseFileHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -90,7 +90,7 @@ func getBaseFileHandler(ctx *web.Context) {
 
 func downloadWorkspaceFileHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -121,7 +121,7 @@ func downloadWorkspaceFileHandler(ctx *web.Context) {
 
 func saveBaseFileHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -163,7 +163,7 @@ type TreeviewFileDTO struct {
 
 func getBrowserFilesData(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -281,7 +281,7 @@ func getMediaType(path string) string {
 
 func newFolderHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -306,7 +306,7 @@ func newFolderHandler(ctx *web.Context) {
 
 func newFileHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -332,7 +332,7 @@ func newFileHandler(ctx *web.Context) {
 
 func newDefFileHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -386,7 +386,7 @@ func fileError(error string) []byte {
 
 func deleteHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 

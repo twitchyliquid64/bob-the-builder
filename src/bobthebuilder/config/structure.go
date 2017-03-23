@@ -1,6 +1,6 @@
 package config
 
-
+import "bobthebuilder/web/auth"
 
 type Config struct {
 	Name string							//canonical name to help identify this server
@@ -12,9 +12,9 @@ type Config struct {
 	Web struct{							//Details needed to get the website part working.
 		Domain string					//Domain should be in the form example.com
 		Listener string				//Address:port (address can be omitted) where the HTTPS listener will bind.
-		RequireBasicAuth bool //If set, will require HTTP Basic authentication with one of the user:pass pairs in AuthPairs
+		RequireAuth bool 			//If set, will require authentication
 		PamAuth bool					//If set, attempt to auth the user using PAM and authorize if it succeeds.
-		AuthPairs map[string]string
+		Users []User
 	}
 
 	RaspberryPi struct { //Intended to flash LEDs using GPIOs on a raspberry pi. For most uses, set Enable = false. Pin is the pin number as written on the BCM2835 pinout.
@@ -37,4 +37,29 @@ type Config struct {
 		Password string			//App password for accessing Gmail.
 		DefaultToAddress string	//Default address to send mail to, unless overridden elsewhere.
 	}
+}
+
+func (c *Config)GetUserByUsername(user string)(usr auth.User, err error){
+	for _, userEntry := range c.Web.Users {
+		if user == userEntry.Username {
+			return &userEntry, nil
+		}
+	}
+	return nil, auth.ErrUserDoesntExist
+}
+
+type User struct {
+	Username string
+	Password string
+}
+
+func (u *User)CheckPassword(pass string)(ok bool, err error){
+	if u.Password == pass{
+		return true, nil
+	}
+	return false, nil
+}
+
+func (u *User)Name()string{
+	return u.Username
 }

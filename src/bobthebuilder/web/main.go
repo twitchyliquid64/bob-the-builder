@@ -3,6 +3,7 @@ package web
 import (
 	"bobthebuilder/config"
 	"bobthebuilder/logging"
+	"bobthebuilder/web/auth"
 	"io/ioutil"
 
 	"github.com/hoisie/web"
@@ -10,8 +11,18 @@ import (
 	//"errors"
 )
 
+var gAuth auth.Auther
+
 //Run() initialises the web server based on the configuration package.
 func Run() {
+
+	if config.All().Web.RequireAuth {
+		if config.All().Web.PamAuth {
+			gAuth = auth.MultiAuth(auth.BasicAuth(config.All()), &auth.PAMAuther{})
+		} else {
+			gAuth = auth.BasicAuth(config.All())
+		}
+	}
 
 	if config.All().TLS.PrivateKey == "" {
 		logging.Info("web", "Initialised HTTP server on ", config.All().Web.Listener)
