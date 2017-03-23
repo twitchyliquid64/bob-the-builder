@@ -15,7 +15,7 @@ import (
 
 func getDefinitionHandler(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 	out := builder.GetInstance().GetDefinitionsSerialisable()

@@ -14,6 +14,7 @@ type Config struct {
 		Listener string				//Address:port (address can be omitted) where the HTTPS listener will bind.
 		RequireAuth bool 			//If set, will require authentication
 		PamAuth bool					//If set, attempt to auth the user using PAM and authorize if it succeeds.
+		RequireOTP bool				//If set, all user logins must use OTP
 		Users []User
 	}
 

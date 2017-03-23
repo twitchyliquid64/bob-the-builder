@@ -10,7 +10,7 @@ import (
 
 func indexMainPage(ctx *web.Context) {
 	if needAuthChallenge(ctx){
-		requestBasicAuth(ctx)
+		requestAuth(ctx)
 		return
 	}
 
@@ -23,5 +23,19 @@ func indexMainPage(ctx *web.Context) {
   err := t.Execute(ctx.ResponseWriter, modelBasic{Config: config.All(), Builder: builder.GetInstance()})
   if err != nil{
           logging.Error("views-index", err)
+  }
+}
+
+
+func loginMainPage(ctx *web.Context) {
+  t := templates.Lookup("login")
+  if t == nil {
+          logging.Error("web", "No template found.")
+					return
+  }
+
+  err := t.Execute(ctx.ResponseWriter, modelBasic{Config: config.All(), Builder: builder.GetInstance()})
+  if err != nil{
+          logging.Error("views-login", err)
   }
 }

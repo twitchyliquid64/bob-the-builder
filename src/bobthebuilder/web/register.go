@@ -22,6 +22,8 @@ func Initialise() {
 
 func registerCoreHandlers() {
 	web.Get("/", indexMainPage, config.All().Web.Domain)
+	web.Get("/login", loginMainPage, config.All().Web.Domain)
+	web.Post("/login", processLogin, config.All().Web.Domain)
 	web.Get("/ws/events", websocket.Handler(ws_EventServer), config.All().Web.Domain)
 	web.Get("/documentation/readme", documentationHandler, config.All().Web.Domain)
 }
@@ -57,6 +59,7 @@ func registerCoreTemplates() {
 	logError(registerTemplate("tailcontent.tpl", "tailcontent"), "Template load error: ")
 	logError(registerTemplate("headcontent.tpl", "headcontent"), "Template load error: ")
 	logError(registerTemplate("index.tpl", "index"), "Template load error: ")
+	logError(registerTemplate("login.tpl", "login"), "Template load error: ")
 	logError(registerTemplate("topnav.tpl", "topnav"), "Template load error: ")
 }
 

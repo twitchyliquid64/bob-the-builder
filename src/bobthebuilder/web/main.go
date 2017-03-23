@@ -18,9 +18,9 @@ func Run() {
 
 	if config.All().Web.RequireAuth {
 		if config.All().Web.PamAuth {
-			gAuth = auth.MultiAuth(auth.BasicAuth(config.All()), &auth.PAMAuther{})
+			gAuth = auth.MultiAuth(auth.CookieAuth(config.All()), &auth.PAMAuther{})
 		} else {
-			gAuth = auth.BasicAuth(config.All())
+			gAuth = auth.CookieAuth(config.All())
 		}
 	}
 

@@ -5,6 +5,7 @@
     <link href='/static/fonts/roboto.css' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/jq-ser.js"></script>
     <script type="text/javascript" src="/static/js/semantic.min.js"></script>
     <script type="text/javascript" src="/static/js/modal.min.js"></script>
     <script type="text/javascript" src="/static/js/dropdown.min.js"></script>
