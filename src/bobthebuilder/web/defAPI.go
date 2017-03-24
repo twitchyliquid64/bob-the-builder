@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/hoisie/web"
@@ -139,7 +140,16 @@ func enqueueBuildHandler(ctx *web.Context) {
 		ctx.Params["version"] = calcNextVersionNumber(ctx.Params["name"])
 	}
 
-	builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], []string{"web", "default"}, ctx.Params["version"])
+	tags := []string{"web", "default"}
+	if gAuth != nil{
+		info, authErr := gAuth.AuthInfo(ctx)
+		if authErr == nil {
+			tags = append(tags, "auth")
+			tags = append(tags, "startedby:" + info.User.Name())
+		}
+	}
+
+	builder.GetInstance().EnqueueBuildEvent(ctx.Params["name"], tags, ctx.Params["version"])
 }
 
 type BuildOptionsDTO struct {
@@ -162,6 +172,19 @@ func enqueueBuildHandlerWithOptions(ctx *web.Context) {
 
 	if len(data.Tags) == 1 && data.Tags[0] == "" {
 		data.Tags = nil
+	}
+
+	for i := range data.Tags {
+		if data.Tags[i] == "auth" || strings.HasPrefix(data.Tags[i], "startedby:") {
+			data.Tags[i] = ""
+		}
+	}
+	if gAuth != nil{
+		info, authErr := gAuth.AuthInfo(ctx)
+		if authErr == nil {
+			data.Tags = append(data.Tags, "auth")
+			data.Tags = append(data.Tags, "startedby:" + info.User.Name())
+		}
 	}
 
 	if data.Version == "" {

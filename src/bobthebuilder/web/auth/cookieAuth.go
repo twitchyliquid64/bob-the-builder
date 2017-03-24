@@ -5,41 +5,40 @@ import (
   "time"
   "github.com/hoisie/web"
   "net/http"
-  "math/rand"
+  "crypto/rand"
+  "sync"
+)
+
+const (
+  SESSION_ID_CHAR_LENGTH = 48
+  EXPIRY_TIME = time.Hour * 6
 )
 
 var ErrCantCheckCookieUserPassword = errors.New("Cannot check the password of a user authed by cookie")
-
-func init() {
-    rand.Seed(time.Now().UnixNano())
-}
-
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func RandStringRunes(n int) string {
-    b := make([]rune, n)
+    b := make([]byte, n)
+    o := make([]rune, n)
+    rand.Read(b)
     for i := range b {
-        b[i] = letterRunes[rand.Intn(len(letterRunes))]
+        o[i] = letterRunes[int(b[i]) % len(letterRunes)]
     }
-    return string(b)
+    return string(o)
 }
 
 
 type session struct {
   Username string
   Created time.Time
+  Expiry time.Time
 }
 
-type userCookie struct{
-  Username string
-  Created time.Time
-}
-
-func (u *userCookie) Name() string{
+func (u *session) Name() string{
   return u.Username
 }
 
-func (u *userCookie) CheckPassword(pass string)(bool, error) {
+func (u *session) CheckPassword(pass string)(bool, error) {
   return false, ErrCantCheckCookieUserPassword
 }
 
@@ -51,9 +50,13 @@ func CookieAuth(src UserSource)Auther{
 type CookieAuther struct {
   userSource UserSource
   sessions map[string]session
+  lock sync.Mutex
 }
 
 func (d *CookieAuther) AuthInfo(ctx *web.Context)(*AuthInfo, error) {
+  d.lock.Lock()
+  defer d.lock.Unlock()
+
   cookie, err := ctx.Request.Cookie("sass")
   if err != nil {
     if err == http.ErrNoCookie {
@@ -67,12 +70,28 @@ func (d *CookieAuther) AuthInfo(ctx *web.Context)(*AuthInfo, error) {
 		return nil, ErrNotAuthenticated
 	}
 
-  return &AuthInfo{User: &userCookie{Username: session.Username, Created: session.Created}}, nil
+  return &AuthInfo{User: &session}, nil
 }
 
 
+func (d *CookieAuther) cleanupExpired(){
+  //assumes lock already held
+  toDeleteSessions := []string{}
+  for SID, session := range d.sessions {
+    if time.Now().After(session.Expiry) {
+      toDeleteSessions = append(toDeleteSessions, SID)
+    }
+  }
+
+  for _, SID := range toDeleteSessions {
+    delete(d.sessions, SID)
+  }
+}
+
 
 func (d *CookieAuther) DoLogin(ctx *web.Context)(*AuthInfo, error){
+  d.lock.Lock()
+  defer d.lock.Unlock()
   username := ctx.Request.FormValue("username")
   pwd := ctx.Request.FormValue("password")
 
@@ -93,9 +112,11 @@ func (d *CookieAuther) DoLogin(ctx *web.Context)(*AuthInfo, error){
   }
 
   //make session
-  SID := RandStringRunes(22)
-  d.sessions[SID] = session{Username: username, Created: time.Now()}
-  ctx.SetCookie(&http.Cookie{Name: "sass", Value: SID})
+  expiry := time.Now().Add(EXPIRY_TIME)
+  SID := RandStringRunes(SESSION_ID_CHAR_LENGTH)
+  d.sessions[SID] = session{Username: username, Created: time.Now(), Expiry: expiry}
+  ctx.SetCookie(&http.Cookie{Name: "sass", Value: SID, Expires: expiry, HttpOnly: true})
 
+  d.cleanupExpired()
   return &AuthInfo{User: usr}, nil
 }

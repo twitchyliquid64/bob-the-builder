@@ -46,7 +46,7 @@
         <tr ng-repeat="run in dataService.getHistory()">
           <td>{{run.definition.name}}</td>
           <td>
-            <div class="ui label" ng-repeat="tag in run.tags">
+            <div class="ui label" ng-repeat="tag in run.tags" style="margin-bottom: 3px;">
               {{tag}}
             </div>
           </td>
