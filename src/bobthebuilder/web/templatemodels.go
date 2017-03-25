@@ -3,6 +3,7 @@ package web
 import (
   "bobthebuilder/builder"
   "bobthebuilder/config"
+  "bobthebuilder/web/auth"
 )
 
 type modelBasic struct{
@@ -10,4 +11,5 @@ type modelBasic struct{
   Builder *builder.Builder
 
   Opt1 string
+  Auth *auth.AuthInfo
 }

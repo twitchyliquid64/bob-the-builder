@@ -23,6 +23,13 @@
             z-index: 99999;
           }
 
+          #bottom-right-info{
+            position: fixed;
+            bottom: 5px;
+            right: 7px;
+            padding: 6px;
+            text-align: right;
+          }
       </style>
 
   </head>
@@ -46,5 +53,15 @@
 
     {!{template "tailcontent"}!}
 
+    {!{if .Auth}!}
+    <div id="bottom-right-info">
+      <p>
+        <b>User:</b> <i>{!{.Auth.User.Name}!}</i><br />
+        <b>Session created:</b> <i>{!{.Auth.User.Created.Format "Jan _2 15:04:05"}!}</i><br />
+        <b>Session expires:</b> <i>{!{.Auth.User.Expiry.Format "Jan _2 15:04:05"}!}</i>
+        <br />Password {!{if .Auth.User.OTPUsed}!}+ <span style="color: #21ba45;">OTP</span> {!{end}!}authentication
+      </p>
+    </div>
+    {!{end}!}
   </body>
 </html>

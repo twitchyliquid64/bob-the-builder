@@ -12,6 +12,7 @@ import (
 const (
   SESSION_ID_CHAR_LENGTH = 48
   EXPIRY_TIME = time.Hour * 6
+  COOKIE_NAME = "sass"
 )
 
 var ErrCantCheckCookieUserPassword = errors.New("Cannot check the password of a user authed by cookie")
@@ -32,6 +33,7 @@ type session struct {
   Username string
   Created time.Time
   Expiry time.Time
+  OTPUsed bool
 }
 
 func (u *session) Name() string{
@@ -57,7 +59,7 @@ func (d *CookieAuther) AuthInfo(ctx *web.Context)(*AuthInfo, error) {
   d.lock.Lock()
   defer d.lock.Unlock()
 
-  cookie, err := ctx.Request.Cookie("sass")
+  cookie, err := ctx.Request.Cookie(COOKIE_NAME)
   if err != nil {
     if err == http.ErrNoCookie {
       return nil, ErrNotAuthenticated
@@ -112,20 +114,22 @@ func (d *CookieAuther) DoLogin(ctx *web.Context)(*AuthInfo, error){
     return nil, ErrNotAuthenticated
   }
 
+  didUseOTP := false
   otpUser, usrSupportsOTP := usr.(OTPUser)
   if usrSupportsOTP {
     if otpUser.IsOTPEnrolled() {
       if !otpUser.VerifyOTP(otp){
         return nil, ErrNotAuthenticated
       }
+      didUseOTP = true
     }
   }
 
   //make session
   expiry := time.Now().Add(EXPIRY_TIME)
   SID := RandStringRunes(SESSION_ID_CHAR_LENGTH)
-  d.sessions[SID] = session{Username: username, Created: time.Now(), Expiry: expiry}
-  ctx.SetCookie(&http.Cookie{Name: "sass", Value: SID, Expires: expiry, HttpOnly: true})
+  d.sessions[SID] = session{Username: username, Created: time.Now(), Expiry: expiry, OTPUsed: didUseOTP}
+  ctx.SetCookie(&http.Cookie{Name: COOKIE_NAME, Value: SID, Expires: expiry, HttpOnly: true})
 
   d.cleanupExpired()
   return &AuthInfo{User: usr}, nil

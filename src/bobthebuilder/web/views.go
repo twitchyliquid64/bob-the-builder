@@ -14,13 +14,22 @@ func indexMainPage(ctx *web.Context) {
 		return
 	}
 
+	mdl := modelBasic{Config: config.All(), Builder: builder.GetInstance()}
+
+	if gAuth != nil{
+		info, err := gAuth.AuthInfo(ctx)
+		if err == nil && info != nil{
+			mdl.Auth = info
+		}
+	}
+
   t := templates.Lookup("index")
   if t == nil {
           logging.Error("web", "No template found.")
 					return
   }
 
-  err := t.Execute(ctx.ResponseWriter, modelBasic{Config: config.All(), Builder: builder.GetInstance()})
+  err := t.Execute(ctx.ResponseWriter, mdl)
   if err != nil{
           logging.Error("views-index", err)
   }

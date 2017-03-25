@@ -17,9 +17,9 @@ func requestBasicAuth(ctx *web.Context) {
 }
 
 func needAuthChallenge(ctx *web.Context) bool{
-	if gAuth == nil{
-		return false
-	}
+  if !config.All().Web.RequireAuth {
+    return false
+  }
 
 	info, err := gAuth.AuthInfo(ctx)
 	if err == nil && info != nil{

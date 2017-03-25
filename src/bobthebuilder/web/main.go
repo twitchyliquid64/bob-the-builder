@@ -15,13 +15,10 @@ var gAuth auth.Auther
 
 //Run() initialises the web server based on the configuration package.
 func Run() {
-
-	if config.All().Web.RequireAuth {
-		if config.All().Web.PamAuth {
-			gAuth = auth.MultiAuth(auth.CookieAuth(config.All()), &auth.PAMAuther{})
-		} else {
-			gAuth = auth.CookieAuth(config.All())
-		}
+	if config.All().Web.PamAuth {
+		gAuth = auth.MultiAuth(auth.CookieAuth(config.All()), &auth.PAMAuther{})
+	} else {
+		gAuth = auth.CookieAuth(config.All())
 	}
 
 	if config.All().TLS.PrivateKey == "" {
