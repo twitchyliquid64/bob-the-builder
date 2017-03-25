@@ -94,6 +94,7 @@ func (d *CookieAuther) DoLogin(ctx *web.Context)(*AuthInfo, error){
   defer d.lock.Unlock()
   username := ctx.Request.FormValue("username")
   pwd := ctx.Request.FormValue("password")
+  otp := ctx.Request.FormValue("otp")
 
 
   usr, lookupErr := d.userSource.GetUserByUsername(username)
@@ -109,6 +110,15 @@ func (d *CookieAuther) DoLogin(ctx *web.Context)(*AuthInfo, error){
   }
   if !passwordOk{
     return nil, ErrNotAuthenticated
+  }
+
+  otpUser, usrSupportsOTP := usr.(OTPUser)
+  if usrSupportsOTP {
+    if otpUser.IsOTPEnrolled() {
+      if !otpUser.VerifyOTP(otp){
+        return nil, ErrNotAuthenticated
+      }
+    }
   }
 
   //make session

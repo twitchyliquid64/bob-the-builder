@@ -1,6 +1,7 @@
 package config
 
 import "bobthebuilder/web/auth"
+import "github.com/pquerna/otp/totp"
 
 type Config struct {
 	Name string							//canonical name to help identify this server
@@ -14,7 +15,7 @@ type Config struct {
 		Listener string				//Address:port (address can be omitted) where the HTTPS listener will bind.
 		RequireAuth bool 			//If set, will require authentication
 		PamAuth bool					//If set, attempt to auth the user using PAM and authorize if it succeeds.
-		RequireOTP bool				//If set, all user logins must use OTP
+		AllowOTP bool					//If set, login page shows an optional field for OTP
 		Users []User
 	}
 
@@ -52,6 +53,7 @@ func (c *Config)GetUserByUsername(user string)(usr auth.User, err error){
 type User struct {
 	Username string
 	Password string
+	OTPSecret string
 }
 
 func (u *User)CheckPassword(pass string)(ok bool, err error){
@@ -63,4 +65,15 @@ func (u *User)CheckPassword(pass string)(ok bool, err error){
 
 func (u *User)Name()string{
 	return u.Username
+}
+
+func (u *User)VerifyOTP(code string)bool {
+	if u.OTPSecret == "" {
+		return false
+	}
+	return totp.Validate(code, u.OTPSecret)
+}
+
+func (u *User)IsOTPEnrolled()bool {
+	return len(u.OTPSecret) != 0
 }

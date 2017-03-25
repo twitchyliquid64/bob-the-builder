@@ -26,6 +26,7 @@ func registerCoreHandlers() {
 	web.Post("/login", processLogin, config.All().Web.Domain)
 	web.Get("/ws/events", websocket.Handler(ws_EventServer), config.All().Web.Domain)
 	web.Get("/documentation/readme", documentationHandler, config.All().Web.Domain)
+	web.Get("/util/otp", OTPUtilHandler, config.All().Web.Domain)
 }
 
 func registerApiHandlers() {
@@ -60,6 +61,7 @@ func registerCoreTemplates() {
 	logError(registerTemplate("headcontent.tpl", "headcontent"), "Template load error: ")
 	logError(registerTemplate("index.tpl", "index"), "Template load error: ")
 	logError(registerTemplate("login.tpl", "login"), "Template load error: ")
+	logError(registerTemplate("otp_gen_util.tpl", "otpgen"), "Template load error: ")
 	logError(registerTemplate("topnav.tpl", "topnav"), "Template load error: ")
 }
 

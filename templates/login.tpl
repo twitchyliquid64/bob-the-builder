@@ -44,7 +44,7 @@
                 <input type="password" name="password" placeholder="Password">
               </div>
             </div>
-            {!{if .Config.Web.RequireOTP}!}
+            {!{if .Config.Web.AllowOTP}!}
             <div class="field">
               <div class="ui left icon input">
                 <i class="code icon"></i>
@@ -70,7 +70,7 @@
           method : 'POST',
           serializeForm: true,
           onError: function(data) {
-            $('.error.message').html('Invalid username or password.');
+            $('.error.message').html('Invalid username, password, or OTP code.');
             $('.error.message').css('display', 'block');
           },
           onSuccess: function(data) {

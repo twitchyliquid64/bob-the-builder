@@ -17,6 +17,12 @@ type User interface{
   CheckPassword(pass string)(bool, error)
 }
 
+type OTPUser interface{
+  User
+  VerifyOTP(code string)bool
+  IsOTPEnrolled()bool
+}
+
 type AuthInfo struct{
   User User
 }
