@@ -115,7 +115,7 @@ func (p * S3UploadFolderPhase)Run(r* Run, builder *Builder, defIndex int)int{
       continue
     }
     p.WriteOutput( "Reading file: " + file.Name() + fmt.Sprintf(" (%.4f Mb)", float64(file.Size())/1024.0/1024.0) + "\n", r, builder, defIndex)
-    data, err := ioutil.ReadFile(path.Join(pwd, BUILD_TEMP_FOLDER_NAME, file.Name()))
+    data, err := ioutil.ReadFile(path.Join(pwd, BUILD_TEMP_FOLDER_NAME, p.SourceFolder, file.Name()))
     if err != nil {
       p.WriteOutput( "Unable to read source file: " + file.Name() + "\n", r, builder, defIndex)
       p.WriteOutput( "Error: " + err.Error() + "\n", r, builder, defIndex)
