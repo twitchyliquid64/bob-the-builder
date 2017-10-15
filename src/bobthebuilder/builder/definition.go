@@ -183,6 +183,16 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 			cmd.init(len(out.Phases), step.ACL)
 			out.Phases = append(out.Phases, cmd)
 
+		case "S3_UPLOAD_FOLDER":
+			cmd := &S3UploadFolderPhase{
+				Bucket:              step.Bucket,
+				Region:              step.Region,
+				SourceFolder:    step.FileName,
+				DestinationFolder: step.DestinationFileName,
+			}
+			cmd.init(len(out.Phases), step.ACL)
+			out.Phases = append(out.Phases, cmd)
+
 		case "ENV_SET":
 			cmd := &SetEnvPhase{
 				Key:   step.Key,

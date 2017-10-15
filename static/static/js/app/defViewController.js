@@ -72,6 +72,7 @@
         if (type == 'CMD')return "Run command";
         if (type == 'EXEC')return "Run script";
         if (type == 'S3_UPLOAD')return "S3 file upload";
+        if (type == 'S3_UPLOAD_FOLDER')return "S3 folder upload";
         if (type == 'ENV_SET')return "Set environment variable";
         if (type == 'TAR_TO_S3')return "Archive to S3";
         if (type == 'SEND_EMAIL')return "Send Email";
@@ -86,6 +87,7 @@
         "CMD": {"terminal": true},
         "EXEC": {"rocket": true},
         "S3_UPLOAD": {"cloud upload": true},
+        "S3_UPLOAD_FOLDER": {"cloud upload": true},
         "ENV_SET": {"level down": true},
         "TAR_TO_S3": {"archive": true},
         "SEND_EMAIL": {"send": true}
@@ -111,6 +113,8 @@
           return "Check & install dependencies";
         } else if (phase.type == "S3UP_BASIC"){
           return "S3 file upload";
+        } else if (phase.type == "S3_UPLOAD_FOLDER"){
+          return "S3 folder upload";
         } else if (phase.type == "SET_ENV"){
           return "Set environment variable";
         } else if (phase.type == "TAR_TO_S3"){
@@ -124,6 +128,8 @@
           return step.filename;
         }else if (step.type == 'ENV_SET'){
           return step.key;
+        }else if (step.type == 'S3_UPLOAD_FOLDER'){
+          return step.filename + (step['filename-destination'] ? (' --> ' + step['filename-destination']) : '');
         }else if (step.type == 'TAR_TO_S3'){
           step.files = step.files || [];
           step.directories = step.directories || [];
