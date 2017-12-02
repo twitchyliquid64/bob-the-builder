@@ -1,13 +1,21 @@
 package config
 
 import (
+	"io/ioutil"
+	"golang.org/x/oauth2/google"
+	"golang.org/x/oauth2/jwt"
 	"github.com/stianeikeland/go-rpio"
 	"bobthebuilder/logging"
+	"golang.org/x/oauth2"
+	"net/http"
 	"crypto/tls"
 )
 
 var gConfig *Config = nil
 var gTls *tls.Config = nil
+
+var gEventCred *jwt.Config = nil
+var gEventClient *http.Client = nil
 
 func Load(fpath string)error{
 	conf, err := readConfig(fpath)
@@ -40,9 +48,23 @@ func Load(fpath string)error{
 		initRpiGPIO()
 	}
 
+	if gConfig.Events.Enable {
+		b, err := ioutil.ReadFile(gConfig.Events.CredentialPath)
+		if err != nil {
+			logging.Error("config", "Failed setup of GCP Events: ", err)
+			return err
+		}
+		eventsConfig, err := google.JWTConfigFromJSON(b, "https://www.googleapis.com/auth/pubsub")
+		if err != nil {
+			logging.Error("config", "Failed setup of GCP Events: ", err)
+			return err
+		}
+		gEventCred = eventsConfig
+		gEventClient = gEventCred.Client(oauth2.NoContext)
+	}
+
 	return nil
 }
-
 
 func initRpiGPIO(){
 	if gConfig.RaspberryPi.BuildLedPin > 0 {
@@ -71,6 +93,11 @@ func GetServerName()string{
 func TLS()*tls.Config{
 	checkInitialisedOrPanic()
 	return gTls
+}
+
+func Pubsub() *http.Client {
+	checkInitialisedOrPanic()
+	return gEventClient
 }
 
 func All()*Config{

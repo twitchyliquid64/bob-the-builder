@@ -39,6 +39,15 @@ type Config struct {
 		Password string			//App password for accessing Gmail.
 		DefaultToAddress string	//Default address to send mail to, unless overridden elsewhere.
 	}
+
+	Events struct {
+		Enable bool
+		CredentialPath string
+
+		Project string
+		EventTopic string
+		PublishDataEvents bool
+	}
 }
 
 func (c *Config)GetUserByUsername(user string)(usr auth.User, err error){

@@ -1,8 +1,13 @@
 package builder
 
 import (
+	"bobthebuilder/logging"
 	"bobthebuilder/config"
 	"time"
+	"io/ioutil"
+	"bytes"
+	"net/url"
+	"encoding/json"
 
 	"github.com/stianeikeland/go-rpio"
 )
@@ -62,5 +67,86 @@ func (b *Builder) publishEvent(t string, d interface{}, index int) {
 		case ch <- pkt:
 		default:
 		}
+	}
+
+	if config.All().Events.Enable && config.All().Events.EventTopic != "" {
+		if t == EVT_PHASE_DATA_UPDATE && !config.All().Events.PublishDataEvents {
+			return
+		}
+		select {
+		case b.pubsubMsgs <- pkt:
+		default:
+		}
+	}
+}
+
+func handlePubsubQueue(c chan BuilderEvent) {
+	logging.Info("builder-pubsub", "Starting pubsub transmission routine.")
+	defer logging.Info("builder-pubsub", "Transmission routine stopping.")
+
+	uri, err := url.Parse("https://pubsub.googleapis.com/v1/projects/" + config.All().Events.Project + "/topics/" + config.All().Events.EventTopic)
+	if err != nil {
+		logging.Error("builder-pubsub", "Error constructing pubsub url: ", err)
+		return
+	}
+
+	isClosed := false
+	for !isClosed {
+		time.Sleep(time.Second)
+		// each run, iterate through the whole channel and gather all the objects
+		// if its closed, set a flag so we exit at the end of the iteration
+		var eventsToSend []BuilderEvent
+		for {
+			select {
+			case evt, ok := <-c:
+				if !ok {
+					isClosed = true
+					goto allEvents
+				}
+				eventsToSend = append(eventsToSend, evt)
+			default:
+				goto allEvents
+			}
+		}
+		allEvents:
+		if len(eventsToSend) == 0 {
+			continue
+		}
+
+		// build up the list of structures necessary for the pubsub API
+		var msgs []map[string]interface{}
+		for _, evt := range eventsToSend {
+			eventData, err := json.Marshal(evt)
+			if err != nil {
+				logging.Error("builder-pubsub", "Error constructing event data: ", err)
+				continue
+			}
+			msgs = append(msgs, map[string]interface{}{
+				"data": eventData,
+			})
+		}
+
+		// marshal and send
+		data, err := json.Marshal(map[string]interface{}{
+			"messages": msgs,
+		})
+		if err != nil {
+			logging.Error("builder-pubsub", "Marshal error: ", err)
+			return
+		}
+
+		resp, err := config.Pubsub().Post(uri.String()+":publish", "application/json", bytes.NewBuffer(data))
+		if err != nil {
+			logging.Error("builder-pubsub", "Pubsub POST error: ", err)
+			resp.Body.Close()
+			return
+		}
+		if resp.StatusCode != 200 {
+			e, _ := ioutil.ReadAll(resp.Body)
+			logging.Error("builder-pubsub", "Pubsub publish error: ", err, string(e))
+			resp.Body.Close()
+			return
+		}
+		resp.Body.Close()
 	}
 }

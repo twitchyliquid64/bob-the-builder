@@ -21,6 +21,7 @@ const DEFINITIONS_FILE_SUFFIX = ".json"
 const BUILD_TEMP_FOLDER_NAME = "build"
 const MAX_EVENT_QUEUE_SIZE = 5000
 const MAX_HISTORY_BACKLOG_SIZE = 15
+const MAX_BACKLOG_PUBSUB = 5
 
 var DefNotFoundErr = errors.New("Definition not found")
 var BuildRunningErr = errors.New("Build already running")
@@ -38,6 +39,9 @@ type Builder struct {
 
 	//subscribers to events
 	subscribers map[chan BuilderEvent]bool
+
+	//pubsub channel
+	pubsubMsgs chan BuilderEvent
 }
 
 func (b *Builder) loadDefinitionFile(fpath string) error {
@@ -79,6 +83,12 @@ func (b *Builder) UpdateCron(data []CronRecord) {
 func (b *Builder) Init() error {
 	b.Lock.Lock()
 	defer b.Lock.Unlock()
+
+	if b.pubsubMsgs != nil {
+		close(b.pubsubMsgs)
+	}
+	b.pubsubMsgs = make(chan BuilderEvent, MAX_BACKLOG_PUBSUB)
+	go handlePubsubQueue(b.pubsubMsgs)
 
 	b.Cron.Stop()
 	b.Cron = cron.New()
