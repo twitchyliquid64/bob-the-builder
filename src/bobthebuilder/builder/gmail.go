@@ -1,17 +1,16 @@
 package builder
 
 import (
-  "bytes"
-  "crypto/tls"
-  "encoding/base64"
-  "errors"
-  "fmt"
-  "io/ioutil"
-  "net/smtp"
-  "path/filepath"
-  "strings"
+	"bytes"
+	"crypto/tls"
+	"encoding/base64"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"net/smtp"
+	"path/filepath"
+	"strings"
 )
-
 
 // Email represents a single message, which may contain
 // attachments.

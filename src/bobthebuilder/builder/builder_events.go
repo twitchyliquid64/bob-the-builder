@@ -1,13 +1,13 @@
 package builder
 
 import (
-	"bobthebuilder/logging"
 	"bobthebuilder/config"
-	"time"
-	"io/ioutil"
+	"bobthebuilder/logging"
 	"bytes"
-	"net/url"
 	"encoding/json"
+	"io/ioutil"
+	"net/url"
+	"time"
 
 	"github.com/stianeikeland/go-rpio"
 )
@@ -108,7 +108,7 @@ func handlePubsubQueue(c chan BuilderEvent) {
 				goto allEvents
 			}
 		}
-		allEvents:
+	allEvents:
 		if len(eventsToSend) == 0 {
 			continue
 		}

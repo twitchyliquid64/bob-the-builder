@@ -29,7 +29,7 @@ type Run struct {
 	Phases []phase  `json:"phases"` //Phases which are part of the run.
 	Tags   []string `json:"tags"`
 
-	PostBuildPhases []phase  `json:"post-phases"` //Phases which are run at the end of the build regardless of result.
+	PostBuildPhases []phase `json:"post-phases"` //Phases which are run at the end of the build regardless of result.
 
 	//todo: convert value to own type
 	buildVariables map[string]string

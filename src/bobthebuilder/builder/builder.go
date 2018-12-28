@@ -16,15 +16,19 @@ import (
 	ring "github.com/zfjagann/golang-ring"
 )
 
-const DEFINITIONS_FOLDER_NAME = "definitions"
 const DEFINITIONS_FILE_SUFFIX = ".json"
-const BUILD_TEMP_FOLDER_NAME = "build"
 const MAX_EVENT_QUEUE_SIZE = 5000
 const MAX_HISTORY_BACKLOG_SIZE = 15
 const MAX_BACKLOG_PUBSUB = 5
 
-var DefNotFoundErr = errors.New("Definition not found")
-var BuildRunningErr = errors.New("Build already running")
+var (
+	DefNotFoundErr  = errors.New("Definition not found")
+	BuildRunningErr = errors.New("Build already running")
+
+	DefinitionsDir = "definitions"
+	BuildDir       = "build"
+	BaseDir        = "base"
+)
 
 type Builder struct {
 	Lock        sync.Mutex //should be used to lock EventsToProcess,Definitions (iteration & modify)
@@ -69,7 +73,7 @@ func (b *Builder) loadDefinitionFile(fpath string) error {
 }
 
 // CronEntries returns a list of Cron entries setup on the system.
-func (b *Builder) CronEntries()[]CronRecord {
+func (b *Builder) CronEntries() []CronRecord {
 	return readCron()
 }
 
@@ -99,7 +103,7 @@ func (b *Builder) Init() error {
 	b.CurrentRun = nil
 	b.publishEvent(EVT_DEF_REFRESH, time.Now().Unix(), -1)
 
-	defFiles, err := util.GetFilenameListInFolder(DEFINITIONS_FOLDER_NAME, DEFINITIONS_FILE_SUFFIX)
+	defFiles, err := util.GetFilenameListInFolder(DefinitionsDir, DEFINITIONS_FILE_SUFFIX)
 	if err != nil {
 		return err
 	}
@@ -344,7 +348,7 @@ func New() *Builder {
 		TriggerWorkerChan: make(chan bool, MAX_EVENT_QUEUE_SIZE),
 		CompletedBacklog:  &ring.Ring{},
 		subscribers:       map[chan BuilderEvent]bool{},
-		Cron: 						 cron.New(),
+		Cron:              cron.New(),
 	}
 	out.EventsToProcess.SetCapacity(MAX_EVENT_QUEUE_SIZE)
 	out.CompletedBacklog.SetCapacity(MAX_HISTORY_BACKLOG_SIZE)

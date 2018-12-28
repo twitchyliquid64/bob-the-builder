@@ -18,7 +18,7 @@ import (
 
 // /api/file/definitions
 func getDefinitionJSONHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -31,7 +31,7 @@ func getDefinitionJSONHandler(ctx *web.Context) {
 }
 
 func saveDefinitionJSONHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -60,17 +60,13 @@ func sanitizePath(base, inPath string) (safe bool, absPath string) {
 }
 
 func getBaseFileHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
-
-	pwd, _ := os.Getwd()
-	baseFolder := path.Join(pwd, builder.BASE_FOLDER_NAME)
-
-	safe, absPath := sanitizePath(baseFolder, relPathUnsafe)
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/base/")
+	safe, absPath := sanitizePath(builder.BaseDir, relPathUnsafe)
 	if safe {
 		d, err := ioutil.ReadFile(absPath)
 		if err != nil {
@@ -89,17 +85,13 @@ func getBaseFileHandler(ctx *web.Context) {
 }
 
 func downloadWorkspaceFileHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
-
-	pwd, _ := os.Getwd()
-	baseFolder := path.Join(pwd, builder.BUILD_TEMP_FOLDER_NAME)
-
-	safe, absPath := sanitizePath(baseFolder, relPathUnsafe)
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/build/")
+	safe, absPath := sanitizePath(builder.BuildDir, relPathUnsafe)
 	if safe {
 		fi, err := os.Open(absPath)
 		if err != nil {
@@ -120,17 +112,13 @@ func downloadWorkspaceFileHandler(ctx *web.Context) {
 }
 
 func saveBaseFileHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
-
-	pwd, _ := os.Getwd()
-	baseFolder := path.Join(pwd, builder.BASE_FOLDER_NAME)
-
-	safe, absPath := sanitizePath(baseFolder, relPathUnsafe)
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/base/")
+	safe, absPath := sanitizePath(builder.BaseDir, relPathUnsafe)
 	if safe {
 
 		data := bytes.Buffer{}
@@ -162,28 +150,24 @@ type TreeviewFileDTO struct {
 }
 
 func getBrowserFilesData(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	pwd, _ := os.Getwd()
-	baseFolder := path.Join(pwd, builder.BASE_FOLDER_NAME)
-	baseDTO, err := iterateFolderToTreeviewJSON(baseFolder, pwd)
+	baseDTO, err := iterateFolderToTreeviewJSON(builder.BaseDir, path.Dir(builder.BaseDir))
 	if err != nil {
 		logging.Error("web-definitions-api", err)
 		ctx.Abort(500, string(fileError(err.Error())))
 		return
 	}
-	defFolder := path.Join(pwd, builder.DEFINITIONS_FOLDER_NAME)
-	defDTO, err := iterateFolderToTreeviewJSON(defFolder, pwd)
+	defDTO, err := iterateFolderToTreeviewJSON(builder.DefinitionsDir, path.Dir(builder.DefinitionsDir))
 	if err != nil {
 		logging.Error("web-definitions-api", err)
 		ctx.Abort(500, string(fileError(err.Error())))
 		return
 	}
-	buildFolder := path.Join(pwd, builder.BUILD_TEMP_FOLDER_NAME)
-	buildDTO, err := iterateFolderToTreeviewJSON(buildFolder, pwd)
+	buildDTO, err := iterateFolderToTreeviewJSON(builder.BuildDir, path.Dir(builder.BuildDir))
 	if err != nil {
 		//this one is not important
 	}
@@ -280,19 +264,13 @@ func getMediaType(path string) string {
 }
 
 func newFolderHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
-	if strings.HasPrefix(relPathUnsafe, "/base/") {
-		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
-	}
-
-	pwd, _ := os.Getwd()
-
-	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/base/")
+	safe, absPath := sanitizePath(builder.BaseDir, relPathUnsafe)
 	if safe {
 		err := os.Mkdir(absPath, 0770)
 		if err != nil {
@@ -305,19 +283,13 @@ func newFolderHandler(ctx *web.Context) {
 }
 
 func newFileHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
-	if strings.HasPrefix(relPathUnsafe, "/base/") {
-		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
-	}
-
-	pwd, _ := os.Getwd()
-
-	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/base/")
+	safe, absPath := sanitizePath(builder.BaseDir, relPathUnsafe)
 	if safe {
 		f, err := os.OpenFile(absPath, os.O_EXCL|os.O_CREATE, 0770)
 		if err != nil {
@@ -331,22 +303,17 @@ func newFileHandler(ctx *web.Context) {
 }
 
 func newDefFileHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/definitions/")
 	if !strings.HasSuffix(relPathUnsafe, builder.DEFINITIONS_FILE_SUFFIX) {
 		relPathUnsafe = relPathUnsafe + builder.DEFINITIONS_FILE_SUFFIX
 	}
-	if strings.HasPrefix(relPathUnsafe, "/definitions/") {
-		relPathUnsafe = strings.Replace(relPathUnsafe, "/definitions", builder.DEFINITIONS_FOLDER_NAME, 1)
-	}
 
-	pwd, _ := os.Getwd()
-
-	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	safe, absPath := sanitizePath(builder.DefinitionsDir, relPathUnsafe)
 	if safe {
 		f, err := os.OpenFile(absPath, os.O_EXCL|os.O_CREATE|os.O_WRONLY, 0770)
 		if err != nil {
@@ -385,19 +352,13 @@ func fileError(error string) []byte {
 }
 
 func deleteHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
 
-	relPathUnsafe := ctx.Params["path"]
-	if strings.HasPrefix(relPathUnsafe, "/base/") {
-		relPathUnsafe = strings.Replace(relPathUnsafe, "/base", builder.BASE_FOLDER_NAME, 1)
-	}
-
-	pwd, _ := os.Getwd()
-
-	safe, absPath := sanitizePath(pwd, relPathUnsafe)
+	relPathUnsafe := strings.TrimPrefix(ctx.Params["path"], "/base/")
+	safe, absPath := sanitizePath(builder.BaseDir, relPathUnsafe)
 	if safe {
 		err := os.RemoveAll(absPath)
 		if err != nil {

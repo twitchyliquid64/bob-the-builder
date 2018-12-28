@@ -23,14 +23,12 @@ func (p *BaseInstallPhase) String() string {
 }
 
 func (p *BaseInstallPhase) Run(r *Run, builder *Builder, defIndex int) int {
-	pwd, _ := os.Getwd()
-
 	//make sure build dir exists
-	if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
-		os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 0777)
+	if exists, _ := exists(BuildDir); !exists {
+		os.MkdirAll(BuildDir, 0777)
 	}
 
-	err := copy_folder(p.BaseAbsPath, path.Join(pwd, BUILD_TEMP_FOLDER_NAME), true)
+	err := copy_folder(p.BaseAbsPath, BuildDir, true)
 
 	p.End = time.Now()
 	p.Duration = p.End.Sub(p.Start)

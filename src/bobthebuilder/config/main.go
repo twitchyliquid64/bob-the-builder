@@ -1,14 +1,14 @@
 package config
 
 import (
-	"io/ioutil"
+	"bobthebuilder/logging"
+	"crypto/tls"
+	"github.com/stianeikeland/go-rpio"
+	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"golang.org/x/oauth2/jwt"
-	"github.com/stianeikeland/go-rpio"
-	"bobthebuilder/logging"
-	"golang.org/x/oauth2"
+	"io/ioutil"
 	"net/http"
-	"crypto/tls"
 )
 
 var gConfig *Config = nil
@@ -17,20 +17,20 @@ var gTls *tls.Config = nil
 var gEventCred *jwt.Config = nil
 var gEventClient *http.Client = nil
 
-func Load(fpath string)error{
+func Load(fpath string) error {
 	conf, err := readConfig(fpath)
-	if err == nil{
+	if err == nil {
 		gConfig = conf
 	} else {
 		logging.Error("config", "config.Load() error:", err)
 		return err
 	}
 
-	if gConfig.TLS.PrivateKey == ""{
+	if gConfig.TLS.PrivateKey == "" {
 		logging.Warning("config", "TLS keyfile paths omitted, skipping TLS setup")
-	} else{
+	} else {
 		tls, err := loadTLS(gConfig.TLS.PrivateKey, gConfig.TLS.Cert)
-		if err == nil{
+		if err == nil {
 			gTls = tls
 		} else {
 			logging.Error("config", "config.Load() tls error:", err)
@@ -66,7 +66,7 @@ func Load(fpath string)error{
 	return nil
 }
 
-func initRpiGPIO(){
+func initRpiGPIO() {
 	if gConfig.RaspberryPi.BuildLedPin > 0 {
 		buildLed := rpio.Pin(gConfig.RaspberryPi.BuildLedPin)
 		buildLed.Output()
@@ -85,12 +85,12 @@ func initRpiGPIO(){
 	}
 }
 
-func GetServerName()string{
+func GetServerName() string {
 	checkInitialisedOrPanic()
 	return gConfig.Name
 }
 
-func TLS()*tls.Config{
+func TLS() *tls.Config {
 	checkInitialisedOrPanic()
 	return gTls
 }
@@ -100,13 +100,13 @@ func Pubsub() *http.Client {
 	return gEventClient
 }
 
-func All()*Config{
+func All() *Config {
 	checkInitialisedOrPanic()
 	return gConfig
 }
 
-func checkInitialisedOrPanic(){
-	if gConfig == nil{
+func checkInitialisedOrPanic() {
+	if gConfig == nil {
 		panic("Config not initialised")
 	}
 	//if gTls == nil{

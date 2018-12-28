@@ -1,0 +1,5 @@
+Package: bob-the-builder
+Version: 0.1.0
+Architecture: ARCH
+Maintainer: Twitch <twitchyliquid64@ciphersink.net>
+Description: Build automation platform.

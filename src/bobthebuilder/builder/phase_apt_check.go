@@ -4,7 +4,6 @@ import (
 	//"bobthebuilder/logging"
 	"os"
 	"os/exec"
-	"path"
 	"time"
 )
 
@@ -28,11 +27,9 @@ func (p *AptGetCheckInstallPhase) Run(r *Run, builder *Builder, defIndex int) in
 	p.builder = builder
 	p.defIndex = defIndex
 
-	pwd, _ := os.Getwd()
-
 	//make sure build dir exists
-	if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
-		os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 0777)
+	if exists, _ := exists(BuildDir); !exists {
+		os.MkdirAll(BuildDir, 0777)
 	}
 
 	for _, pkg := range p.Packages {
@@ -46,7 +43,7 @@ func (p *AptGetCheckInstallPhase) Run(r *Run, builder *Builder, defIndex int) in
 
 		//run install if it doesnt
 		cmd := exec.Command("apt-get", "-y", "install", pkg)
-		cmd.Dir = path.Join(pwd, BUILD_TEMP_FOLDER_NAME)
+		cmd.Dir = BuildDir
 
 		cmd.Stdout = p
 		cmd.Stderr = p

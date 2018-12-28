@@ -2,20 +2,20 @@ package config
 
 import (
 	"bobthebuilder/logging"
-	"encoding/json"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"io"
 	"os"
 )
 
-func readConfig(fpath string)(*Config,error){
+func readConfig(fpath string) (*Config, error) {
 	var m = &Config{}
 
 	confF, err := os.Open(fpath)
 
 	if err != nil {
-			return nil, errors.New("Failed to open config: "+err.Error())
+		return nil, errors.New("Failed to open config: " + err.Error())
 	}
 	defer confF.Close()
 
@@ -23,12 +23,12 @@ func readConfig(fpath string)(*Config,error){
 
 	if err := dec.Decode(&m); err == io.EOF {
 	} else if err != nil {
-		return nil, errors.New("Failed to decode config: "+err.Error())
+		return nil, errors.New("Failed to decode config: " + err.Error())
 	}
 	return m, nil
 }
 
-func loadTLS(keyPath, certPath string)(*tls.Config, error){
+func loadTLS(keyPath, certPath string) (*tls.Config, error) {
 	tlsConfig := new(tls.Config)
 
 	tlsConfig.PreferServerCipherSuites = true

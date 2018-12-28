@@ -29,12 +29,11 @@ func (p *CleanPhase) Run(r *Run, builder *Builder, defIndex int) int {
 
 	if err == nil {
 		if len(r.fileData) > 0 {
-			pwd, _ := os.Getwd()
-			os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 0777)
+			os.MkdirAll(BuildDir, 0777)
 			for fname, _ := range r.fileData {
-				logging.Info("CleanPhase-run", "Writing runvar-file to: "+path.Join(pwd, BUILD_TEMP_FOLDER_NAME, fname))
-				p.WriteOutput("Writing runvar-file to: "+path.Join(BUILD_TEMP_FOLDER_NAME, fname), r, builder, defIndex)
-				err = ioutil.WriteFile(path.Join(pwd, BUILD_TEMP_FOLDER_NAME, fname), r.fileData[fname], 0777)
+				logging.Info("CleanPhase-run", "Writing runvar-file to: "+path.Join(BuildDir, fname))
+				p.WriteOutput("Writing runvar-file to: "+path.Join(BuildDir, fname), r, builder, defIndex)
+				err = ioutil.WriteFile(path.Join(BuildDir, fname), r.fileData[fname], 0777)
 				if err != nil {
 					logging.Error("CleanPhase-run", "Could not save file "+fname+": "+err.Error())
 					p.WriteOutput("Error: "+err.Error(), r, builder, defIndex)

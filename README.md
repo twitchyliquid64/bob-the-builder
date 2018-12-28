@@ -6,19 +6,35 @@ Bob-the-builder adds a frontend and framework around your scripts. Whilst intend
 
 [Click here for a (GIF) Demo](https://s3-ap-southeast-2.amazonaws.com/ciphersink.net.current.workingfolder/Bob%20the%20builder.gif )
 
+### Beta quality
 
+I wrote this when I was first learning Go, so the code is a monstrosity.
 
+This should be consider a beta-grade system, with possible security flaws. Do not expose any HTTP endpoints to untrusted clients.
 
 ### What is this repository for? ###
 
 * Stores code for the simple run automator 'bob the builder'
-* Version 0.0.2
+* Version 0.1.0
 
 ### How do I get set up? ###
 
+#### Using debian packaging
+
 * Install Go
 * Get a copy of this repository
-* 'go build'
+* Set the GOPATH to this repository
+* `cd` into this repository
+* `./build_deb.sh /tmp/btb`
+* Install the resulting `.deb` file on the system you want to use it on.
+* Start the service with `sudo systemctl start bob-the-builder.service`.
+
+#### Development / manual
+
+* Install Go
+* Get a copy of this repository
+* Set the GOPATH to this repository
+* go build
 * Make sure the 'definitions' and 'bases' folder exist in your working directory.
 * './bobthebuilder' or 'bobthebuilder.exe' (make sure config.json is in your working directory)
 * Follow the steps below to setup your first build definition

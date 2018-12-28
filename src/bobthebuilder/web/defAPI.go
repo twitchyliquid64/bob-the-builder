@@ -13,9 +13,8 @@ import (
 	"github.com/hoisie/web"
 )
 
-
 func getDefinitionHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -31,7 +30,7 @@ func getDefinitionHandler(ctx *web.Context) {
 }
 
 func getCronHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -47,7 +46,7 @@ func getCronHandler(ctx *web.Context) {
 }
 
 func updateCronHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -64,9 +63,8 @@ func updateCronHandler(ctx *web.Context) {
 	builder.GetInstance().UpdateCron(data)
 }
 
-
 func getHistoryHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -96,7 +94,7 @@ func getStatusHandler(ctx *web.Context) {
 }
 
 func getBuildParamsLookupHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}
@@ -141,11 +139,11 @@ func enqueueBuildHandler(ctx *web.Context) {
 	}
 
 	tags := []string{"web", "default"}
-	if gAuth != nil{
+	if gAuth != nil {
 		info, authErr := gAuth.AuthInfo(ctx)
 		if authErr == nil {
 			tags = append(tags, "auth")
-			tags = append(tags, "startedby:" + info.User.Name())
+			tags = append(tags, "startedby:"+info.User.Name())
 		}
 	}
 
@@ -179,11 +177,11 @@ func enqueueBuildHandlerWithOptions(ctx *web.Context) {
 			data.Tags[i] = ""
 		}
 	}
-	if gAuth != nil{
+	if gAuth != nil {
 		info, authErr := gAuth.AuthInfo(ctx)
 		if authErr == nil {
 			data.Tags = append(data.Tags, "auth")
-			data.Tags = append(data.Tags, "startedby:" + info.User.Name())
+			data.Tags = append(data.Tags, "startedby:"+info.User.Name())
 		}
 	}
 
@@ -200,7 +198,7 @@ func enqueueReloadHandler(ctx *web.Context) {
 }
 
 func getDefIndexByIdHandler(ctx *web.Context) {
-	if needAuthChallenge(ctx){
+	if needAuthChallenge(ctx) {
 		requestAuth(ctx)
 		return
 	}

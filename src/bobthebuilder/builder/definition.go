@@ -9,8 +9,6 @@ import (
 	"path"
 )
 
-const BASE_FOLDER_NAME = "base"
-
 type BuildDefinition struct {
 	//high level information
 	Name                string   `json:"name"`
@@ -18,9 +16,9 @@ type BuildDefinition struct {
 	AptPackagesRequired []string `json:"apt-packages-required,omitempty"`
 	BaseFolder          string   `json:"base-folder,omitempty"`
 	GitSrc              string   `json:"git-src,omitempty"`
-	HideFromLog				  bool   	 `json:"hide-from-log,omitempty"`
-	NotifyOnFailure		 	bool   	 `json:"notify-on-failure,omitempty"`
-	NotifyOnSuccess		 	bool   	 `json:"notify-on-success,omitempty"`
+	HideFromLog         bool     `json:"hide-from-log,omitempty"`
+	NotifyOnFailure     bool     `json:"notify-on-failure,omitempty"`
+	NotifyOnSuccess     bool     `json:"notify-on-success,omitempty"`
 
 	//list of steps
 	Steps []BuildStep `json:"steps"`
@@ -47,7 +45,7 @@ type BuildParam struct {
 }
 
 type BuildStep struct {
-	ID						string `json:"id,omitempty"`
+	ID            string `json:"id,omitempty"`
 	Type          string `json:"type"`
 	Conditional   string `json:"skip-condition,omitempty"`
 	HideFromSteps bool   `json:"hide-from-steps,omitempty"`
@@ -68,10 +66,10 @@ type BuildStep struct {
 	Value string `json:"value,omitempty"`
 
 	//used for send email command
-	AllOutput bool `json:"all-output,omitempty"`
-	To []string		 `json:"to,omitempty"`
-	Subject string `json:"subject,omitempty"`
-	Prefix string	 `json:"prefix,omitempty"`
+	AllOutput bool     `json:"all-output,omitempty"`
+	To        []string `json:"to,omitempty"`
+	Subject   string   `json:"subject,omitempty"`
+	Prefix    string   `json:"prefix,omitempty"`
 
 	//used for S3 commands
 	Bucket string `json:"bucket,omitempty"`
@@ -81,8 +79,7 @@ type BuildStep struct {
 
 func (d *BuildDefinition) Validate() bool {
 	if d.BaseFolder != "" {
-		pwd, _ := os.Getwd() //cant have error - would have failed in file/util.go
-		if _, err := os.Stat(path.Join(pwd, BASE_FOLDER_NAME, d.BaseFolder)); os.IsNotExist(err) {
+		if _, err := os.Stat(path.Join(BaseDir, d.BaseFolder)); os.IsNotExist(err) {
 			logging.Error("definition-validate", d.Name+" base folder does not exist.")
 			return false // base folder does not exist
 		}
@@ -120,11 +117,10 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 		buildVariables: map[string]string{},
 		fileData:       map[string][]byte{},
 	}
-	pwd, _ := os.Getwd() //cant have error - would have failed in file/util.go
 
 	//generate phase to clean up the build folder
 	delPhase := &CleanPhase{
-		DeletePath: path.Join(pwd, BUILD_TEMP_FOLDER_NAME),
+		DeletePath: BuildDir,
 	}
 	delPhase.init(len(out.Phases))
 	out.Phases = append(out.Phases, delPhase)
@@ -147,7 +143,7 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 
 	if d.BaseFolder != "" { //next, copy in any static files specified.Value to set the environment variable to
 		p := &BaseInstallPhase{ //generate phase to copy in files
-			BaseAbsPath: path.Join(pwd, BASE_FOLDER_NAME, d.BaseFolder),
+			BaseAbsPath: path.Join(BaseDir, d.BaseFolder),
 		}
 		p.init(len(out.Phases))
 		out.Phases = append(out.Phases, p)
@@ -185,9 +181,9 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 
 		case "S3_UPLOAD_FOLDER":
 			cmd := &S3UploadFolderPhase{
-				Bucket:              step.Bucket,
-				Region:              step.Region,
-				SourceFolder:    step.FileName,
+				Bucket:            step.Bucket,
+				Region:            step.Region,
+				SourceFolder:      step.FileName,
 				DestinationFolder: step.DestinationFileName,
 			}
 			cmd.init(len(out.Phases), step.ACL)
@@ -203,10 +199,10 @@ func (d *BuildDefinition) genRun(tags []string, version string, physDisabled boo
 
 		case "SEND_EMAIL":
 			cmd := &SendEmailPhase{
-				SendManual: true,
-				SendAllOutput: step.AllOutput,
-				Destinations: step.To,
-				Prefix: step.Prefix,
+				SendManual:      true,
+				SendAllOutput:   step.AllOutput,
+				Destinations:    step.To,
+				Prefix:          step.Prefix,
 				SubjectOverride: step.Subject,
 			}
 			cmd.init(len(out.Phases))

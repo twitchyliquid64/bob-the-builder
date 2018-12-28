@@ -4,7 +4,6 @@ import (
 	//"bobthebuilder/logging"
 	"os"
 	"os/exec"
-	"path"
 	"strconv"
 	"time"
 )
@@ -31,11 +30,9 @@ func (p *CommandPhase) Run(r *Run, builder *Builder, defIndex int) int {
 	p.builder = builder
 	p.defIndex = defIndex
 
-	pwd, _ := os.Getwd()
-
 	//make sure build dir exists
-	if exists, _ := exists(path.Join(pwd, BUILD_TEMP_FOLDER_NAME)); !exists {
-		os.MkdirAll(path.Join(pwd, BUILD_TEMP_FOLDER_NAME), 0777)
+	if exists, _ := exists(BuildDir); !exists {
+		os.MkdirAll(BuildDir, 0777)
 	}
 
 	args := make([]string, len(p.Args))
@@ -59,7 +56,7 @@ func (p *CommandPhase) Run(r *Run, builder *Builder, defIndex int) int {
 	}
 
 	cmd := exec.Command(p.Command, args...)
-	cmd.Dir = path.Join(pwd, BUILD_TEMP_FOLDER_NAME)
+	cmd.Dir = BuildDir
 
 	cmd.Stdout = p
 	cmd.Stderr = p
